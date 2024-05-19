@@ -1,4 +1,4 @@
-# Inventing Modern Sequence Models as a Music 320 Project
+## Inventing Modern Sequence Models as a Music 320 Project
 
 Presented at the CCRMA Open House on May 17, 2024.
 
