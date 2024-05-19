@@ -14,3 +14,7 @@ keyeps eps/$(KEY).eps: key/$(KEY).key Makefile
 	-echo '/bin/rm pdf/$(KEY).pdf'
 	-echo 'OR:'
 	pdf2ps key/$(KEY).pdf > eps/$(KEY).eps
+
+clean::
+	-/bin/rm -f $(NAME).l2h
+	-/bin/rm -f $(NAME).ps
