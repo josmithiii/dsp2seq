@@ -1,0 +1,400 @@
+%&latex
+% Created from /l/mt/JOSOverview.tex
+
+\newcommand{\theTitle}{Inventing Modern Sequence Models as a Music 320 Project}
+\newcommand{\theSubTitle}{Samples become Meaning Vectors}
+\newcommand{\theEvent}{CCRMA Open House} 
+\newcommand{\theDate}{May 17, 2024}
+% Classroom (Knoll 217), Friday 1:40-1:55pm}
+
+\newcommand{\theAuthor}{Julius Smith}
+
+%Mohonk05 said:
+\input ../latex/stdpreshdr.tex % /w/latex/stdpreshdr.tex
+\input ../latex/wgtmac.tex % /w/latex/wgtmac.tex
+
+\usepackage{xcolor}
+%N:\usepackage[dvipsnames]{xcolor}
+%N:\usepackage[svgnames]{xcolor}
+
+% Uses package etoolbox for \newtoggle et al:
+\usepackage{etoolbox} % for \newtoggle et al
+\newtoggle{local}
+%\toggletrue{local}
+\togglefalse{local}
+\input localremote.tex
+
+\date{\theDate}
+
+\title{\theTitle}
+\author{\theAuthor\\
+  CCRMA Open House\\
+%  Classroom (Knoll 217)\\
+  Stanford University \\[10pt]
+%  \theEvent
+}
+
+\begin{document}
+
+\maketitle
+
+%\section[\sectopts]{JOS Overview}
+
+%\end{document}
+%\endinput
+
+\begin{slide}[\slideopts,toc={}]{Abstract}
+
+Today's sequence models (such as large language models) in machine
+learning (AI) arose from a blend of principle-based design and
+empirical discovery, spanning several fields. This talk describes how
+the ideas could have emerged from an elementary signal-processing
+approach. This viewpoint offers some features:
+\begin{enumerate}
+\item Signal processing folks can quickly learn what is happening in a motivated way
+\item Machine-learning experts might benefit from signal-processing insights
+\item Obvious suggestions for things to try next naturally arise
+\end{enumerate}
+
+\href{https://ccrma.stanford.edu/ccrma-open-house}{[Open House Schedule]}
+
+\end{slide}
+
+\section[\sectopts,toc={Basic Idea}]{Music 320 Project Idea}
+
+\begin{slide}[\slideopts,toc={One Pole Filter}]{One Pole Recursive Digital Filter}
+\vspace{-2em}
+  \myFigureToWidth{one-pole-jos}{0.6\twidth}{Pole at $z = -a_1$\\[5pt]
+    $H(z) = \frac{\displaystyle Y(z)}{\displaystyle X(z)} = \frac{\displaystyle  b_0}{\displaystyle 1+a_1\,\zi}$}
+\maybepause
+\textbf{Idea: Let's Make an Associative Memory!}
+\begin{itemize}
+\mpitem $x(n)$ can be a \emph{long vector} $\xv(n)\in\RN$ representing \emph{anything we want} --- any ``label''
+\mpitem Set $\beev_0 = 1$ and $\av_1 = -1$ to make $\yv(n)$ a \emph{sum of all input vectors} (``integrator'')
+\mpitem Choose the dimension $N$ so large that \emph{vectors in the sum are mostly orthogonal}
+\mpitem Retrieve similar vectors using a \emph{matched inner product} $\wv^T\xv > b$,\\
+        for some suitable threshold $b$ (Hey! That's one simulated neuron! (``Perceptron'')
+\end{itemize}
+\end{slide}
+
+\begin{slide}[\slideopts,toc={Inner Product}]{Vector Retrieval by Inner Product}
+
+  Given the sum of vectors
+  \[
+  \yv(n) = \sum_{m=0}^n \xv(m)
+  \]
+  and a ``query vector'' $\wv = \xv(k)$,\\
+  \maybepause
+  find the query in the sum using an \emph{inner product:}
+  \[
+  \wv^T\yv(n) \eqsp \sum_{m=0}^n \wv^T\xv(m) \;\approx\; \xv^T(k)\,\xv(k) \eqsp \|\xv(k)\|^2 \;>\; b(k)
+  \]
+  where $b(k)$ is the \emph{detection threshold} for $\xv(k)$
+
+  \begin{itemize}
+  \mpitem This works because the spatial dimension is so large that $\xv^T(j)\,\xv(k)\approx 0$ for $j\ne k$
+
+  \mpitem Retrieval threshold $b(k)$ depends on $\|\xv(k)\|^2$
+
+  \mpitem $\Rightarrow$ \emph{reserve the radial dimension for similarity scoring}
+
+  \mpitem \Ie, \emph{only populate the \textbf{hypersphere}} in $\RN$: $\norm{\xv(k)} = 1, \, \forall k$
+
+  \mpitem We just invented \textbf{\texttt{RMSNorm}}, used extensively in neural networks (not \texttt{LayerNorm})
+
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}[\slideopts,toc={Vector Memory}]{Cumulative Vector Memory}
+\vspace{-1em}
+\myFigureToWidth{integrator}{0.6\twidth}{}
+\vspace{-1em}
+\myFigureToWidth{ginaSphere1}{0.5\twidth}{}
+%\myTwoFiguresToWidth{integrator}{ginaSphere1}{0.5\twidth}{Vector summer}{MidJourney depiction for $N=3$}{}
+\end{slide}
+
+\begin{slide}[\slideopts,toc={Gating}]{Gated Vector Memory}
+
+\myFigureToWidth{integrator}{0.6\twidth}{Input Vector Summer}
+
+\begin{itemize}
+\item \textbf{Problem:} Need a \emph{memory reset}
+\mpitem \textbf{Solution:} Set \emph{feedback gain to zero} for one step to clear the memory
+\item[]
+\mpitem \textbf{Problem:} Need an \emph{input gate} to suppress unimportant inputs
+\mpitem \textbf{Solution:} Set \emph{input gain to zero} for unimportant inputs
+\item[]
+\mpitem We just invented \textbf{gating}, used extensively in neural sequence models
+\end{itemize}
+
+\end{slide}
+
+\begin{slide}[\slideopts,toc={Gated RNN}]{Gated Recurrent Network}
+
+\vspace{-1em}
+
+  \textbf{Idea:} \emph{Learn} the input and feedback gates as functions of $\xv_n$\\
+  based on many input-output examples $(\xv_n,\yv_n)$ (``training data''):
+%% \mpitem Some item
+%% \end{itemize}
+
+\vspace{-1em}
+
+\myFigureToWidth{one-pole-rnn}{0.5\twidth}{Vector Memory with Learned Input and Feedback Gates}
+
+\maybepause
+
+\textbf{``Obvious'' Training Considerations:}
+\begin{itemize}
+\mpitem Initialize $-\av_1$ for desired initial memory duration (exponentially fading)
+\mpitem Learn $-\av_1(\xv_n)$ as $\Imtx\cdot e^{-\Delta}\approx \Imtx -\Imtx \Delta$, and $\bv_0(\xv_n)$ as $\mbox{Linear}(\xv_n,\yv_n)\cdot\Delta$, where
+$\Delta = \mbox{softPlus}(\mbox{parameter}(\xv_n,\Yv_n))$ (approximately gain-normalized)
+\end{itemize}
+
+\end{slide}
+
+\begin{slide}[\slideopts,toc={Skip Connection}]{Output Gating}
+
+  \vspace{-1em}
+
+  \textbf{Idea:} Since we have input and feedback gates, why not an \textbf{\emph{output gate?}}
+
+\myFigureToWidth{one-pole-rnn-skip}{0.6\twidth}{Gated RNN with \textbf{Skip Connection}}
+
+\maybepause
+Output gating allows network to be ``bypassed'' when not helpful
+
+\maybepause
+\vspace{1em}
+\textbf{Idea:} For detecting vectors in $\yv$ using \emph{learned} inner-product weights and thresholds,\\
+use an array of \emph{``Perceptrons''} (P)
+%\emph{``Multi-Layer Perceptron'' (MLP)}
+\begin{itemize}
+\mpitem Each P detects one or more memory vectors similar to its weight vectors
+\mpitem The P outputs indicate \emph{which weight-vectors are present} in the vector sum
+\end{itemize}
+
+\end{slide}
+
+\begin{slide}[\slideopts,toc={Sequences}]{Sequence Modeling}
+  \vspace{-1em}
+  \begin{itemize}
+    \mpitem If each vector represents a \emph{word,} a vector sum is simply a \emph{bag of words}
+    \mpitem To model a \emph{sequence} of words, we have options:
+    \begin{enumerate}
+      \mpitem Use a \emph{positional encoding} scheme, such as
+      \begin{enumerate}
+        \mpitem \emph{Amplitude Decay} - Multiply the sum by a \emph{forgetting factor} each sequence step\\
+        (RNNs) - \emph{poor choice} (conflates with angular distance on the hypersphere)
+        \mpitem \emph{Sinusoidal Amplitude Modulation} - Add a sinusoid with \emph{increasing frequency} to each vector summing into the history\\
+        (used in the original Transformer)
+        \mpitem \emph{Phase Shift} - Multiply by the sum by $e^{j\Delta}$ each sample\\
+        (``RoPE'') - \emph{apparently most used today}
+      \end{enumerate}
+      \mpitem Use many vector-sum memories in parallel, positionally encoded\\
+      (``State Expansion'' in SSMs)
+      % \mpitem Learn position-specific \emph{FIR Coefficients} across a parallel bank of positionally encoded vector-sum memories (``Attention Layer'' in a Transformer)
+    \end{enumerate}
+  \end{itemize}
+\end{slide}
+
+\begin{slide}[\slideopts]{State Expansion}
+
+% \vspace{-4em}
+% \myFigureToWidth{one-pole-rnn-seq}{0.6\twidth}{} % {Sequence Modeling with Gated RNNs}
+%
+
+\vspace{-2em}
+\myFigureToWidth{statespace-rnn}{0.6\twidth}{}
+\vspace{-2em}
+\begin{itemize}
+  \mpitem Called a \emph{``Structured State-space Model''} (SSM) in machine learning
+  \mpitem Feedback matrix $\Amtx$ has been \emph{diagonal} since ``S4D'' (2022)\\
+  	  $\Rightarrow$ Parallel bank of vector one-poles (\emph{gated, state-expanded RNNs})
+  \mpitem Processed sequence (``context buffer'') is \emph{indefinitely long}
+  \mpitem Gating matrices are typically simple linear input projections, \eg,
+  \[
+    [\Bmtx(\xv_n), \Cmtx(\xv_n)] = \Lmtx\,\xv_n  % , \qquad \Dmtx(\xv_n) = \mbox{SiLU}(\Lmtx^\prime\xv_n)\]
+  \] 
+  (See Mamba, \eg)
+  % \mpitem Conv1D mixing on input
+\end{itemize}
+
+\end{slide}
+
+\begin{slide}[\slideopts,toc={Attention}]{Attention Layer}
+
+\vspace{-1em}
+
+\textbf{Idea:} Also use \emph{FIR Filtering}
+
+%\myFigureToWidth{one-pole-rnn-seq}{0.6\twidth}{} % {Sequence Modeling with Gated RNNs}
+%\vspace{-4em}
+
+\myFigureToWidth{attention}{0.8\twidth}{}
+
+\vspace{-1em}
+
+We can have \emph{separately learned FIR coefficient matrices} $b_j[\xv(n-j),k]$, \\
+  which depend on the
+  \begin{enumerate}
+    \mpitem input \emph{position} $j$ in the input sequence (``context buffer'')
+    \mpitem input \emph{vector} $\xv(n-j)$, $j=0,1,2,\dots,M$, (nonlinear)
+    \mpitem \emph{output-position} $k$ being computed, $k=0,1,2,\dots,M$ ($M+1$ outputs)
+  \end{enumerate}
+
+\maybepause
+\textbf{Idea:} Add \emph{relevance gating} suppressing unimportant inputs to each output (``attention'')
+
+\vspace{0.5em}
+
+\maybepause
+\textbf{Idea:} Measure relevance using an \emph{inner product} between the output and input positions (``dot-product attention'')
+\end{slide}
+
+\begin{slide}[\slideopts]{Dot-Product Attention}
+
+\vspace{-1em}
+
+\myFigureToWidth{attention}{0.8\twidth}{}
+
+\vspace{-1em}
+
+\textbf{Relevance Gating}
+
+Contribution from input $\xv(n-j)$ to the nonlinear FIR sum for output $\yv(n-k)$ is $(Q_k^T K_j)\xv(n-j)$, where
+\begin{itemize}
+  \mpitem $Q_k[\xv(n-k),k]$ is called the \emph{query} vector for position $k$ in the input sequence
+  \mpitem $K_j[\xv(n-j),j]$ is called the \emph{key} vector for position $j$ in the input sequence
+%  \mpitem $V_j[\xv(n-j)]$ is called the \emph{value} vector for position $j$ in the input sequence
+\end{itemize}
+
+\maybepause
+
+\textbf{Idea:} To provide more flexibility for the attention sum,
+replace $\xv(n-j)$ in the attention sum with a learned \emph{value
+vector} $V_j[\xv(n-j)]$\\
+%
+\maybepause
+$\Rightarrow$\\
+%
+Relevance of input $j$ to output $k$ $\propto (Q_k^T K_j)V_j$, where
+all three vectors are learned projections of $\xv(n-j)$ for each
+$(j,k)$ (``Transformer'')
+
+\end{slide}
+
+\begin{slide}[\slideopts]{Multi-Head Attention}
+
+\textbf{Idea:} To support multiple meaning possibilities, \emph{partition the model space} into\\
+parallel independent \emph{attention calculations} (``multi-head attention'')
+
+%\myFigureToWidth{one-pole-rnn-seq}{0.6\twidth}{} % {Sequence Modeling with Gated RNNs}
+%\vspace{-4em}
+
+\begin{itemize}
+  \mpitem Each \emph{attention head} can form an independent sequence model
+  \mpitem Also introduced in the Transformer paper (2017)
+\end{itemize}
+
+\end{slide}
+
+\begin{slide}[\slideopts]{Weight Tying}
+
+  When the sequence model maps input to output in the same ``language'' (e.g., English to English),
+  it makes sense to use the \emph{same embedding vectors} at the input and output layers, instead
+  of separately learning a set of weights for mapping to the final output.
+  This is called ``weight tying'' (many fewer parameters, better results).
+
+\end{slide}
+
+\begin{slide}[\slideopts]{Hierarchical Blocks}
+\begin{itemize}
+  \mpitem Cascade blocks of attention + MLP and/or gated recurrence + MLP to model \emph{hierarchical relationships} like image features or grammatical constructs
+  \mpitem Attention and gated RNNs are called ``mixing layers'' (successive inputs are combined)
+  \mpitem MLPs are called ``point transformations'' (generally mapping of any vector from one place to another)
+  \mpitem RMSNorm typical at the input to put it on the hypersphere --- also used internally (see Hawk/Griffin e.g.)
+\end{itemize}
+\end{slide}
+
+%% \begin{slide}[\slideopts,toc={Multiple Heads}]{MultiHead Attention}
+
+%% \vspace{-1em}
+
+%% \textbf{Idea:} To enable several independent meaning possibilities, \emph{partition the space}
+
+%% %\myFigureToWidth{one-pole-rnn-seq}{0.6\twidth}{} % {Sequence Modeling with Gated RNNs}
+%% %\vspace{-4em}
+
+%% \begin{itemize}
+%%   \mpitem Each \emph{head} can form an independent sequence model
+%%   \mpitem Filter coefficients computed from input as before, but smaller
+%%   \mpitem Part of the \emph{Transformer} for sequence modeling (attention layer)
+%% \end{itemize}
+
+%% \end{slide}
+
+%% \begin{slide}[\slideopts,toc={Other Features}]{Other ``Obvious'' Features}
+%% \begin{itemize}
+%%   \mpitem Tying output ``language modeling head'' weights to the input embedding weights
+%%   \mpitem Positional encoding within an RNN
+%% \end{itemize}
+%% Less obvious:
+%% \begin{itemize}
+%%   \mpitem Multihead Attention (down-projection + independent spatial processing)
+%%   \mpitem (Q,K,V) matrices for ``dot-product attention'' (down-projection + inner-product function + value flexibility)
+%% \end{itemize}
+%% \end{slide}
+
+%% \begin{wideslidewhite}[\slideopts,toc={Architectures}]{Architectures}
+%% \vspace{-4em}
+%% \myFigureToWidth{Architectures}{\twidth}{}
+%% \vspace{-4em}
+%% \end{wideslidewhite}
+
+\begin{slide}[\slideopts,toc={Hypersphere}]{Where Meaning Lies}
+\vspace{-1em}
+\myFigureToWidth{ginaSphere1}{\twidth}{}
+\end{slide}
+
+\section[\sectopts,toc={History Samples}]{Sequence Modeling Snapshots}
+
+\begin{slidewhite}[\slideopts, toc={LSTM \& GRU}]{LSTM and GRU}
+\vspace{-6em}
+\myFigureRotateToWidth{Architectures1}{-90}{\twidth}{}
+\end{slidewhite}
+
+\begin{slidewhite}[\slideopts, toc={SSM \& Mamba}]{Structured State Space and Mamba}
+\vspace{-6em}
+\myFigureRotateToWidth{Architectures2}{-90}{\twidth}{}
+\end{slidewhite}
+
+\begin{slidewhite}[\slideopts,toc={Hawk \& Griffin}]{Hawk and Griffin}
+\vspace{-6em}
+\myFigureRotateToWidth{Architectures3}{-90}{\twidth}{}
+\end{slidewhite}
+
+\begin{slidewhite}[\slideopts,toc={HGRN2}]{Gated Linear RNNs with State Expansion}
+\vspace{-6em}
+\myFigureRotateToWidth{Architectures4}{-90}{\twidth}{}
+\end{slidewhite}
+
+\begin{slidewhite}[\slideopts,toc={RWKV+}]{RWKV, Eagle, Finch}
+\vspace{-6em}
+\myFigureRotateToWidth{Architectures5}{-90}{\twidth}{}
+\end{slidewhite}
+
+%\begin{slidewhite}[\slideopts,toc={}]{Architectures 6}
+%\vspace{-6em}
+%\myFigureRotateToWidth{Architectures6}{-90}{\twidth}{}
+%\end{slidewhite}
+
+%\input ai-reading-2022.tex
+%\input ai-reading-2023.tex
+%\input ai-projects.tex
+%\section[\sectopts]{Differentiable DSP (DDSP)}
+%\input ddsp.tex
+
+\end{document}
+\endinput
