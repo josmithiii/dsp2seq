@@ -73,7 +73,7 @@ approach. This viewpoint offers some features:
 \mpitem Set $\beev_0 = 1$ and $\av_1 = -1$ to make $\yv(n)$ a \emph{sum of all input vectors} (``integrator'')
 \mpitem Choose the dimension $N$ so large that \emph{vectors in the sum are mostly orthogonal}
 \mpitem Retrieve similar vectors using a \emph{matched inner product} $\wv^T\xv > b$,\\
-        for some suitable threshold $b$ (Hey! That's one simulated neuron! (``Perceptron'')
+        for some suitable threshold $b$ (Hey! That's one simulated neuron! (``Perceptron''))
 \end{itemize}
 \end{slide}
 
@@ -94,9 +94,8 @@ approach. This viewpoint offers some features:
   \begin{itemize}
   \mpitem This works because the spatial dimension is so large that $\xv^T(j)\,\xv(k)\approx 0$ for $j\ne k$
 
-  \mpitem Retrieval threshold $b(k)$ depends on $\|\xv(k)\|^2$
-
-  \mpitem $\Rightarrow$ \emph{reserve the radial dimension for similarity scoring}
+  \mpitem Retrieval threshold $b(k)$ depends on $\|\xv(k)\|^2$\\
+  $\Rightarrow$ \emph{reserve the radial dimension for similarity scoring}
 
   \mpitem \Ie, \emph{only populate the \textbf{hypersphere}} in $\RN$: $\norm{\xv(k)} = 1, \, \forall k$
 
