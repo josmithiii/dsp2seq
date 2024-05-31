@@ -315,6 +315,11 @@ parallel independent \emph{attention calculations} (``multi-head attention'')
   \mpitem Attention and gated RNNs are called ``mixing layers'' (successive inputs are combined)
   \mpitem MLPs are called ``point transformations'' (general mapping of any vector from one place to another)
   \mpitem RMSNorm typical at the input to put it on the hypersphere --- also used internally (see Hawk/Griffin e.g.)
+  \mpitem Thus, these point MLPs are effectively data-dependent \emph{rotation matrices}.\\
+  In model-dimension $N$, we need only learn $N-1$ \emph{rotation angles} for each input class.\\
+  The direct mapping of the coordinates used now seems efficient enough, but projection back to the sphere
+  during training might help.  Then perhaps there is no need for RMSNorm at the output after summing the skip
+  connection.
 \end{itemize}
 \end{slide}
 
