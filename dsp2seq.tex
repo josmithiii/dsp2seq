@@ -137,13 +137,18 @@
 
 \myFigureToWidth{one-pole-rnn}{0.5\twidth}{Vector Memory with Learned Input and Feedback Gates}
 
+\vspace{-1em}
+
 \maybepause
 
-\textbf{``Obvious'' Training Considerations:}
+\textbf{``Obvious'' Training Considerations for Learning Memory Duration:}
 \begin{itemize}
-\mpitem Initialize $-\av_1$ for desired initial memory duration (exponentially fading)
-\mpitem Learn $-\av_1(\xv_n)$ as $\Imtx\cdot e^{-\Delta}\approx \Imtx -\Imtx \Delta$, and $\bv_0(\xv_n)$ as $\mbox{Linear}(\xv_n,\yv_n)\cdot\Delta$, where
+\mpitem Initialize $\peev$ for desired initial memory duration (exponentially fading)
+\mpitem Learn $\peev(\xv_n)$ as $\Imtx\cdot e^{-\Delta}\approx \Imtx -\Imtx \Delta$, and $\geev(\xv_n)$ as $\mbox{Linear}(\xv_n,\yv_n)\cdot\Delta$, where
 $\Delta = \mbox{softPlus}(\mbox{parameter}(\xv_n,\Yv_n))$ (approximately gain-normalized)
+\mpitem Note that \emph{gating} $\Rightarrow$ \emph{activation} (LSTM, GRU) while \emph{memory duration} $\Rightarrow$ \emph{linear projection}\\
+(SSMs, Mamba) --- Structured State Space Models led to \emph{linear projection} based on cool \emph{history polynomial approximation} ideas that ultimately
+went away (S4D)
 \end{itemize}
 
 \end{slide}
@@ -204,7 +209,7 @@ use an array of \emph{``Perceptrons''} (P)
 \vspace{-2em}
 \begin{itemize}
   \mpitem Called a \emph{``Structured State-space Model''} (SSM) in machine learning
-  \mpitem Feedback matrix $\Amtx$ has been \emph{diagonal} since ``S4D'' (2022)\\
+  \mpitem Feedback matrix $\Amtx$ has been typically \emph{diagonal} since ``S4D'' (2022)\\
   	  $\Rightarrow$ Parallel bank of vector one-poles (\emph{gated, state-expanded RNNs})
   \mpitem Processed sequence (``context buffer'') is \emph{indefinitely long}
   \mpitem Gating matrices are typically simple linear input projections, \eg,
