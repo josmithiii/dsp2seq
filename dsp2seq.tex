@@ -1,11 +1,15 @@
 %&latex
 % Created from /l/mt/JOSOverview.tex
 
-\newcommand{\theTitle}{Inventing Modern Sequence Models as a Music 320 Project}
-\newcommand{\theSubTitle}{Samples become Meaning Vectors}
-\newcommand{\theEvent}{CCRMA Open House} 
-\newcommand{\theDate}{May 17, 2024}
-% Classroom (Knoll 217), Friday 1:40-1:55pm}
+\newcommand{\theTitle}{Inventing Modern Sequence Models in Signal Processing}
+\newcommand{\theEvent}{West Coast Machine Learning} 
+\newcommand{\theDate}{June 13, 2024}
+
+%% \newcommand{\theTitle}{Inventing Modern Sequence Models as a Music 320 Project}
+%% \newcommand{\theSubTitle}{Samples become Meaning Vectors}
+%% \newcommand{\theEvent}{CCRMA Open House} 
+%% \newcommand{\theDate}{May 17, 2024}
+%% % Classroom (Knoll 217), Friday 1:40-1:55pm}
 
 \newcommand{\theAuthor}{Julius Smith}
 
@@ -28,49 +32,40 @@
 
 \title{\theTitle}
 \author{\theAuthor\\
-  CCRMA Open House\\
+%  CCRMA Open House\\
 %  Classroom (Knoll 217)\\
-  Stanford University \\[10pt]
-%  \theEvent
+%  Stanford University \\[10pt]
+  \theEvent
 }
 
 \begin{document}
 
 \maketitle
 
-%\section[\sectopts]{JOS Overview}
+\section[\sectopts]{Background}
+
+\input jos-origin.tex
+\input courses-overview.tex
 
 %\end{document}
 %\endinput
 
-\begin{slide}[\slideopts,toc={}]{Abstract}
-
-Today's sequence models (such as large language models) in machine
-learning (AI) arose from a blend of principle-based design and
-empirical discovery, spanning several fields. This talk describes how
-the ideas could have emerged from an elementary signal-processing
-approach. This viewpoint offers some features:
-\begin{enumerate}
-\item Signal processing folks can quickly learn what is happening in a motivated way
-\item Machine-learning experts might benefit from signal-processing insights
-\item Obvious suggestions for things to try next naturally arise
-\end{enumerate}
-
-\href{https://ccrma.stanford.edu/ccrma-open-house}{[Open House Schedule]}
-
-\end{slide}
+%\input abstract.tex
 
 \section[\sectopts,toc={Basic Idea}]{Music 320 Project Idea}
 
-\begin{slide}[\slideopts,toc={One Pole Filter}]{One Pole Recursive Digital Filter}
-\vspace{-2em}
-  \myFigureToWidth{one-pole-jos}{0.6\twidth}{Pole at $z = -a_1$\\[5pt]
-    $H(z) = \frac{\displaystyle Y(z)}{\displaystyle X(z)} = \frac{\displaystyle  b_0}{\displaystyle 1+a_1\,\zi}$}
+\begin{slide}[\slideopts,toc={One Pole Filter}]{Assignment: Do Something Cool with a \emph{One-Pole Recursive Digital Filter}}
+\vspace{-1em}
+\myFigureToWidth{one-pole-jos}{0.5\twidth}{
+  One Pole at $z = p$\\[5pt]
+    $y(n) = g\, x(n) + p\, y(n-1)$, $n=0,1,2,\ldots$\\[5pt]
+    $H(z) = \frac{\displaystyle Y(z)}{\displaystyle X(z)} = \frac{\displaystyle  g}{\displaystyle 1 - p\,\zi}$}
 \maybepause
-\textbf{Idea: Let's Make an Associative Memory!}
+\vspace{-1em}
+\textbf{Let's Make an Associative Memory!}
 \begin{itemize}
 \mpitem $x(n)$ can be a \emph{long vector} $\xv(n)\in\RN$ representing \emph{anything we want} --- any ``label''
-\mpitem Set $\beev_0 = 1$ and $\av_1 = -1$ to make $\yv(n)$ a \emph{sum of all input vectors} (``integrator'')
+\mpitem Set $\geev = 1$ and $\peev = -1$ to make $\yv(n)$ a \emph{sum of all input vectors} (``integrator'')
 \mpitem Choose the dimension $N$ so large that \emph{vectors in the sum are mostly orthogonal}
 \mpitem Retrieve similar vectors using a \emph{matched inner product} $\wv^T\xv > b$,\\
         for some suitable threshold $b$ (Hey! That's one simulated neuron! (``Perceptron''))
@@ -92,7 +87,7 @@ approach. This viewpoint offers some features:
   where $b(k)$ is the \emph{detection threshold} for $\xv(k)$
 
   \begin{itemize}
-  \mpitem This works because the spatial dimension is so large that $\xv^T(j)\,\xv(k)\approx 0$ for $j\ne k$
+  \mpitem This works because the spatial dimension is so large that $\xv^T(j)\,\xv(k)\approx \epsilon$ for $j\ne k$
 
   \mpitem Retrieval threshold $b(k)$ depends on $\|\xv(k)\|^2$\\
   $\Rightarrow$ \emph{reserve the radial dimension for similarity scoring}
