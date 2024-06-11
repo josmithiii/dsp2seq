@@ -2,7 +2,7 @@
 % Created from /l/mt/JOSOverview.tex
 
 \newcommand{\theTitle}{Inventing Modern Sequence Models in Signal Processing}
-\newcommand{\theEvent}{West Coast Machine Learning} 
+\newcommand{\theEvent}{\htmladdnormallink{West Coast Machine Learning}{https://www.youtube.com/channel/UCuoNQWLuEYwjP7mI23sZ3WQ}} 
 \newcommand{\theDate}{June 13, 2024}
 
 %% \newcommand{\theTitle}{Inventing Modern Sequence Models as a Music 320 Project}
@@ -11,7 +11,7 @@
 %% \newcommand{\theDate}{May 17, 2024}
 %% % Classroom (Knoll 217), Friday 1:40-1:55pm}
 
-\newcommand{\theAuthor}{Julius Smith}
+\newcommand{\theAuthor}{\htmladdnormallink{Julius Smith}{http://ccrma.stanford.edu/~jos/}}
 
 %Mohonk05 said:
 \input ../latex/stdpreshdr.tex % /w/latex/stdpreshdr.tex
@@ -24,8 +24,8 @@
 % Uses package etoolbox for \newtoggle et al:
 \usepackage{etoolbox} % for \newtoggle et al
 \newtoggle{local}
-%\toggletrue{local}
-\togglefalse{local}
+\toggletrue{local}
+%\togglefalse{local}
 \input localremote.tex
 
 \date{\theDate}
@@ -44,7 +44,24 @@
 
 \section[\sectopts]{Background}
 
-\input jos-origin.tex
+\begin{slide}[\slideopts,toc={Path to CCRMA}]{My Path to
+    \htmladdnormallink{\textbf{CCRMA}}{http://ccrma.stanford.edu/}
+    (Center for Computer Research in Music and Acoustics)
+}
+
+\centerline{Musician : Math : Physics : EE : Control : DSP : System ID : SAIL/CCRMA}
+\vspace{1em}
+
+\myTwoFiguresToBoxes{Julius}{jtm45_new2}{0.4\twidth}{0.6\textheight}{Some Gig}{Tube Amp}{}
+%\myTwoFiguresToBoxes{Bittersweet2}{jtm45_new2}{0.4\twidth}{0.6\textheight}{Some Gig}{Tube Amp}{}
+%\myTwoFiguresToBoxes{Julius}{Bittersweet2}{0.4\twidth}{0.6\textheight}{High School Band}{Tube Amp}{}
+%\myTwoFiguresToBoxes{Julius}{moogschemsmall}{0.4\twidth}{0.6\textheight}{Some Gig}{Moog VCF Ladder}{}
+%\myTwoFiguresToWidth{Julius}{wdelt}{0.4\twidth}{}{}{}
+%\myTwoFiguresToWidth{Julius}{conicalcap2}{0.5\twidth}{Tesseract Gig}{Cone Proof}{}
+%\myFigureRotateToWidth{Julius}{-90}{0.9\twidth}{}
+%\centerline{JOS in situ}
+\end{slide}
+
 \input courses-overview.tex
 
 %\end{document}
@@ -62,13 +79,13 @@
     $H(z) = \frac{\displaystyle Y(z)}{\displaystyle X(z)} = \frac{\displaystyle  g}{\displaystyle 1 - p\,\zi}$}
 \maybepause
 \vspace{-1em}
-\textbf{Let's Make an Associative Memory!}
+\textbf{Project Idea: Let's Make an Associative Memory!}
 \begin{itemize}
 \mpitem $x(n)$ can be a \emph{long vector} $\xv(n)\in\RN$ representing \emph{anything we want} --- any ``label''
 \mpitem Set $\geev = 1$ and $\peev = -1$ to make $\yv(n)$ a \emph{sum of all input vectors} (``integrator'')
 \mpitem Choose the dimension $N$ so large that \emph{vectors in the sum are mostly orthogonal}
 \mpitem Retrieve similar vectors using a \emph{matched inner product} $\wv^T\xv > b$,\\
-        for some suitable threshold $b$ (Hey! That's one simulated neuron! (``Perceptron''))
+        for some suitable threshold $b$ (Hey! That's a simulated neuron! (``Perceptron''))
 \end{itemize}
 \end{slide}
 
@@ -90,7 +107,7 @@
   \mpitem This works because the spatial dimension is so large that $\xv^T(j)\,\xv(k)\approx \epsilon$ for $j\ne k$
 
   \mpitem Retrieval threshold $b(k)$ depends on $\|\xv(k)\|^2$\\
-  $\Rightarrow$ \emph{reserve the radial dimension for similarity scoring}
+  $\Rightarrow$ \textbf{suggestion:} \emph{reserve the radial dimension for similarity scoring}
 
   \mpitem \Ie, \emph{only populate the \textbf{hypersphere}} in $\RN$: $\norm{\xv(k)} = 1, \, \forall k$
 
@@ -99,6 +116,55 @@
   \end{itemize}
 
 \end{slide}
+
+%---------------------------------------------------------------------------------------------------
+
+\begin{slide}[\slideopts,toc={Orthogonality}]{Orthogonality in High Dimensions}
+\vspace{-1em}
+% \input orthogonality.tex
+Let $\ab\in\reals^N$ and$\bb\in\reals^N$ be two normally random, real, unit-norm vectors in $N$ dimensions.
+$\|\ab\|=\|\bb\|=1$.
+
+The dot-product of
+$\ab^T=[a_1,a_2,\ldots,a_N]$ and
+$\bb^T=[b_1,b_2,\ldots,b_N]$ is defined as
+\[
+\ab \cdot \bb = \sum_{i=1}^{N} a_i b_i.
+\]
+
+The squared dot product is
+\[
+(\ab \cdot \bb)^2 = \left(\sum_{i=1}^{N} a_i b_i\right)^2 = \sum_{i=1}^{N} \sum_{j=1}^{N} a_i a_j b_i b_j.
+\]
+
+Expected value (average):
+\[
+E\left[(\ab \cdot \bb)^2\right]
+= \sum_{i=1}^{N} \sum_{j=1}^{N} E[a_i a_j] \, E[b_i b_j]
+= \sum_{i=1}^{N} \frac{1}{N},\frac{1}{N}
+= \zbox{\frac{1}{N}}
+\]
+\end{slide}
+\begin{slide}[\slideopts,toc={Orthogonality}]{Orthogonality in High Dimensions}
+
+We just showed
+\[
+E\left[(\ab \cdot \bb)^2\right] = \zbox{\frac{1}{N}}
+\]
+since $E[a_i b_j]=0$ for $i \ne j$, $E[a_i^2] = E[b_i]^2 = 1/N$, and $\ab$ and $\bb$ are independent.\\
+In other words, the \emph{expected squared dot product of two normally random unit vectors in $\reals^N$ is $1/N$}.\\
+\textbf{Suggestion:} \emph{Initialize biases larger than $1/N$}.\\
+\textbf{Suggestion:} \emph{Divide the sum of $M$ vectors by $\sqrt{M}$}
+\begin{itemize}
+  \mpitem ``power normalization''
+  \mpitem ``\tx{RMSNorm}-preserving''
+  \mpitem Done in \htmladdnormallink{Hawk \& Griffin}{https://arxiv.org/abs/2402.19427}, \eg
+  \mpitem ``Keep vector sums near the unit sphere''
+\end{itemize}
+
+\end{slide}
+
+%---------------------------------------------------------------------------------------------------
 
 \begin{slide}[\slideopts,toc={Vector Memory}]{Cumulative Vector Memory}
 \vspace{-1em}
@@ -128,7 +194,7 @@
 
 \vspace{-1em}
 
-  \textbf{Idea:} \emph{Learn} the input and feedback gates as functions of $\xv_n$\\
+  \textbf{Idea:} \emph{Learn} the input and feedback gates as functions of input $\xv_n$\\
   based on many input-output examples $(\xv_n,\yv_n)$ (``training data''):
 %% \mpitem Some item
 %% \end{itemize}
@@ -141,14 +207,22 @@
 
 \maybepause
 
-\textbf{``Obvious'' Training Considerations for Learning Memory Duration:}
+\textbf{Suggestions:}
 \begin{itemize}
-\mpitem Initialize $\peev$ for desired initial memory duration (exponentially fading)
-\mpitem Learn $\peev(\xv_n)$ as $\Imtx\cdot e^{-\Delta}\approx \Imtx -\Imtx \Delta$, and $\geev(\xv_n)$ as $\mbox{Linear}(\xv_n,\yv_n)\cdot\Delta$, where
-$\Delta = \mbox{softPlus}(\mbox{parameter}(\xv_n,\Yv_n))$ (approximately gain-normalized)
-\mpitem Note that \emph{gating} $\Rightarrow$ \emph{activation} (LSTM, GRU) while \emph{memory duration} $\Rightarrow$ \emph{linear projection}\\
-(SSMs, Mamba) --- Structured State Space Models led to \emph{linear projection} based on cool \emph{history polynomial approximation} ideas that ultimately
-went away (S4D)
+\mpitem Use \emph{activations} for gating (LSTM, GRU)
+\mpitem While activated, \emph{optionally} set \emph{memory duration} with $\peev$ (SSMs, Mamba)
+\begin{itemize}
+  \mpitem \emph{Initialize} $\peev$ for desired initial memory duration (exponential fade time)
+  \mpitem Learn $\peev(\xv_n)$ as $\Imtx\cdot e^{-\Delta}\approx \Imtx -\Imtx \Delta$,
+  %and $\geev(\xv_n)$ as $\mbox{Linear}(\xv_n,\yv_n)\cdot\Delta$,
+  where $\Delta = \mbox{softPlus}(\mbox{parameter}(\xv_n,\Yv_n))$ (guaranteed stable --- no ``exploding gradients'')
+  % (approximately gain-normalized)
+%\mpitem \emph{memory duration} $\Rightarrow$ \emph{linear projection}\\
+  % (SSMs, Mamba) ---
+  \mpitem Structured State Space Models led to \emph{linear projection} $\peev(\xv_n)$ (\emph{no activation})
+  based on cool \emph{history-polynomial-approximation} ideas that ultimately went away (S4D), but \emph{linearity survives}.\\
+  \mpitem Consider \emph{separate activation} multiplying feedback: $\sigma(\Lmtx\xv)\peev(\xv)$
+\end{itemize}
 \end{itemize}
 
 \end{slide}
@@ -157,21 +231,29 @@ went away (S4D)
 
   \vspace{-1em}
 
-  \textbf{Idea:} Since we have input and feedback gates, why not an \textbf{\emph{output gate?}}
+  \textbf{Idea:} Since we have input and feedback gates, why not an \textbf{\emph{output gate} and bypass?}
 
 \myFigureToWidth{one-pole-rnn-skip}{0.6\twidth}{Gated RNN with \textbf{Skip Connection}}
 
 \maybepause
-Output gating allows network to be ``bypassed'' when not helpful
+Output gating allows network to be ``bypassed'' when not helpful.
 
+\begin{itemize}
+\mpitem \textbf{``Obvious'' Suggestion:} The bypass path should be scaled for \emph{power normalization}\\
+\mpitem \textbf{Better yet:} Don't scale the bypass and use \tx{RMSNorm} at the input of the next layer\\
+(prevents a ``bad layer'' from isolating deeper layers from the input with garbage)
+\end{itemize}
+
+\end{slide}
+
+\begin{slide}[\slideopts,toc={Perceptrons}]{Detecting Multiple Vectors in Parallel}
 \maybepause
 \vspace{1em}
-\textbf{Idea:} For detecting vectors in $\yv$ using \emph{learned} inner-product weights and thresholds,\\
-use an array of \emph{``Perceptrons''} (P)
+\textbf{Idea:} Detect multiple memory vectors in parallel using an array of \emph{``Perceptrons''}
 %\emph{``Multi-Layer Perceptron'' (MLP)}
 \begin{itemize}
-\mpitem Each P detects one or more memory vectors similar to its weight vectors
-\mpitem The P outputs indicate \emph{which weight-vectors are present} in the vector sum
+\mpitem Each Perceptron detects one or more memory vectors similar to its weight vectors
+\mpitem The Perceptrons indicate \emph{which weight-vectors are present} in the vector memory
 \end{itemize}
 
 \end{slide}
