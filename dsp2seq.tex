@@ -1,7 +1,7 @@
 %&latex
 % Created from /l/mt/JOSOverview.tex
 
-\newcommand{\theTitle}{Inventing Modern Sequence Models in Signal Processing}
+\newcommand{\theTitle}{Inventing Modern Sequence Models as Signal Processors}
 \newcommand{\theEvent}{\htmladdnormallink{West Coast Machine Learning}{https://www.youtube.com/channel/UCuoNQWLuEYwjP7mI23sZ3WQ}} 
 \newcommand{\theDate}{June 13, 2024}
 
@@ -79,7 +79,7 @@
     $H(z) = \frac{\displaystyle Y(z)}{\displaystyle X(z)} = \frac{\displaystyle  g}{\displaystyle 1 - p\,\zi}$}
 \maybepause
 \vspace{-1em}
-\textbf{Project Idea: Let's Make an Associative Memory!}
+\textbf{Idea: Let's Make an Associative Memory!}
 \begin{itemize}
 \mpitem $x(n)$ can be a \emph{long vector} $\xv(n)\in\RN$ representing \emph{anything we want} --- any ``label''
 \mpitem Set $\geev = 1$ and $\peev = -1$ to make $\yv(n)$ a \emph{sum of all input vectors} (``integrator'')
@@ -201,7 +201,7 @@ In other words, the \emph{expected squared dot product of two normally random un
 
 \vspace{-1em}
 
-\myFigureToWidth{one-pole-rnn}{0.5\twidth}{Vector Memory with Learned Input and Feedback Gates}
+\myFigureToWidth{one-pole-rnn}{0.4\twidth}{Vector Memory with Learned Input and Feedback Gates}
 
 \vspace{-1em}
 
@@ -209,19 +209,21 @@ In other words, the \emph{expected squared dot product of two normally random un
 
 \textbf{Suggestions:}
 \begin{itemize}
-\mpitem Use \emph{activations} for gating (LSTM, GRU)
-\mpitem While activated, \emph{optionally} set \emph{memory duration} with $\peev$ (SSMs, Mamba)
+\mpitem Use learned, input-based, \emph{activations} for gating (LSTM, GRU, Mamba smoothed input)
+\mpitem While activated, \emph{optionally} set \emph{memory duration} via $\peev$ magnitude (SSMs, Mamba)
 \begin{itemize}
   \mpitem \emph{Initialize} $\peev$ for desired initial memory duration (exponential fade time)
   \mpitem Learn $\peev(\xv_n)$ as $\Imtx\cdot e^{-\Delta}\approx \Imtx -\Imtx \Delta$,
   %and $\geev(\xv_n)$ as $\mbox{Linear}(\xv_n,\yv_n)\cdot\Delta$,
   where $\Delta = \mbox{softPlus}(\mbox{parameter}(\xv_n,\Yv_n))$ (guaranteed stable --- no ``exploding gradients'')
-  % (approximately gain-normalized)
+  [Also multiply $\geev(\xv_n)$ by $\Delta$ for gain-normalization]
 %\mpitem \emph{memory duration} $\Rightarrow$ \emph{linear projection}\\
   % (SSMs, Mamba) ---
-  \mpitem Structured State Space Models led to \emph{linear projection} $\peev(\xv_n)$ (\emph{no activation})
-  based on cool \emph{history-polynomial-approximation} ideas that ultimately went away (S4D), but \emph{linearity survives}.\\
-  \mpitem Consider \emph{separate activation} multiplying feedback: $\sigma(\Lmtx\xv)\peev(\xv)$
+%  \mpitem SSMs led to \emph{linear projection} (\emph{no activation} in feedback)
+%  based on cool \emph{history-polynomial-approximation} ideas that ultimately went away (S4D), but \emph{linearity survives}.\\
+  \mpitem Consider \emph{separate meaning-driven activation} multiplying feedback: $\sigma(\Lmtx\xv)\peev(\xv)$
+%  Example: activation by end-of-sentence detector, end-of-paragraph, etc. (e.g., for RAG sentence/paragraph embeddings)\\
+%  Analogy: clear Transformer input context buffer after processing a full sentence/paragraph
 \end{itemize}
 \end{itemize}
 
@@ -291,7 +293,7 @@ Output gating allows network to be ``bypassed'' when not helpful.
 \vspace{-2em}
 \begin{itemize}
   \mpitem Called a \emph{``Structured State-space Model''} (SSM) in machine learning
-  \mpitem Feedback matrix $\Amtx$ has been typically \emph{diagonal} since ``S4D'' (2022)\\
+  \mpitem Feedback matrix $\Amtx$ has been typically \emph{diagonal} since 2022 (see ``S4D'')\\
   	  $\Rightarrow$ Parallel bank of vector one-poles (\emph{gated, state-expanded RNNs})
   \mpitem Processed sequence (``context buffer'') is \emph{indefinitely long}
   \mpitem Gating matrices are typically simple linear input projections, \eg,
