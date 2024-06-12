@@ -1,7 +1,7 @@
 %&latex
 % Created from /l/mt/JOSOverview.tex
 
-\newcommand{\theTitle}{Inventing Modern Sequence Models as Signal Processors}
+\newcommand{\theTitle}{Sequence Models from a Signal Processing Perspective}
 \newcommand{\theEvent}{\htmladdnormallink{West Coast Machine Learning}{https://www.youtube.com/channel/UCuoNQWLuEYwjP7mI23sZ3WQ}} 
 \newcommand{\theDate}{June 13, 2024}
 
@@ -166,6 +166,8 @@ In other words, the \emph{expected squared dot product of two normally random un
 
 %---------------------------------------------------------------------------------------------------
 
+\section[\sectopts,toc={Architectures}]{Architectures}
+
 \begin{slide}[\slideopts,toc={Vector Memory}]{Cumulative Vector Memory}
 \vspace{-1em}
 \myFigureToWidth{integrator}{0.6\twidth}{}
@@ -216,7 +218,7 @@ In other words, the \emph{expected squared dot product of two normally random un
   \mpitem Learn $\peev(\xv_n)$ as $\Imtx\cdot e^{-\Delta}\approx \Imtx -\Imtx \Delta$,
   %and $\geev(\xv_n)$ as $\mbox{Linear}(\xv_n,\yv_n)\cdot\Delta$,
   where $\Delta = \mbox{softPlus}(\mbox{parameter}(\xv_n,\Yv_n))$ (guaranteed stable --- no ``exploding gradients'')
-  [Also multiply $\geev(\xv_n)$ by $\Delta$ for gain-normalization]
+  [Also multiply $\geev(\xv_n)$ by $\Delta$] % for gain-normalization]
 %\mpitem \emph{memory duration} $\Rightarrow$ \emph{linear projection}\\
   % (SSMs, Mamba) ---
 %  \mpitem SSMs led to \emph{linear projection} (\emph{no activation} in feedback)
@@ -248,6 +250,40 @@ Output gating allows network to be ``bypassed'' when not helpful.
 
 \end{slide}
 
+\begin{slide}[\slideopts]{State Expansion}
+
+\vspace{-1em}
+
+  \textbf{Idea:} \emph{Expand} vector-memory dimension to an integer multiple of the model dimension:
+% \vspace{-4em}
+% \myFigureToWidth{one-pole-rnn-seq}{0.6\twidth}{} % {Sequence Modeling with Gated RNNs}
+%
+
+\myFigureToWidth{statespace-rnn}{0.5\twidth}{}
+
+\vspace{-2em}
+
+\begin{itemize}
+  \mpitem Increased storage capacity
+  \mpitem Multiple parallel memories, as in ``multi-head attention'' with individual durations
+  \mpitem \emph{``Structured State-Space Models''} (SSM) look like this (see Mamba, \eg)
+  \mpitem Feedback matrix $\Amtx$ typically \emph{diagonal} since 2022 (see ``S4D'')\\
+  	  $\Rightarrow$ Parallel bank of vector one-poles (\emph{``linearly'' gated, state-expanded RNNs})
+  % \mpitem Processed sequence (``context buffer'') is \emph{indefinitely long}
+  \mpitem Gating matrices in Mamba are simple linear input projections: 
+%  \[
+  $
+          [\Bmtx(\xv_n), \Cmtx(\xv_n)] = \Lmtx\,\xv_n  % , \qquad \Dmtx(\xv_n) = \mbox{SiLU}(\Lmtx^\prime\xv_n)\]
+  $
+%  \] 
+  % (See Mamba, \eg)
+  % \mpitem Conv1D mixing followed by SiLU on input for Mamba (only nonlinear activation)
+\end{itemize}
+
+\end{slide}
+
+\section[\sectopts,toc={Processing}]{Memory Access}
+
 \begin{slide}[\slideopts,toc={Perceptrons}]{Detecting Multiple Vectors in Parallel}
 \maybepause
 \vspace{1em}
@@ -264,47 +300,21 @@ Output gating allows network to be ``bypassed'' when not helpful.
   \vspace{-1em}
   \begin{itemize}
     \mpitem If each vector represents a \emph{word,} a vector sum is simply a \emph{bag of words}
-    \mpitem To model a \emph{sequence} of words, we have options:
+    \mpitem To model a \emph{sequence} of words, we have various \emph{sequence-position-encoding} options:
     \begin{enumerate}
-      \mpitem Use a \emph{positional encoding} scheme, such as
-      \begin{enumerate}
-        \mpitem \emph{Amplitude Decay} - Multiply the sum by a \emph{forgetting factor} each sequence step\\
-        (RNNs) - \emph{poor choice} (conflates with angular distance on the hypersphere)
-        \mpitem \emph{Sinusoidal Amplitude Modulation} - Add a sinusoid with \emph{increasing frequency} to each vector summing into the history\\
-        (used in the original Transformer)
-        \mpitem \emph{Phase Shift} - Multiply by the sum by $e^{j\Delta}$ each sample\\
-        (``RoPE'') - \emph{apparently most used today}
-      \end{enumerate}
-      \mpitem Use many vector-sum memories in parallel, positionally encoded\\
-      (``State Expansion'' in SSMs)
-      % \mpitem Learn position-specific \emph{FIR Coefficients} across a parallel bank of positionally encoded vector-sum memories (``Attention Layer'' in a Transformer)
+      \mpitem \emph{Amplitude Decay} - Multiply the sum by a \emph{forgetting factor} each sequence step\\
+      (RNNs) - \emph{poor choice} (conflates with angular distance on the hypersphere)
+      \mpitem \emph{Sinusoidal Amplitude Modulation} - Add a sinusoid with \emph{increasing frequency} to each vector summing into the history\\
+      (used in the original Transformer)
+      \mpitem \emph{Phase Shift} - Multiply by the sum by $e^{j\Delta}$ each sample\\
+      (``RoPE'') - \emph{apparently most used today}
     \end{enumerate}
+    % Toward Xformer: \mpitem Use many vector-sum memories in parallel, positionally encoded (``State Expansion'' in SSMs)
+    % \mpitem Learn position-specific \emph{FIR Coefficients} across a parallel bank of positionally encoded vector-sum memories (``Attention Layer'' in a Transformer)
   \end{itemize}
 \end{slide}
 
-\begin{slide}[\slideopts]{State Expansion}
-
-% \vspace{-4em}
-% \myFigureToWidth{one-pole-rnn-seq}{0.6\twidth}{} % {Sequence Modeling with Gated RNNs}
-%
-
-\vspace{-2em}
-\myFigureToWidth{statespace-rnn}{0.6\twidth}{}
-\vspace{-2em}
-\begin{itemize}
-  \mpitem Called a \emph{``Structured State-space Model''} (SSM) in machine learning
-  \mpitem Feedback matrix $\Amtx$ has been typically \emph{diagonal} since 2022 (see ``S4D'')\\
-  	  $\Rightarrow$ Parallel bank of vector one-poles (\emph{gated, state-expanded RNNs})
-  \mpitem Processed sequence (``context buffer'') is \emph{indefinitely long}
-  \mpitem Gating matrices are typically simple linear input projections, \eg,
-  \[
-    [\Bmtx(\xv_n), \Cmtx(\xv_n)] = \Lmtx\,\xv_n  % , \qquad \Dmtx(\xv_n) = \mbox{SiLU}(\Lmtx^\prime\xv_n)\]
-  \] 
-  (See Mamba, \eg)
-  % \mpitem Conv1D mixing on input
-\end{itemize}
-
-\end{slide}
+\section[\sectopts,toc={Attention}]{Attention}
 
 \begin{slide}[\slideopts,toc={Attention}]{Attention Layer}
 
@@ -464,7 +474,7 @@ parallel independent \emph{attention calculations} (``multi-head attention'')
 \myFigureRotateToWidth{Architectures3}{-90}{\twidth}{}
 \end{slidewhite}
 
-\begin{slidewhite}[\slideopts,toc={HGRN2}]{Gated Linear RNNs with State Expansion}
+\begin{slidewhite}[\slideopts,toc={HGRN2}]{Gated ``Linear'' RNNs with State Expansion}
 \vspace{-6em}
 \myFigureRotateToWidth{Architectures4}{-90}{\twidth}{}
 \end{slidewhite}
