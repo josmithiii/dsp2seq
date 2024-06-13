@@ -2,12 +2,12 @@
 % Created from /l/mt/JOSOverview.tex
 
 \newcommand{\theTitle}{Sequence Models from a Signal Processing Perspective}
-\newcommand{\theEvent}{\htmladdnormallink{West Coast Machine Learning}{https://www.youtube.com/channel/UCuoNQWLuEYwjP7mI23sZ3WQ}} 
+\newcommand{\theEvent}{\htmladdnormallink{West Coast Machine Learning}{https://www.youtube.com/channel/UCuoNQWLuEYwjP7mI23sZ3WQ}}
 \newcommand{\theDate}{June 13, 2024}
 
 %% \newcommand{\theTitle}{Inventing Modern Sequence Models as a Music 320 Project}
 %% \newcommand{\theSubTitle}{Samples become Meaning Vectors}
-%% \newcommand{\theEvent}{CCRMA Open House} 
+%% \newcommand{\theEvent}{CCRMA Open House}
 %% \newcommand{\theDate}{May 17, 2024}
 %% % Classroom (Knoll 217), Friday 1:40-1:55pm}
 
@@ -147,30 +147,32 @@ E\left[(\ab \cdot \bb)^2\right]
 \end{slide}
 
 \begin{slide}[\slideopts,toc={}]{Orthogonality in High Dimensions, Continued}
-
-We just showed
+\vspace{-1em}
+We just showed the \emph{expected squared dot product of two normally random unit vectors in $\reals^N$ is $1/N$}, \ie,
 \[
 E\left[(\ab \cdot \bb)^2\right] = \zbox{\frac{1}{N}}
 \]
 since $E[a_i b_j]=0$ for $i \ne j$, $E[a_i^2] = E[b_i]^2 = 1/N$, and $\ab$ and $\bb$ are independent.\\
-In other words, the \emph{expected squared dot product of two normally random unit vectors in $\reals^N$ is $1/N$}.\\
-\textbf{Suggestion:} \emph{Initialize biases larger than $1/N$}.\\
-\textbf{Suggestion:} \emph{Divide the sum of $M$ vectors by $\sqrt{M}$:}
+\maybepause
+\textbf{Suggestions:}
+\begin{itemize}
+\mpitem \emph{Initialize biases larger than $1/N$}
+\mpitem \emph{Divide the sum of $M$ vectors by $\sqrt{M}$:}
 \begin{itemize}
   \item ``power normalization''
   \mpitem ``\tx{RMSNorm}-preserving''
   \mpitem Done in \htmladdnormallink{Hawk \& Griffin}{https://arxiv.org/abs/2402.19427}, \eg
   \mpitem ``Keep vector sums near the unit sphere''
 \end{itemize}
-\maybepause
-\textbf{Suggestion:} Apply \tx{RMSNorm} when \emph{training} the initial \emph{vocabulary embedding}
-\textbf{Suggestion:} Modify \emph{model dimension} according to \emph{layer width} at each level
+\mpitem Apply \tx{RMSNorm} when \emph{training} the initial \emph{vocabulary embedding} (``\tx{word2sphere}'')
+\mpitem Set the \emph{model dimension} just sufficient for the \emph{layer width} at each level
+\end{itemize}
 % Note to self: embeddings have semantic proximity while feature maps may not
 
 \end{slide}
 
-\begin{slide}[\slideopts,toc={Model Dimension}]{Model Dimension vs.~Model Size
-(says \htmladdnormallink{ChatGPT-4o}{https://chatgpt.com/share/76499bbc-95f7-48bf-8646-19786c1961f4}, not checked)}
+\begin{slide}[\slideopts,toc={Model Dimension}]{Model Dimension vs.~Model \& Vocab Size
+(\htmladdnormallink{ChatGPT-4o}{https://chatgpt.com/share/76499bbc-95f7-48bf-8646-19786c1961f4}, not checked)}
 
 \vspace{-2em}
 
@@ -183,75 +185,76 @@ In other words, the \emph{expected squared dot product of two normally random un
 \begin{itemize}
     \item \textbf{Original Transformer}
     \begin{itemize}
-      \item $d = 512$ ($65$ M, $VS = 50$ K?)
+      \item $d = 512$ ($65$ M)
     \end{itemize}
-    
+
     \item \textbf{BERT}
     \begin{itemize}
-        \item $d = 768$ ($110$ M, $30$ K VS)
-        \item $d = 1024$ ($340$ M, $30$ K VS)
+        \item $d = 768$ ($110$ M, $30$ K)
+        \item $d = 1024$ ($340$ M, $30$ K)
     \end{itemize}
-    
+
     \item \textbf{GPT-2}
     \begin{itemize}
-        \item $d = 768$ ($124$ M, $50$ K VS)
-        \item $d = 1024$ ($345$ M, $50$ K VS)
-        \item $d = 1280$ ($774$ M, $50$ K VS)
-        \item $d = 1600$ ($1.5$ B, $50$ K VS)
+        \item $d = 768$ ($124$ M, $50$ K)
+        \item $d = 1024$ ($345$ M, $50$ K)
+        \item $d = 1280$ ($774$ M, $50$ K)
+        \item $d = 1600$ ($1.5$ B, $50$ K)
     \end{itemize}
-    
+
     \item \textbf{GPT-3}
     \begin{itemize}
-        \item $d = 2048$ ($2.7$ B, $50$ K VS)
-        \item $d = 4096$ ($6.7$ B, $50$ K VS)
-        \item $d = 6144$ ($13$ B, $50$ K VS)
-        \item $d = 12288$ ($175$ B, $50$ K VS)
+        \item $d = 2048$ ($2.7$ B, $50$ K)
+        \item $d = 4096$ ($6.7$ B, $50$ K)
+        \item $d = 6144$ ($13$ B, $50$ K)
+        \item $d = 12288$ ($175$ B, $50$ K)
     \end{itemize}
-    
+
     \item \textbf{T5}
     \begin{itemize}
-        \item $d = 512$ ($60$ M, $32$ K VS)
-        \item $d = 768$ ($220$ M, $32$ K VS)
-        \item $d = 1024$ ($770$ M, $32$ K VS)
-        \item $d = 1024$ ($3$ B, $32$ K VS)
-        \item $d = 1024$ ($11$ B, $32$ K VS)
+        \item $d = 512$ ($60$ M, $32$ K)
+        \item $d = 768$ ($220$ M, $32$ K)
+        \item $d = 1024$ ($770$ M, $32$ K)
+        \item $d = 1024$ ($3$ B, $32$ K)
+        \item $d = 1024$ ($11$ B, $32$ K)
     \end{itemize}
-    
+
     %% \item \textbf{RoBERTa}
     %% \begin{itemize}
-    %%     \item $d = 768$ ($125$ M, $50$ K VS)
-    %%     \item $d = 1024$ ($355$ M, $50$ K VS)
+    %%     \item $d = 768$ ($125$ M, $50$ K)
+    %%     \item $d = 1024$ ($355$ M, $50$ K)
     %% \end{itemize}
-    
+
     \item \textbf{ALBERT}
     \begin{itemize}
-        \item $d = 768$ ($12$ M, $30$ K VS)
-        \item $d = 1024$ ($18$ M, $30$ K VS)
-        \item $d = 2048$ ($60$ M, $30$ K VS)
-        \item $d = 4096$ ($235$ M, $30$ K VS)
+        \item $d = 768$ ($12$ M, $30$ K)
+        \item $d = 1024$ ($18$ M, $30$ K)
+        \item $d = 2048$ ($60$ M, $30$ K)
+        \item $d = 4096$ ($235$ M, $30$ K)
     \end{itemize}
-    
+
     \item \textbf{DistilBERT}
     \begin{itemize}
-        \item $d = 768$ ($66$ M, $30$ K VS)
+        \item $d = 768$ ($66$ M, $30$ K)
     \end{itemize}
-    
+
     \item \textbf{Megatron-Turing NLG}
     \begin{itemize}
-        \item $d = 20480$ ($530$ B, $50$ K VS)
+        \item $d = 20480$ ($530$ B, $50$ K)
     \end{itemize}
-    
+
 \end{itemize}
 \end{multicols}
 
 \end{slide}
 
-\begin{slidewhite}[\slideopts,toc={}]{Model Dimension $d$ versus Log10 Model Size}
+\begin{slidewhite}[\slideopts,toc={}]{Log10 Model Dimension versus Log10 Model Size}
 
 \vspace{-2em}
 
-\myFigureToWidth{Model_Dimension_vs_Log10_Parameters}{\twidth}{}
-  
+%\myFigureToWidth{Model_Dimension_vs_Log10_Parameters}{\twidth}{}
+\myFigureToWidth{Log10_Model_Dimension_vs_Log10_Model_Size}{\twidth}{}
+
 \end{slidewhite}
 
 %---------------------------------------------------------------------------------------------------
@@ -360,12 +363,12 @@ Output gating allows network to be ``bypassed'' when not helpful.
   \mpitem Feedback matrix $\Amtx$ typically \emph{diagonal} since 2022 (see ``S4D'')\\
   	  $\Rightarrow$ Parallel bank of vector one-poles (\emph{``linearly'' gated, state-expanded RNNs})
   % \mpitem Processed sequence (``context buffer'') is \emph{indefinitely long}
-  \mpitem Gating matrices in Mamba are simple linear input projections: 
+  \mpitem Gating matrices in Mamba are simple linear input projections:
 %  \[
   $
           [\Bmtx(\xv_n), \Cmtx(\xv_n)] = \Lmtx\,\xv_n  % , \qquad \Dmtx(\xv_n) = \mbox{SiLU}(\Lmtx^\prime\xv_n)\]
   $
-%  \] 
+%  \]
   % (See Mamba, \eg)
   % \mpitem Conv1D mixing followed by SiLU on input for Mamba (only nonlinear activation)
 \end{itemize}
