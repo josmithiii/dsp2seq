@@ -24,8 +24,8 @@
 % Uses package etoolbox for \newtoggle et al:
 \usepackage{etoolbox} % for \newtoggle et al
 \newtoggle{local}
-\toggletrue{local}
-%\togglefalse{local}
+%\toggletrue{local}
+\togglefalse{local}
 \input localremote.tex
 
 \date{\theDate}
@@ -141,11 +141,12 @@ Expected value (average):
 \[
 E\left[(\ab \cdot \bb)^2\right]
 = \sum_{i=1}^{N} \sum_{j=1}^{N} E[a_i a_j] \, E[b_i b_j]
-= \sum_{i=1}^{N} \frac{1}{N},\frac{1}{N}
+= \sum_{i=1}^{N} \frac{1}{N}\,\frac{1}{N}
 = \zbox{\frac{1}{N}}
 \]
 \end{slide}
-\begin{slide}[\slideopts,toc={Orthogonality}]{Orthogonality in High Dimensions}
+
+\begin{slide}[\slideopts,toc={}]{Orthogonality in High Dimensions, Continued}
 
 We just showed
 \[
@@ -154,15 +155,167 @@ E\left[(\ab \cdot \bb)^2\right] = \zbox{\frac{1}{N}}
 since $E[a_i b_j]=0$ for $i \ne j$, $E[a_i^2] = E[b_i]^2 = 1/N$, and $\ab$ and $\bb$ are independent.\\
 In other words, the \emph{expected squared dot product of two normally random unit vectors in $\reals^N$ is $1/N$}.\\
 \textbf{Suggestion:} \emph{Initialize biases larger than $1/N$}.\\
-\textbf{Suggestion:} \emph{Divide the sum of $M$ vectors by $\sqrt{M}$}
+\textbf{Suggestion:} \emph{Divide the sum of $M$ vectors by $\sqrt{M}$:}
 \begin{itemize}
-  \mpitem ``power normalization''
+  \item ``power normalization''
   \mpitem ``\tx{RMSNorm}-preserving''
   \mpitem Done in \htmladdnormallink{Hawk \& Griffin}{https://arxiv.org/abs/2402.19427}, \eg
   \mpitem ``Keep vector sums near the unit sphere''
 \end{itemize}
+\maybepause
+\textbf{Suggestion:} Apply \tx{RMSNorm} when \emph{training} the initial \emph{vocabulary embedding}
+% Note to self: embeddings have semantic proximity while feature maps may not
 
 \end{slide}
+
+\begin{slide}[\slideopts,toc={Model Dimension}]{Model Dimension vs.~Model Size
+(says ChatGPT-4o, not checked: \htmladdnormallink{\tx{\small https://chatgpt.com/share/76499bbc-95f7-48bf-8646-19786c1961f4}}{https://chatgpt.com/share/76499bbc-95f7-48bf-8646-19786c1961f4})}
+
+\vspace{-2em}
+
+% \usepackage{multicol}
+% \usepackage{amsmath}
+
+\begin{multicols}{2}
+\begin{itemize}
+    \item \textbf{Original Transformer}
+    \begin{itemize}
+        \item $d = 512$ ($65$ M)
+    \end{itemize}
+    
+    \item \textbf{BERT}
+    \begin{itemize}
+        \item \textbf{Base}: $d = 768$ ($110$ M)
+        \item \textbf{Large}: $d = 1024$ ($340$ M)
+    \end{itemize}
+    
+    \item \textbf{GPT-2}
+    \begin{itemize}
+        \item \textbf{Small}: $d = 768$ ($124$ M)
+        \item \textbf{Medium}: $d = 1024$ ($345$ M)
+        \item \textbf{Large}: $d = 1280$ ($774$ M)
+        \item \textbf{XL}: $d = 1600$ ($1.5$ B)
+    \end{itemize}
+    
+    \item \textbf{GPT-3}
+    \begin{itemize}
+        \item \textbf{Small}: $d = 2048$ ($2.7$ B)
+        \item \textbf{Medium}: $d = 4096$ ($6.7$ B)
+        \item \textbf{Large}: $d = 6144$ ($13$ B)
+        \item \textbf{XL}: $d = 12288$ ($175$ B)
+    \end{itemize}
+    
+    \item \textbf{T5}
+    \begin{itemize}
+        \item \textbf{Small}: $d = 512$ ($60$ M)
+        \item \textbf{Base}: $d = 768$ ($220$ M)
+        \item \textbf{Large}: $d = 1024$ ($770$ M)
+        \item \textbf{3B}: $d = 1024$ ($3$ B)
+        \item \textbf{11B}: $d = 1024$ ($11$ B)
+    \end{itemize}
+    
+    %% \item \textbf{RoBERTa}
+    %% \begin{itemize}
+    %%     \item \textbf{Base}: $d = 768$ ($125$ M)
+    %%     \item \textbf{Large}: $d = 1024$ ($355$ M)
+    %% \end{itemize}
+    
+    \item \textbf{ALBERT}
+    \begin{itemize}
+        \item \textbf{Base}: $d = 768$ ($12$ M)
+        \item \textbf{Large}: $d = 1024$ ($18$ M)
+        \item \textbf{XLarge}: $d = 2048$ ($60$ M)
+        \item \textbf{XXLarge}: $d = 4096$ ($235$ M)
+    \end{itemize}
+    
+    \item \textbf{DistilBERT}
+    \begin{itemize}
+        \item $d = 768$ ($66$ M)
+    \end{itemize}
+    
+    \item \textbf{Megatron-Turing NLG}
+    \begin{itemize}
+        \item $d = 20480$ ($530$ B)
+    \end{itemize}
+    
+\end{itemize}
+
+\end{multicols}
+
+%% One-column format:
+
+  %% \begin{itemize}
+  %%     \item \textbf{Original Transformer}
+  %%     \begin{itemize}
+  %%         \item $d = 512$ (N/A)
+  %%     \end{itemize}
+
+  %%     \item \textbf{BERT}
+  %%     \begin{itemize}
+  %%         \item \textbf{BERT Base}: $d = 768$ ($110$ M)
+  %%         \item \textbf{BERT Large}: $d = 1024$ ($340$ M)
+  %%     \end{itemize}
+
+  %%     \item \textbf{GPT-2}
+  %%     \begin{itemize}
+  %%         \item \textbf{GPT-2 Small}: $d = 768$ ($124$ M)
+  %%         \item \textbf{GPT-2 Medium}: $d = 1024$ ($345$ M)
+  %%         \item \textbf{GPT-2 Large}: $d = 1280$ ($774$ M)
+  %%         \item \textbf{GPT-2 XL}: $d = 1600$ ($1.5$ B)
+  %%     \end{itemize}
+
+  %%     \item \textbf{GPT-3}
+  %%     \begin{itemize}
+  %%         \item \textbf{GPT-3 Small}: $d = 2048$ ($2.7$ B)
+  %%         \item \textbf{GPT-3 Medium}: $d = 4096$ ($6.7$ B)
+  %%         \item \textbf{GPT-3 Large}: $d = 6144$ ($13$ B)
+  %%         \item \textbf{GPT-3 XL}: $d = 12288$ ($175$ B)
+  %%     \end{itemize}
+
+  %%     \item \textbf{T5}
+  %%     \begin{itemize}
+  %%         \item \textbf{T5 Small}: $d = 512$ ($60$ M)
+  %%         \item \textbf{T5 Base}: $d = 768$ ($220$ M)
+  %%         \item \textbf{T5 Large}: $d = 1024$ ($770$ M)
+  %%         \item \textbf{T5 3B}: $d = 1024$ ($3$ B)
+  %%         \item \textbf{T5 11B}: $d = 1024$ ($11$ B)
+  %%     \end{itemize}
+
+  %%     \item \textbf{RoBERTa}
+  %%     \begin{itemize}
+  %%         \item \textbf{RoBERTa Base}: $d = 768$ ($125$ M)
+  %%         \item \textbf{RoBERTa Large}: $d = 1024$ ($355$ M)
+  %%     \end{itemize}
+
+  %%     \item \textbf{ALBERT}
+  %%     \begin{itemize}
+  %%         \item \textbf{ALBERT Base}: $d = 768$ ($12$ M)
+  %%         \item \textbf{ALBERT Large}: $d = 1024$ ($18$ M)
+  %%         \item \textbf{ALBERT XLarge}: $d = 2048$ ($60$ M)
+  %%         \item \textbf{ALBERT XXLarge}: $d = 4096$ ($235$ M)
+  %%     \end{itemize}
+
+  %%     \item \textbf{DistilBERT}
+  %%     \begin{itemize}
+  %%         \item $d = 768$ ($66$ M)
+  %%     \end{itemize}
+
+  %%     \item \textbf{Megatron-Turing NLG}
+  %%     \begin{itemize}
+  %%         \item $d = 20480$ ($530$ B)
+  %%     \end{itemize}
+
+  %% \end{itemize}
+  
+\end{slide}
+
+\begin{slidewhite}[\slideopts,toc={}]{Model Dimension $d$ versus Log10 Model Size}
+
+\vspace{-2em}
+
+\myFigureToWidth{Model_Dimension_vs_Log10_Parameters}{\twidth}{}
+  
+\end{slidewhite}
 
 %---------------------------------------------------------------------------------------------------
 
