@@ -451,7 +451,10 @@ We can have \emph{separately learned FIR coefficient matrices} $c_j[\xv(n-j),k]$
 
 \textbf{Relevance Gating}
 
-Contribution from input $\xv(n-j)$ to the nonlinear FIR sum for output $\yv(n-k)$ is $(Q_k^T K_j)\xv(n-j)$, where
+Contribution from input $\xv(n-j)$ to the nonlinear FIR sum for output $\yv(n-k)$ is
+$[\xv(n-k)^T \xv(n-j)]\xv(n-j)$,
+\maybepause
+or more generally $(Q_k^T K_j)\xv(n-j)$, where
 \begin{itemize}
   \mpitem $Q_k[\xv(n-k),k]$ is called the \emph{query} vector for position $k$ in the input sequence
   \mpitem $K_j[\xv(n-j),j]$ is called the \emph{key} vector for position $j$ in the input sequence
@@ -460,16 +463,16 @@ Contribution from input $\xv(n-j)$ to the nonlinear FIR sum for output $\yv(n-k)
 
 \maybepause
 
-\textbf{Idea:} To provide more flexibility for the attention sum (or to support down-projection in \emph{multi-headed} mode),
-replace $\xv(n-j)$ in the attention sum with a learned \emph{value
-vector} $V_j[\xv(n-j)]$\\
+\textbf{Idea:} For more flexibility in the attention sum (or to learn
+down-projections in \emph{multi-head} mode), replace $\xv(n-j)$ in the
+attention sum with a learned \emph{value vector} $V_j[\xv(n-j)]$\\
 %
 \maybepause
 $\Rightarrow$\\
 %
-Relevance of input $j$ to output $k$ $\propto (Q_k^T K_j)V_j$, where
-all three vectors are learned projections of $\xv(n-j)$ for each
-$(j,k)$ (``Transformer'')
+Relevance of input $j$ to output $k$ is $\propto (Q_k^T K_j)V_j$, where
+all three vectors are learned projections of the input $\xv$ at positions
+$j$ and $k$, for all available $j$ and $k$ (``Transformer'')
 
 \end{slide}
 
