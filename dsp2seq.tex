@@ -443,36 +443,39 @@ We can have \emph{separately learned FIR coefficient matrices} $c_j[\xv(n-j),k]$
 
 \begin{slide}[\slideopts]{Dot-Product Attention}
 
-\vspace{-1em}
+\vspace{-2em}
 
 \myFigureToWidth{attention}{0.8\twidth}{}
 
-\vspace{-1em}
+\vspace{-2em}
 
 \textbf{Relevance Gating}
 
-Contribution from input $\xv(n-j)$ to the nonlinear FIR sum for output $\yv(n-k)$ is
-$[\xv(n-k)^T \xv(n-j)]\xv(n-j)$,
+Let $\xv_k$ denote $\xv(n-k)$
+
+The contribution from input $\xv_j$ to the nonlinear FIR sum for output $\yv_k$ can be defined as $(\xv_k^T \xv_j)\xv_j$,
 \maybepause
-or more generally $(Q_k^T K_j)\xv(n-j)$, where
+or more generally $(Q_k^T K_j)\xv_j$, where
 \begin{itemize}
-  \mpitem $Q_k[\xv(n-k),k]$ is called the \emph{query} vector for position $k$ in the input sequence
-  \mpitem $K_j[\xv(n-j),j]$ is called the \emph{key} vector for position $j$ in the input sequence
-%  \mpitem $V_j[\xv(n-j)]$ is called the \emph{value} vector for position $j$ in the input sequence
+  \mpitem $Q_k[\xv_k,k]$ is called the \emph{query} vector for position $k$ in the input sequence
+  \mpitem $K_j[\xv_j,j]$ is called the \emph{key} vector for position $j$ in the input sequence
+%  \mpitem $V_j[\xv_j]$ is called the \emph{value} vector for position $j$ in the input sequence
 \end{itemize}
 
 \maybepause
+The query $Q_k$ can be a sum of \emph{all vectors supported in the attention sum}:\\
+$Q_k = \xv_k + \xv_{m_1} + \cdots + \xv_{m_k}$\\
+$\Rightarrow (Q_k^T \xv_j)\xv_j \approx \xv_j$, if $\xv_j$ is similar to \emph{any vector} in the query sum.
 
-\textbf{Idea:} For more flexibility in the attention sum (or to learn
-down-projections in \emph{multi-head} mode), replace $\xv(n-j)$ in the
-attention sum with a learned \emph{value vector} $V_j[\xv(n-j)]$\\
-%
 \maybepause
-$\Rightarrow$\\
-%
-Relevance of input $j$ to output $k$ is $\propto (Q_k^T K_j)V_j$, where
-all three vectors are learned projections of the input $\xv$ at positions
-$j$ and $k$, for all available $j$ and $k$ (``Transformer'')
+Similarly, the key vector $K_j$ can be a sum of \emph{all queries} to which it applies, \eg,\\
+$K_j = \xv_j + \xv_{n_1} + \cdots + \xv_{n_k} \Rightarrow (Q_k^T K_j)\xv_j \approx M\xv_j$, given $M$ similar vectors in both.
+
+\maybepause
+%% \textbf{Idea:} For more flexibility in the attention sum (or to learn
+%% down-projections in \emph{multi-head} mode), replace $\xv_j$ in the
+%% attention sum with a learned \emph{value vector} $V_j[\xv_j]$\\
+We still need a reason to generalize $\xv$ above to a \emph{value} $V(\xv)$
 
 \end{slide}
 
@@ -490,31 +493,43 @@ parallel independent \emph{attention calculations} (``multi-head attention'')
   \mpitem Also introduced in the Transformer paper (2017)
 \end{itemize}
 
+\maybepause
+
+Now we need \emph{down-projections} for the query $Q(\xv)$, \emph{key} $K(\xv)$, and \emph{value} $V(\xv)$
+
+\maybepause Relevance of input $j$ to output $k$ in attention-head $l$
+is now proportional to $[Q_{k,l}^T(\xv_k)
+  K_{j,l}(\xv_j)]V_{j,l}(\xv_j)$, where $Q$, $K$, and $V$ are learned
+down-projections of the input $\xv$ for each attention-head $l$ and
+for all sequence indices $j$ and $k$ in the context buffer
+(``Transformer'')
+
 \end{slide}
 
-\begin{slide}[\slideopts]{Weight Tying}
+% Relatively weak/obvious points:
+%% \begin{slide}[\slideopts]{Weight Tying}
 
-  When the sequence model maps input to output in the same ``language'' (e.g., English to English),
-  it makes sense to use the \emph{same embedding vectors} at the input and output layers, instead
-  of separately learning a set of weights for mapping to the final output.
-  This is called ``weight tying'' (many fewer parameters, better results).
+%%   When the sequence model maps input to output in the same ``language'' (e.g., English to English),
+%%   it makes sense to use the \emph{same embedding vectors} at the input and output layers, instead
+%%   of separately learning a set of weights for mapping to the final output.
+%%   This is called ``weight tying'' (many fewer parameters, better results).
 
-\end{slide}
+%% \end{slide}
 
-\begin{slide}[\slideopts]{Hierarchical Blocks}
-\begin{itemize}
-  \mpitem Cascade blocks of attention + MLP and/or gated recurrence + MLP to model \emph{hierarchical relationships} like image features or grammatical constructs
-  \mpitem Attention and gated RNNs are called ``mixing layers'' (successive inputs are combined)
-  \mpitem MLPs are called ``point transformations'' (general mapping of any vector from one place to another)
-  \mpitem RMSNorm typical at the input to put it on the hypersphere --- also used internally\\
-  (see Hawk/Griffin e.g.)
-  \mpitem Thus, these ``point MLPs'' are effectively data-dependent \emph{rotation matrices}.\\
-  In model-dimension $N$, we need only learn $N-1$ \emph{rotation angles} for each input class.\\
-  The direct mapping of the coordinates used now seems efficient enough, but projection back to the sphere
-  during training might help.  Then perhaps there is no need for RMSNorm at the output after summing the skip
-  connection.
-\end{itemize}
-\end{slide}
+%% \begin{slide}[\slideopts]{Hierarchical Blocks}
+%% \begin{itemize}
+%%   \mpitem Cascade blocks of attention + MLP and/or gated recurrence + MLP to model \emph{hierarchical relationships} like image features or grammatical constructs
+%%   \mpitem Attention and gated RNNs are called ``mixing layers'' (successive inputs are combined)
+%%   \mpitem MLPs are called ``point transformations'' (general mapping of any vector from one place to another)
+%%   \mpitem RMSNorm typical at the input to put it on the hypersphere --- also used internally\\
+%%   (see Hawk/Griffin e.g.)
+%%   \mpitem Thus, these ``point MLPs'' are effectively data-dependent \emph{rotation matrices}.\\
+%%   In model-dimension $N$, we need only learn $N-1$ \emph{rotation angles} for each input class.\\
+%%   The direct mapping of the coordinates used now seems efficient enough, but projection back to the sphere
+%%   during training might help.  Then perhaps there is no need for RMSNorm at the output after summing the skip
+%%   connection.
+%% \end{itemize}
+%% \end{slide}
 
 %% \begin{slide}[\slideopts,toc={Multiple Heads}]{MultiHead Attention}
 
