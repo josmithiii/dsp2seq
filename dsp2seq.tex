@@ -253,7 +253,7 @@ since $E[a_i b_j]=0$ for $i \ne j$, $E[a_i^2] = E[b_i]^2 = 1/N$, and $\ab$ and $
 \vspace{-2em}
 
 %\myFigureToWidth{Model_Dimension_vs_Log10_Parameters}{\twidth}{}
-\myFigureToWidth{Log10_Model_Dimension_vs_Log10_Model_Size}{\twidth}{}
+\myFigureToWidth{Model_Dimensions_vs_Model_Sizes_Labeled}{\twidth}{}
 
 \end{slidewhite}
 
@@ -371,6 +371,8 @@ Output gating allows network to be ``bypassed'' when not helpful.
 %  \]
   % (See Mamba, \eg)
   % \mpitem Conv1D mixing followed by SiLU on input for Mamba (only nonlinear activation)
+  % \mpitem $\Cmtx$ could become an \emph{attention matrix} across the expanded state; $\Amtx$ could make it \emph{shift} like a
+  %    \emph{transformer context buffer} (using a unit subdiagonal, \eg)
 \end{itemize}
 
 \end{slide}
@@ -422,11 +424,11 @@ Output gating allows network to be ``bypassed'' when not helpful.
 
 \vspace{-1em}
 
-We can have \emph{separately learned FIR coefficient matrices} $b_j[\xv(n-j),k]$, \\
+We can have \emph{separately learned FIR coefficient matrices} $c_j[\xv(n-j),k]$, \\
   which depend on the
   \begin{enumerate}
     \mpitem input \emph{position} $j$ in the input sequence (``context buffer'')
-    \mpitem input \emph{vector} $\xv(n-j)$, $j=0,1,2,\dots,M$, (nonlinear)
+    \mpitem input \emph{vector} $\xv(n-j)$, $j=0,1,2,\dots,M$, ($\Rightarrow$ nonlinear)
     \mpitem \emph{output-position} $k$ being computed, $k=0,1,2,\dots,M$ ($M+1$ outputs)
   \end{enumerate}
 
@@ -458,7 +460,7 @@ Contribution from input $\xv(n-j)$ to the nonlinear FIR sum for output $\yv(n-k)
 
 \maybepause
 
-\textbf{Idea:} To provide more flexibility for the attention sum,
+\textbf{Idea:} To provide more flexibility for the attention sum (or to support down-projection in \emph{multi-headed} mode),
 replace $\xv(n-j)$ in the attention sum with a learned \emph{value
 vector} $V_j[\xv(n-j)]$\\
 %
@@ -501,8 +503,9 @@ parallel independent \emph{attention calculations} (``multi-head attention'')
   \mpitem Cascade blocks of attention + MLP and/or gated recurrence + MLP to model \emph{hierarchical relationships} like image features or grammatical constructs
   \mpitem Attention and gated RNNs are called ``mixing layers'' (successive inputs are combined)
   \mpitem MLPs are called ``point transformations'' (general mapping of any vector from one place to another)
-  \mpitem RMSNorm typical at the input to put it on the hypersphere --- also used internally (see Hawk/Griffin e.g.)
-  \mpitem Thus, these point MLPs are effectively data-dependent \emph{rotation matrices}.\\
+  \mpitem RMSNorm typical at the input to put it on the hypersphere --- also used internally\\
+  (see Hawk/Griffin e.g.)
+  \mpitem Thus, these ``point MLPs'' are effectively data-dependent \emph{rotation matrices}.\\
   In model-dimension $N$, we need only learn $N-1$ \emph{rotation angles} for each input class.\\
   The direct mapping of the coordinates used now seems efficient enough, but projection back to the sphere
   during training might help.  Then perhaps there is no need for RMSNorm at the output after summing the skip
