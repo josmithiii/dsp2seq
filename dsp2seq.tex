@@ -164,6 +164,7 @@ In other words, the \emph{expected squared dot product of two normally random un
 \end{itemize}
 \maybepause
 \textbf{Suggestion:} Apply \tx{RMSNorm} when \emph{training} the initial \emph{vocabulary embedding}
+\textbf{Suggestion:} Modify \emph{model dimension} according to \emph{layer width} at each level
 % Note to self: embeddings have semantic proximity while feature maps may not
 
 \end{slide}
@@ -182,7 +183,7 @@ In other words, the \emph{expected squared dot product of two normally random un
 \begin{itemize}
     \item \textbf{Original Transformer}
     \begin{itemize}
-      \item $d = 512$ ($65$ M, $V = $?)
+      \item $d = 512$ ($65$ M, $VS = 50$ K?)
     \end{itemize}
     
     \item \textbf{BERT}
