@@ -169,144 +169,80 @@ In other words, the \emph{expected squared dot product of two normally random un
 \end{slide}
 
 \begin{slide}[\slideopts,toc={Model Dimension}]{Model Dimension vs.~Model Size
-(says ChatGPT-4o, not checked: \htmladdnormallink{\tx{\small https://chatgpt.com/share/76499bbc-95f7-48bf-8646-19786c1961f4}}{https://chatgpt.com/share/76499bbc-95f7-48bf-8646-19786c1961f4})}
+(says \htmladdnormallink{ChatGPT-4o}{https://chatgpt.com/share/76499bbc-95f7-48bf-8646-19786c1961f4}, not checked)}
 
 \vspace{-2em}
 
 % \usepackage{multicol}
 % \usepackage{amsmath}
 
+% \input ModelDims.tex
+
 \begin{multicols}{2}
 \begin{itemize}
     \item \textbf{Original Transformer}
     \begin{itemize}
-        \item $d = 512$ ($65$ M)
+      \item $d = 512$ ($65$ M, $V = $?)
     \end{itemize}
     
     \item \textbf{BERT}
     \begin{itemize}
-        \item \textbf{Base}: $d = 768$ ($110$ M)
-        \item \textbf{Large}: $d = 1024$ ($340$ M)
+        \item $d = 768$ ($110$ M, $30$ K VS)
+        \item $d = 1024$ ($340$ M, $30$ K VS)
     \end{itemize}
     
     \item \textbf{GPT-2}
     \begin{itemize}
-        \item \textbf{Small}: $d = 768$ ($124$ M)
-        \item \textbf{Medium}: $d = 1024$ ($345$ M)
-        \item \textbf{Large}: $d = 1280$ ($774$ M)
-        \item \textbf{XL}: $d = 1600$ ($1.5$ B)
+        \item $d = 768$ ($124$ M, $50$ K VS)
+        \item $d = 1024$ ($345$ M, $50$ K VS)
+        \item $d = 1280$ ($774$ M, $50$ K VS)
+        \item $d = 1600$ ($1.5$ B, $50$ K VS)
     \end{itemize}
     
     \item \textbf{GPT-3}
     \begin{itemize}
-        \item \textbf{Small}: $d = 2048$ ($2.7$ B)
-        \item \textbf{Medium}: $d = 4096$ ($6.7$ B)
-        \item \textbf{Large}: $d = 6144$ ($13$ B)
-        \item \textbf{XL}: $d = 12288$ ($175$ B)
+        \item $d = 2048$ ($2.7$ B, $50$ K VS)
+        \item $d = 4096$ ($6.7$ B, $50$ K VS)
+        \item $d = 6144$ ($13$ B, $50$ K VS)
+        \item $d = 12288$ ($175$ B, $50$ K VS)
     \end{itemize}
     
     \item \textbf{T5}
     \begin{itemize}
-        \item \textbf{Small}: $d = 512$ ($60$ M)
-        \item \textbf{Base}: $d = 768$ ($220$ M)
-        \item \textbf{Large}: $d = 1024$ ($770$ M)
-        \item \textbf{3B}: $d = 1024$ ($3$ B)
-        \item \textbf{11B}: $d = 1024$ ($11$ B)
+        \item $d = 512$ ($60$ M, $32$ K VS)
+        \item $d = 768$ ($220$ M, $32$ K VS)
+        \item $d = 1024$ ($770$ M, $32$ K VS)
+        \item $d = 1024$ ($3$ B, $32$ K VS)
+        \item $d = 1024$ ($11$ B, $32$ K VS)
     \end{itemize}
     
     %% \item \textbf{RoBERTa}
     %% \begin{itemize}
-    %%     \item \textbf{Base}: $d = 768$ ($125$ M)
-    %%     \item \textbf{Large}: $d = 1024$ ($355$ M)
+    %%     \item $d = 768$ ($125$ M, $50$ K VS)
+    %%     \item $d = 1024$ ($355$ M, $50$ K VS)
     %% \end{itemize}
     
     \item \textbf{ALBERT}
     \begin{itemize}
-        \item \textbf{Base}: $d = 768$ ($12$ M)
-        \item \textbf{Large}: $d = 1024$ ($18$ M)
-        \item \textbf{XLarge}: $d = 2048$ ($60$ M)
-        \item \textbf{XXLarge}: $d = 4096$ ($235$ M)
+        \item $d = 768$ ($12$ M, $30$ K VS)
+        \item $d = 1024$ ($18$ M, $30$ K VS)
+        \item $d = 2048$ ($60$ M, $30$ K VS)
+        \item $d = 4096$ ($235$ M, $30$ K VS)
     \end{itemize}
     
     \item \textbf{DistilBERT}
     \begin{itemize}
-        \item $d = 768$ ($66$ M)
+        \item $d = 768$ ($66$ M, $30$ K VS)
     \end{itemize}
     
     \item \textbf{Megatron-Turing NLG}
     \begin{itemize}
-        \item $d = 20480$ ($530$ B)
+        \item $d = 20480$ ($530$ B, $50$ K VS)
     \end{itemize}
     
 \end{itemize}
-
 \end{multicols}
 
-%% One-column format:
-
-  %% \begin{itemize}
-  %%     \item \textbf{Original Transformer}
-  %%     \begin{itemize}
-  %%         \item $d = 512$ (N/A)
-  %%     \end{itemize}
-
-  %%     \item \textbf{BERT}
-  %%     \begin{itemize}
-  %%         \item \textbf{BERT Base}: $d = 768$ ($110$ M)
-  %%         \item \textbf{BERT Large}: $d = 1024$ ($340$ M)
-  %%     \end{itemize}
-
-  %%     \item \textbf{GPT-2}
-  %%     \begin{itemize}
-  %%         \item \textbf{GPT-2 Small}: $d = 768$ ($124$ M)
-  %%         \item \textbf{GPT-2 Medium}: $d = 1024$ ($345$ M)
-  %%         \item \textbf{GPT-2 Large}: $d = 1280$ ($774$ M)
-  %%         \item \textbf{GPT-2 XL}: $d = 1600$ ($1.5$ B)
-  %%     \end{itemize}
-
-  %%     \item \textbf{GPT-3}
-  %%     \begin{itemize}
-  %%         \item \textbf{GPT-3 Small}: $d = 2048$ ($2.7$ B)
-  %%         \item \textbf{GPT-3 Medium}: $d = 4096$ ($6.7$ B)
-  %%         \item \textbf{GPT-3 Large}: $d = 6144$ ($13$ B)
-  %%         \item \textbf{GPT-3 XL}: $d = 12288$ ($175$ B)
-  %%     \end{itemize}
-
-  %%     \item \textbf{T5}
-  %%     \begin{itemize}
-  %%         \item \textbf{T5 Small}: $d = 512$ ($60$ M)
-  %%         \item \textbf{T5 Base}: $d = 768$ ($220$ M)
-  %%         \item \textbf{T5 Large}: $d = 1024$ ($770$ M)
-  %%         \item \textbf{T5 3B}: $d = 1024$ ($3$ B)
-  %%         \item \textbf{T5 11B}: $d = 1024$ ($11$ B)
-  %%     \end{itemize}
-
-  %%     \item \textbf{RoBERTa}
-  %%     \begin{itemize}
-  %%         \item \textbf{RoBERTa Base}: $d = 768$ ($125$ M)
-  %%         \item \textbf{RoBERTa Large}: $d = 1024$ ($355$ M)
-  %%     \end{itemize}
-
-  %%     \item \textbf{ALBERT}
-  %%     \begin{itemize}
-  %%         \item \textbf{ALBERT Base}: $d = 768$ ($12$ M)
-  %%         \item \textbf{ALBERT Large}: $d = 1024$ ($18$ M)
-  %%         \item \textbf{ALBERT XLarge}: $d = 2048$ ($60$ M)
-  %%         \item \textbf{ALBERT XXLarge}: $d = 4096$ ($235$ M)
-  %%     \end{itemize}
-
-  %%     \item \textbf{DistilBERT}
-  %%     \begin{itemize}
-  %%         \item $d = 768$ ($66$ M)
-  %%     \end{itemize}
-
-  %%     \item \textbf{Megatron-Turing NLG}
-  %%     \begin{itemize}
-  %%         \item $d = 20480$ ($530$ B)
-  %%     \end{itemize}
-
-  %% \end{itemize}
-  
 \end{slide}
 
 \begin{slidewhite}[\slideopts,toc={}]{Model Dimension $d$ versus Log10 Model Size}
