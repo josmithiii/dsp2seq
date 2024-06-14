@@ -24,8 +24,8 @@
 % Uses package etoolbox for \newtoggle et al:
 \usepackage{etoolbox} % for \newtoggle et al
 \newtoggle{local}
-%\toggletrue{local}
-\togglefalse{local}
+\toggletrue{local}
+%\togglefalse{local}
 \input localremote.tex
 
 \date{\theDate}
@@ -82,7 +82,7 @@
 \textbf{Idea: Let's Make an Associative Memory!}
 \begin{itemize}
 \mpitem $x(n)$ can be a \emph{long vector} $\xv(n)\in\RN$ representing \emph{anything we want} --- any ``label''
-\mpitem Set $\geev = 1$ and $\peev = -1$ to make $\yv(n)$ a \emph{sum of all input vectors} (``integrator'')
+\mpitem Set $\geev = 1$ and $\peev = 1$ to make $\yv(n)$ a \emph{sum of all input vectors} (``integrator'')
 \mpitem Choose the dimension $N$ so large that \emph{vectors in the sum are mostly orthogonal}
 \mpitem Retrieve similar vectors using a \emph{matched inner product} $\wv^T\xv > b$,\\
         for some suitable threshold $b$ (Hey! That's a simulated neuron! (``Perceptron''))
@@ -122,7 +122,7 @@
 \begin{slide}[\slideopts,toc={Orthogonality}]{Orthogonality in High Dimensions}
 \vspace{-1em}
 % \input orthogonality.tex
-Let $\ab\in\reals^N$ and$\bb\in\reals^N$ be two normally random, real, unit-norm vectors in $N$ dimensions.
+Let $\ab\in\reals^N$ and $\bb\in\reals^N$ be two normally random, real, unit-norm vectors in $N$ dimensions.
 $\|\ab\|=\|\bb\|=1$.
 
 The dot-product of
@@ -477,7 +477,10 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
 Let $\xv_k$ denote $\xv(n-k)$
 
 The contribution from input $\xv_j$ to the nonlinear FIR sum for output $\yv_k$ can be calculated as
-$\cv_{kj} = [(\sum_{m\in \Rscr_k}\xv_m)^T \xv_j]\xv_j$,
+\[
+\cv_{kj} = [(\sum_{m\in \Rscr_k}\xv_m)^T \xv_j]\xv_j
+\]
+
 \maybepause
 or more generally $\cv_{kj} = (Q_k^T \xv_j)\xv_j$, where
 \\
@@ -487,6 +490,8 @@ $Q_k[\xv_k,k]$ is called the \emph{query} vector for position $k$ in the input s
 %  \mpitem $K_j[\xv_j,j]$ is called the \emph{key} vector for position $j$ in the input sequence
 %  \mpitem $V_j[\xv_j]$ is called the \emph{value} vector for position $j$ in the input sequence
 %\end{itemize}
+
+\vspace{1em}
 
 \maybepause
 The query $Q_k$ can be a sum of \emph{all vectors supported in the attention sum}:\\
@@ -542,11 +547,17 @@ parallel independent \emph{attention calculations} (``multi-head attention'')
 Now we need \emph{down-projections} for the query $Q(\xv)$, \emph{key} $K(\xv)$, and \emph{value} $V(\xv)$
 
 \maybepause Relevance of input $j$ to output $k$ in attention-head $l$
-is now proportional to $[Q_{k,l}^T(\xv_k)
-  K_{j,l}(\xv_j)]V_{j,l}(\xv_j)$, where $Q$, $K$, and $V$ are learned
-down-projections of the input $\xv$ for each attention-head $l$ and
-for all sequence indices $j$ and $k$ in the context buffer
-(``Transformer'')
+is now proportional to
+\[
+\left[Q_{k,l}^T(\xv_k) K_{j,l}(\xv_j)\right]V_{j,l}(\xv_j)
+\]
+where $Q$, $K$, and $V$ are learned down-projections of the input
+$\xv$ for each attention-head $l$ and for all sequence indices $j$ and
+$k$ in the context buffer (``Transformer'')
+
+Other useful generalizations can be imagined for these learned
+vectors, such as grouping grammatical functions, creating new
+model-space regions, etc.
 
 \end{slide}
 
