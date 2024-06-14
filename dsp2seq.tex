@@ -476,31 +476,52 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
 
 Let $\xv_k$ denote $\xv(n-k)$
 
-The contribution from input $\xv_j$ to the nonlinear FIR sum for output $\yv_k$ can be calculated as $(\xv_k^T \xv_j)\xv_j$,
+The contribution from input $\xv_j$ to the nonlinear FIR sum for output $\yv_k$ can be calculated as
+$\cv_{kj} = [(\sum_{m\in \Rscr_k}\xv_m)^T \xv_j]\xv_j$,
 \maybepause
-or more generally $(Q_k^T K_j)\xv_j$, where
-\begin{itemize}
-  \mpitem $Q_k[\xv_k,k]$ is called the \emph{query} vector for position $k$ in the input sequence
-  \mpitem $K_j[\xv_j,j]$ is called the \emph{key} vector for position $j$ in the input sequence
+or more generally $\cv_{kj} = (Q_k^T \xv_j)\xv_j$, where
+\\
+%\begin{itemize}
+%  \mpitem
+$Q_k[\xv_k,k]$ is called the \emph{query} vector for position $k$ in the input sequence
+%  \mpitem $K_j[\xv_j,j]$ is called the \emph{key} vector for position $j$ in the input sequence
 %  \mpitem $V_j[\xv_j]$ is called the \emph{value} vector for position $j$ in the input sequence
-\end{itemize}
+%\end{itemize}
 
 \maybepause
 The query $Q_k$ can be a sum of \emph{all vectors supported in the attention sum}:\\
 $Q_k = \xv_k + \xv_{m_1} + \cdots + \xv_{m_k}$\\
 $\Rightarrow (Q_k^T \xv_j)\xv_j \approx \xv_j$, if $\xv_j$ is similar to \emph{any vector} in the query sum.
 
-\maybepause
-Similarly, the key vector $K_j$ can be a sum of \emph{all queries} to which it applies, \eg,\\
-$K_j = \xv_j + \xv_{n_1} + \cdots + \xv_{n_k} \Rightarrow (Q_k^T K_j)\xv_j \approx M\xv_j$, given $M$ similar vectors in both.
-
-\maybepause
-%% \textbf{Idea:} For more flexibility in the attention sum (or to learn
-%% down-projections in \emph{multi-head} mode), replace $\xv_j$ in the
-%% attention sum with a learned \emph{value vector} $V_j[\xv_j]$\\
-We still need a reason to generalize $\xv$ above to a \emph{value} $V(\xv)$
+%We still need a reason to generalize $\xv$ above to a \emph{key} $K(\xv)$ and \emph{value} $V(\xv)$
 
 \end{slide}
+
+%% \begin{slide}[\slideopts]{Queries, Keys, and Values}
+
+%% \begin{itemize}
+%%   A query $Q_k$ formed as a sum of sought vectors, looks useful, but we can generalize further
+%%   \mpitem The query for a \emph{noun} can look for \emph{all verbs} and \emph{all adjectives} that could contextualize it
+%%   \mpitem The model space can have different partitions for nouns, verbs, and adjectives
+%%   \mpitem We can learn a projection $K(\xv)$ that projects any $\xv$ to a vector representing ``noun'', ``verb'', or ``adjective,'' etc.
+%%   \mpitem Finally, instead of adding the original vector into the sum, we can learn a different \emph{value vector} $V(\xv)$
+%%   for building attention-sums in some new sector of the model space, etc.
+%% \end{itemize}
+
+%% So now we're up to (Q,K,V) attention:
+%% \[
+%% \cv_{kj}\xv_j = (Q_k^T K_j)V_j
+%% \]
+
+%% %Similarly, the key vector $K_j$ can be a sum of \emph{all queries} to which it applies, \eg,\\
+%% %$K_j = \xv_j + \xv_{n_1} + \cdots + \xv_{n_k} \Rightarrow (Q_k^T K_j)\xv_j \approx M\xv_j$, given $M$ similar vectors in both.
+
+  
+%% %% \textbf{Idea:} For more flexibility in the attention sum (or to learn
+%% %% down-projections in \emph{multi-head} mode), replace $\xv_j$ in the
+%% %% attention sum with a learned \emph{value vector} $V_j[\xv_j]$\\
+
+%% \end{slide}
 
 \begin{slide}[\slideopts]{Multi-Head Attention}
 
