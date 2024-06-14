@@ -24,8 +24,8 @@
 % Uses package etoolbox for \newtoggle et al:
 \usepackage{etoolbox} % for \newtoggle et al
 \newtoggle{local}
-\toggletrue{local}
-%\togglefalse{local}
+%\toggletrue{local}
+\togglefalse{local}
 \input localremote.tex
 
 \date{\theDate}
@@ -354,16 +354,19 @@ Output gating allows network to be ``bypassed'' when not helpful.
 
 \myFigureToWidth{statespace-rnn}{0.5\twidth}{}
 
-\vspace{-2em}
+\vspace{-1em}
 
+\maybepause
+
+\emph{``Structured State-Space Models''} (SSM) look like this (\eg, Mamba)
 \begin{itemize}
   \mpitem Increased storage capacity
-  \mpitem Multiple parallel memories, as in ``multi-head attention'' with individual durations
-  \mpitem \emph{``Structured State-Space Models''} (SSM) look like this (see Mamba, \eg)
   \mpitem Feedback matrix $\Amtx$ typically \emph{diagonal} since 2022 (see ``S4D'')\\
-  	  $\Rightarrow$ Parallel bank of vector one-poles (\emph{``linearly'' gated, state-expanded RNNs})
+  	  \maybepause $\Rightarrow$ Parallel bank of vector one-poles (\emph{``linearly'' gated, state-expanded RNNs})
+  \mpitem In Mamba-2, $\Amtx = p\,\Imtx$, \ie, \emph{shared memory duration} across expanded state
   % \mpitem Processed sequence (``context buffer'') is \emph{indefinitely long}
-  \mpitem Gating matrices in Mamba are simple linear input projections:
+  % \mpitem Multiple parallel memories (as in ``multi-head attention'')
+  \mpitem Gating matrices in Mamba[-2] are simple linear input projections:
 %  \[
   $
           [\Bmtx(\xv_n), \Cmtx(\xv_n)] = \Lmtx\,\xv_n  % , \qquad \Dmtx(\xv_n) = \mbox{SiLU}(\Lmtx^\prime\xv_n)\]
@@ -373,6 +376,7 @@ Output gating allows network to be ``bypassed'' when not helpful.
   % \mpitem Conv1D mixing followed by SiLU on input for Mamba (only nonlinear activation)
   % \mpitem $\Cmtx$ could become an \emph{attention matrix} across the expanded state; $\Amtx$ could make it \emph{shift} like a
   %    \emph{transformer context buffer} (using a unit subdiagonal, \eg)
+  % \mpitem $\Amtx = -p\Imtx$ as of Mamba-2, \ie, parallel RNNs all have the same memory duration
 \end{itemize}
 
 \end{slide}
@@ -385,8 +389,23 @@ Output gating allows network to be ``bypassed'' when not helpful.
 \textbf{Idea:} Detect multiple memory vectors in parallel using an array of \emph{``Perceptrons''}
 %\emph{``Multi-Layer Perceptron'' (MLP)}
 \begin{itemize}
-\mpitem Each Perceptron detects one or more memory vectors similar to its weight vectors
-\mpitem The Perceptrons indicate \emph{which weight-vectors are present} in the vector memory
+  \mpitem Each Perceptron detects one or more memory vectors similar to its weight vectors
+  \[
+  y_i(n) = \wv_i^T\hv(n) > b_i
+  \]
+  where $y_i(n)$ denotes the $i$th output at time $n$, i=0,\ldots,M-1,\\
+  and $\hv(n)$ denotes the (``hidden'' [expanded-] state) vector memory 
+  \mpitem Note that the $\Cmtx$ matrix can provide these weights:
+  \[
+  \yv(n) = \Cmtx\,\hv(n) > \beev
+  \]
+
+\mpitem The Perceptrons indicate \emph{which weight-vectors $\wv_i$ are present} in the vector memory $\hv$
+
+\mpitem \textbf{Idea:} (Backpropagation---1980s?): To facilitate
+\emph{learning} $\wv_i$ via gradient descent, replace ``$>$'' by
+something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
+
 \end{itemize}
 
 \end{slide}
@@ -415,7 +434,7 @@ Output gating allows network to be ``bypassed'' when not helpful.
 
 \vspace{-1em}
 
-\textbf{Idea:} Also use \emph{FIR Filtering}
+\textbf{Idea:} Also use \emph{FIR Filtering} (SSM State Expansion Factor $N\ge M$):
 
 %\myFigureToWidth{one-pole-rnn-seq}{0.6\twidth}{} % {Sequence Modeling with Gated RNNs}
 %\vspace{-4em}
@@ -424,18 +443,22 @@ Output gating allows network to be ``bypassed'' when not helpful.
 
 \vspace{-1em}
 
-We can have \emph{separately learned FIR coefficient matrices} $c_j[\xv(n-j),k]$, \\
-  which depend on the
+\emph{Separately learnable FIR coefficient matrices} $\dv_k[\xv(n)], \cv_j[\xv(n-j),k]$, depending on
   \begin{enumerate}
-    \mpitem input \emph{position} $j$ in the input sequence (``context buffer'')
-    \mpitem input \emph{vector} $\xv(n-j)$, $j=0,1,2,\dots,M$, ($\Rightarrow$ nonlinear)
+    \mpitem input \emph{position} $j$ in the input sequence (``context buffer'' or ``expanded state'' + RoPE),
+    \mpitem input \emph{vector} $\xv(n-j)$, $j=0,1,2,\dots,M$,
     \mpitem \emph{output-position} $k$ being computed, $k=0,1,2,\dots,M$ ($M+1$ outputs)
   \end{enumerate}
 
 \maybepause
 \textbf{Idea:} Add \emph{relevance gating} suppressing unimportant inputs to each output (``attention'')
 
-\vspace{0.5em}
+\vspace{0.2em}
+
+\maybepause
+\textbf{Idea:} Create \emph{new embedding vectors} as \emph{sums} of existing embedding vectors (``attention'')
+
+\vspace{0.2em}
 
 \maybepause
 \textbf{Idea:} Measure relevance using an \emph{inner product} between the output and input positions (``dot-product attention'')
@@ -453,7 +476,7 @@ We can have \emph{separately learned FIR coefficient matrices} $c_j[\xv(n-j),k]$
 
 Let $\xv_k$ denote $\xv(n-k)$
 
-The contribution from input $\xv_j$ to the nonlinear FIR sum for output $\yv_k$ can be defined as $(\xv_k^T \xv_j)\xv_j$,
+The contribution from input $\xv_j$ to the nonlinear FIR sum for output $\yv_k$ can be calculated as $(\xv_k^T \xv_j)\xv_j$,
 \maybepause
 or more generally $(Q_k^T K_j)\xv_j$, where
 \begin{itemize}
