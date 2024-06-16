@@ -83,7 +83,7 @@
 \textbf{Idea: Let's Make an Associative Memory!}
 \begin{itemize}
 \mpitem $x(n)$ can be a \emph{long vector} $\xv(n)\in\RN$ representing \emph{anything we want} --- any ``label''
-\mpitem Set $\geev = 1$ and $\peev = 1$ to make $\yv(n)$ a \emph{sum of all input vectors} (``integrator'')
+\mpitem Set $\geev = \onev$ and $\peev = \onev$ to make $\yv(n)$ a \emph{sum of all input vectors} (``integrator'')
 \mpitem Choose the dimension $N$ so large that \emph{vectors in the sum are mostly orthogonal}
 \mpitem Retrieve similar vectors using a \emph{matched inner product} $\wv^T\xv > b$,\\
         for some suitable threshold $b$ (Hey! That's a simulated neuron! (``Perceptron''))
@@ -130,7 +130,7 @@ The dot-product of
 $\ab^T=[a_1,a_2,\ldots,a_N]$ and
 $\bb^T=[b_1,b_2,\ldots,b_N]$ is defined as
 \[
-\ab \cdot \bb = \sum_{i=1}^{N} a_i b_i.
+\ab \cdot \bb = \ab^T\bb = \sum_{i=1}^{N} a_i b_i.
 \]
 
 The squared dot product is
@@ -395,7 +395,7 @@ Output gating allows network to be ``bypassed'' when not helpful.
   y_i(n) = \wv_i^T\hv(n) > b_i
   \]
   where $y_i(n)$ denotes the $i$th output at time $n$, i=0,\ldots,M-1,\\
-  and $\hv(n)$ denotes the (``hidden'' [expanded-] state) vector memory 
+  and $\hv(n)$ denotes the (``hidden'' [expanded-] state) vector memory
   \mpitem Note that the $\Cmtx$ matrix can provide these weights:
   \[
   \yv(n) = \Cmtx\,\hv(n) > \beev
@@ -442,7 +442,7 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
   when our maximum sequence length (before reset) is $L$
   \mpitem \textbf{Idea:} ``Warped RoPE'' (WRoPE) for \emph{arbitrarily long sequences}:
   \[
-  \Delta_n = \frac{2\pi n}{n+1}, \quad n=0,1,2,\ldots
+  \Delta_n = \frac{2\pi n}{n+L}, \quad n=0,1,2,\ldots
   \]
   \maybepause
   (inspired by the \emph{bilinear transform} used in digital filter design)
@@ -468,19 +468,24 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
       \mpitem RoPE: Effectively reserves \emph{complex angle:} $\hv_a(n) = e^{j\Delta}\hv(n)$\\
       		    (data size doubled: $\xv \to (\xv,\zv)$)
       \mpitem Use \emph{quaternions} for two more angles $\Rightarrow$ data size quadrupled: $\xv \to (\xv,\zv,\zv,\zv)$\\
+      % https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
+      $\hv_a(n) = \qb\hv(n)$, where, from \htmladdnormallink{Wikipedia}{https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation}:\\
       $
-      \hv_a(n) = q\hv(n), \quad
-      q = \cos(a/2) + i ( x \, \sin(a/2)) + j (y \, \sin(a/2)) + k ( z \, \sin(a/2))
+      % \displaystyle
+      \qb = e^{{\frac {\Delta}{2}}{(\av_x\ib +\av_y\jb +\av_z\kb )}}
+      = \cos {\frac {\Delta }{2}}+(\av_x\ib +\av_y\jb + \av_z\kb )\sin {\frac {\Delta }{2}}
+      = \cos {\frac {\Delta }{2}}+\av\sin {\frac {\Delta }{2}}
       $
-      \mpitem See Cayley-Dickson Construction for $2^k-1$ angles, $k=1,2,3,\ldots$
+      \mpitem See the Cayley-Dickson Construction for $2^k-1$ angles, $k=1,2,3,\ldots$
       \mpitem Trivial in \emph{polar coordinates} (``write-protect'' reserved dimensions during gradient step),\\
       but then back-propagation must be rewritten for polar coordinates
       % \\ Replace weight matrices $\Wmtx$ with \emph{rotation matrices?}
-      \mpitem Find suitable method of \emph{constrained gradient descent}
-      \mpitem Use \emph{reserved translational dimension} instead (``TraPE'')
+      \mpitem Find a suitable method of \emph{constrained gradient descent}
       \mpitem Train (or calculate) a \emph{pointwise MLP} that ``de-rotates'' $\xv+\mu\gradv$ given also $\xv$
-%    \end{enumerate}
+      \mpitem Use \emph{reserved translational dimension(s)} instead (``TraPE'') (omitted from \tx{RMSNorm})
+      % Illustrate "meta" reserved translation dimension: \myFigureToWidth{threeGinaSpheres}{0.5\twidth}{}
   \end{itemize}
+
 \end{slide}
 
 \section[\sectopts,toc={Attention}]{Attention}
@@ -511,7 +516,7 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
 \vspace{0.2em}
 
 \maybepause
-\textbf{Idea:} Create \emph{new embedding vectors} as \emph{sums} of existing embedding vectors (``attention'')
+\textbf{Idea:} Create \emph{new embedding vectors} as \emph{sums} of relevant input vectors (``attention'')
 
 \vspace{0.2em}
 
@@ -532,16 +537,17 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
 Let $\xv_k$ denote $\xv(n-k)$
 
 The contribution from input $\xv_j$ to the nonlinear FIR sum for output $\yv_k$ can be calculated as
-\[
-\cv_{kj} = [(\sum_{m\in \Rscr_k}\xv_m)^T \xv_j]\xv_j
-\]
-
+\\
+$
+\cv_{kj}\xv_j = \left[\left(\sum_{m\in \Rscr_k}\xv_m\right)^T \xv_j\right]\xv_j
+$
+\\
 \maybepause
-or more generally $\cv_{kj} = (Q_k^T \xv_j)\xv_j$, where
+or more generally $\zbox{\cv_{kj} = Q_k^T \xv_j}$, where
 \\
 %\begin{itemize}
 %  \mpitem
-$Q_k[\xv_k,k]$ is called the \emph{query} vector for position $k$ in the input sequence
+$Q_k(\xv_k,k)$ is called the \emph{query} vector for position $k$ in the input sequence
 %  \mpitem $K_j[\xv_j,j]$ is called the \emph{key} vector for position $j$ in the input sequence
 %  \mpitem $V_j[\xv_j]$ is called the \emph{value} vector for position $j$ in the input sequence
 %\end{itemize}
@@ -576,7 +582,7 @@ $\Rightarrow (Q_k^T \xv_j)\xv_j \approx \xv_j$, if $\xv_j$ is similar to \emph{a
 %% %Similarly, the key vector $K_j$ can be a sum of \emph{all queries} to which it applies, \eg,\\
 %% %$K_j = \xv_j + \xv_{n_1} + \cdots + \xv_{n_k} \Rightarrow (Q_k^T K_j)\xv_j \approx M\xv_j$, given $M$ similar vectors in both.
 
-  
+
 %% %% \textbf{Idea:} For more flexibility in the attention sum (or to learn
 %% %% down-projections in \emph{multi-head} mode), replace $\xv_j$ in the
 %% %% attention sum with a learned \emph{value vector} $V_j[\xv_j]$\\
@@ -599,18 +605,22 @@ parallel independent \emph{attention calculations} (``multi-head attention'')
 
 \maybepause
 
-Now we need \emph{down-projections} for the query $Q(\xv)$, \emph{key} $K(\xv)$, and \emph{value} $V(\xv)$
-
-\maybepause Relevance of input $j$ to output $k$ in attention-head $l$
-is now proportional to
+Now we need \emph{down-projections} of the relevance-calculation components\\
+$\Rightarrow$ relevance of input $j$ to output $k$ in attention-head $l$ becomes proportional to
 \[
-\left[Q_{k,l}^T(\xv_k) K_{j,l}(\xv_j)\right]V_{j,l}(\xv_j)
+\cv_{kj}\xv_j = (Q_k^T \xv_j)\xv_j \;\longrightarrow\; \cv_{lkj}\xv_{lj} = \left[Q_{lk}^T(\xv_k) K_{lj}(\xv_{j})\right]V_{lj}(\xv_j)
 \]
-where $Q$, $K$, and $V$ are learned down-projections of the input
-$\xv$ for each attention-head $l$ and for all sequence indices $j$ and
-$k$ in the context buffer (``Transformer'')
+where $Q_{lk}$ (``query''), $K_{lj}$ (``key''), and $V_{lj}$
+(``value'') vectors are learned down-projections of the input $\xv_j$
+for each attention-head $l$ and for all sequence indices $j$ and $k$
+in the context buffer (``Transformer'')
 
-Other useful generalizations can be imagined for these learned
+%% \[
+%% $(Q_k^T K_j)V_j$,
+%% \]
+%% using down-projected queries $Q_k(\xv)$, \emph{keys} $K_j(\xv)$, and \emph{values} $V_j(\xv)$
+
+Other useful generalizations can be imagined for these learned (Q,K,V)
 vectors, such as grouping grammatical functions, creating new
 model-space regions, etc.
 
