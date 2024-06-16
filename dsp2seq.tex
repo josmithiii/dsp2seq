@@ -15,6 +15,7 @@
 
 %Mohonk05 said:
 \input ../latex/stdpreshdr.tex % /w/latex/stdpreshdr.tex
+%\input ../latex/stddefs.tex % /w/latex/stddefs.tex
 \input ../latex/wgtmac.tex % /w/latex/wgtmac.tex
 
 \usepackage{xcolor}
@@ -454,13 +455,41 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
 \end{itemize}
 \end{slide}
 
+\begin{slide}[\slideopts,toc={Reservations}]{Reserving Angular Dimensions}
+
+  \vspace{-1em}
+
+  Reserving the radial dimension looks easy (\eg, \tx{RMSNorm} every $k$ gradient-descent steps)\\
+  How to reserve an \emph{arc dimension} for [W]RoPE and perhaps other purposes?
+
+  \begin{itemize}
+%    \mpitem \emph{Augment the space with new angular dimensions:}
+%    \begin{enumerate}
+      \mpitem RoPE: Effectively reserves \emph{complex angle:} $\hv_a(n) = e^{j\Delta}\hv(n)$\\
+      		    (data size doubled: $\xv \to (\xv,\zv)$)
+      \mpitem Use \emph{quaternions} for two more angles $\Rightarrow$ data size quadrupled: $\xv \to (\xv,\zv,\zv,\zv)$\\
+      $
+      \hv_a(n) = q\hv(n), \quad
+      q = \cos(a/2) + i ( x \, \sin(a/2)) + j (y \, \sin(a/2)) + k ( z \, \sin(a/2))
+      $
+      \mpitem See Cayley-Dickson Construction for $2^k-1$ angles, $k=1,2,3,\ldots$
+      \mpitem Trivial in \emph{polar coordinates} (``write-protect'' reserved dimensions during gradient step),\\
+      but then back-propagation must be rewritten for polar coordinates
+      % \\ Replace weight matrices $\Wmtx$ with \emph{rotation matrices?}
+      \mpitem Find suitable method of \emph{constrained gradient descent}
+      \mpitem Use \emph{reserved translational dimension} instead (``TraPE'')
+      \mpitem Train (or calculate) a \emph{pointwise MLP} that ``de-rotates'' $\xv+\mu\gradv$ given also $\xv$
+%    \end{enumerate}
+  \end{itemize}
+\end{slide}
+
 \section[\sectopts,toc={Attention}]{Attention}
 
 \begin{slide}[\slideopts,toc={Attention}]{Attention Layer}
 
 \vspace{-1em}
 
-\textbf{Idea:} Also use \emph{FIR Filtering} (SSM State Expansion Factor $N\ge M$):
+\textbf{Idea:} Also use \emph{FIR Filtering} (SSM State Expansion Factor $N\ge M$, $\Amtx$ subdiagonal):
 
 %\myFigureToWidth{one-pole-rnn-seq}{0.6\twidth}{} % {Sequence Modeling with Gated RNNs}
 %\vspace{-4em}
@@ -471,9 +500,9 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
 
 \emph{Separately learnable FIR coefficient matrices} $\dv_k[\xv(n)], \cv_j[\xv(n-j),k]$, depending on
   \begin{enumerate}
-    \mpitem input \emph{position} $j$ in the input sequence (``context buffer'' or ``expanded state'' + RoPE),
-    \mpitem input \emph{vector} $\xv(n-j)$, $j=0,1,2,\dots,M$,
-    \mpitem \emph{output-position} $k$ being computed, $k=0,1,2,\dots,M$ ($M+1$ outputs)
+    \mpitem input \emph{position} $j$ in the input sequence (``context buffer'' or ``expanded state'' + [W]RoPE),
+    \mpitem input \emph{vector} $\xv(n-j)$,\; $j=0,1,2,\dots,M$,
+    \mpitem \emph{output-position} $k$ being computed,\; $k=0,1,2,\dots,M$ ($M+1$ outputs)
   \end{enumerate}
 
 \maybepause
