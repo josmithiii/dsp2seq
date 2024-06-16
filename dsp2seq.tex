@@ -428,6 +428,32 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
   \end{itemize}
 \end{slide}
 
+\begin{slide}[\slideopts,toc={WRoPE}]{RoPE and WRoPE}
+
+\vspace{-1em}
+
+\begin{itemize}
+\item Rotational Positional Encoding (RoPE) owns \emph{one arc direction} along the hypersphere % to \emph{positional encoding}
+  \mpitem We can thus rotate our vector memory $\hv(n)$ by $\Delta$ radians each time step to ``age'' it:
+  \[
+  \hv_a(n) = e^{j\Delta}\hv(n), \quad \mbox{with}\; \Delta = \frac{2\pi}{L}
+  \]
+  when our maximum sequence length (before reset) is $L$
+  \mpitem \textbf{Idea:} ``Warped RoPE'' (WRoPE) for \emph{arbitrarily long sequences}:
+  \[
+  \Delta_n = \frac{2\pi n}{n+1}, \quad n=0,1,2,\ldots
+  \]
+  \maybepause
+  (inspired by the \emph{bilinear transform} used in digital filter design)
+  \mpitem A \emph{blend} of \emph{uniform} and \emph{warped} rotations can be used:
+  \[
+  \Delta_n = \funcalign{\frac{\pi n}{L}}{n=0,1,2,\ldots,L-1}{%
+    \pi + \frac{\pi n}{n+1}}{n=L,L+1,L+2,\ldots}
+  \]
+  where $L$ is now the \emph{typical} sequence length (giving it more ``space'' in recall)
+\end{itemize}
+\end{slide}
+
 \section[\sectopts,toc={Attention}]{Attention}
 
 \begin{slide}[\slideopts,toc={Attention}]{Attention Layer}
