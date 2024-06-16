@@ -25,8 +25,8 @@
 % Uses package etoolbox for \newtoggle et al:
 \usepackage{etoolbox} % for \newtoggle et al
 \newtoggle{local}
-%\toggletrue{local}
-\togglefalse{local}
+\toggletrue{local}
+%\togglefalse{local}
 \input localremote.tex
 
 \date{\theDate}
@@ -83,7 +83,7 @@
 \textbf{Idea: Let's Make an Associative Memory!}
 \begin{itemize}
 \mpitem $x(n)$ can be a \emph{long vector} $\xv(n)\in\RN$ representing \emph{anything we want} --- any ``label''
-\mpitem Set $\geev = \onev$ and $\peev = \onev$ to make $\yv(n)$ a \emph{sum of all input vectors} (``integrator'')
+\mpitem Set $\geev = \underline{1}$ and $\peev = \underline{1}$ to make $\yv(n)$ a \emph{sum of all input vectors} (``integrator'')
 \mpitem Choose the dimension $N$ so large that \emph{vectors in the sum are mostly orthogonal}
 \mpitem Retrieve similar vectors using a \emph{matched inner product} $\wv^T\xv > b$,\\
         for some suitable threshold $b$ (Hey! That's a simulated neuron! (``Perceptron''))
@@ -539,7 +539,7 @@ Let $\xv_k$ denote $\xv(n-k)$
 The contribution from input $\xv_j$ to the nonlinear FIR sum for output $\yv_k$ can be calculated as
 \\
 $
-\cv_{kj}\xv_j = \left[\left(\sum_{m\in \Rscr_k}\xv_m\right)^T \xv_j\right]\xv_j
+\cv_{kj}\xv_j = \left[\left(\sum_{m\in \Rscr(\xv_k)}\xv_m\right)^T \xv_j\right]\xv_j
 $
 \\
 \maybepause
@@ -620,6 +620,8 @@ in the context buffer (``Transformer'')
 %% \]
 %% using down-projected queries $Q_k(\xv)$, \emph{keys} $K_j(\xv)$, and \emph{values} $V_j(\xv)$
 
+\maybepause
+
 Other useful generalizations can be imagined for these learned (Q,K,V)
 vectors, such as grouping grammatical functions, creating new
 model-space regions, etc.
@@ -686,7 +688,7 @@ model-space regions, etc.
 %% \vspace{-4em}
 %% \end{wideslidewhite}
 
-\begin{slide}[\slideopts,toc={Hypersphere}]{Where Meaning Lies}
+\begin{slide}[\slideopts,toc={Hypersphere}]{Summary}
 \vspace{-1em}
 \myFigureToWidth{ginaSphere1}{\twidth}{}
 \end{slide}
