@@ -26,8 +26,8 @@
 % Uses package etoolbox for \newtoggle et al:
 \usepackage{etoolbox} % for \newtoggle et al
 \newtoggle{local}
-\toggletrue{local}
-%\togglefalse{local}
+%\toggletrue{local}
+\togglefalse{local}
 \input localremote.tex
 
 \date{\theDate}
@@ -312,7 +312,7 @@ since $E[a_i b_j]=0$ for $i \ne j$, $E[a_i^2] = E[b_i]^2 = 1/N$, and $\ab$ and $
   \mpitem \emph{Initialize} $\peev$ for desired initial memory duration (exponential fade time)
   \mpitem Learn $\peev(\xv_n)$ as $\Imtx\cdot e^{-\Delta}\approx \Imtx -\Imtx \Delta$,
   %and $\geev(\xv_n)$ as $\mbox{Linear}(\xv_n,\yv_n)\cdot\Delta$,
-  where $\Delta = \mbox{softPlus}(\mbox{parameter}(\xv_n,\Yv_n))$ (guaranteed stable --- no ``exploding gradients'')
+  where $\Delta = \mbox{softPlus}(\mbox{parameter}(\xv_n,\yv_n))$ (guaranteed stable --- no ``exploding gradients'')
   [Also multiply $\geev(\xv_n)$ by $\Delta$] % for gain-normalization]
 %\mpitem \emph{memory duration} $\Rightarrow$ \emph{linear projection}\\
   % (SSMs, Mamba) ---
@@ -689,7 +689,32 @@ model-space regions, etc.
 %% \vspace{-4em}
 %% \end{wideslidewhite}
 
-\begin{slide}[\slideopts,toc={Hypersphere}]{Summary}
+\begin{slide}[\slideopts,toc={Plan}]{Reasonable Next Steps}
+  \vspace{-1em}
+  \begin{itemize}
+    \mpitem Try to improve \textbf{Mamba}[-2] on small synthetic datasets testing \emph{memory}
+    \begin{itemize}
+      \mpitem Vocabulary embeddings trained to the unit hypersphere (\eg, \tx{word2sphere})
+      \mpitem Memory \emph{duration} and \emph{reset} functions separately trained and implemented
+      \mpitem Initial \emph{biases} at $\zv$ versus $2/N$ etc.
+      \mpitem Do \emph{power normalization} in place of \tx{RMSNorm} where possible (efficiency)
+      \mpitem Adapt \emph{model dimension} to \emph{layer width} at each level (efficiency)
+      \mpitem Warped Rotational Positional Encoding (WRoPE)
+      \mpitem Translational Positional Encoding (TraPE) in its own head (no \tx{RMSNorm})
+      \mpitem Explore other ``Control Heads'' that flow along purely for ``conditioning'' like TraPE
+    \end{itemize}
+    \mpitem Publish on Arxiv and GitHub, advertise on ``AI social media'' and blog
+    \mpitem Progress to date:
+    \begin{itemize}
+      \mpitem New synthetic benchmarks analogous to ``needle in a haystack''
+      \mpitem Adapted Andrej Karpathy's \tx{makemore} code, adding Mamba and new benchmarks
+      \mpitem Four papers started
+    \end{itemize}
+    \mpitem Feel free to take on any of these so I don't have to! (And LMK, please)
+  \end{itemize}
+\end{slide}
+
+\begin{slide}[\slideopts,toc={Hypersphere}]{Thanks for your Attention!}
 \vspace{-1em}
 \myFigureToWidth{ginaSphere1}{\twidth}{}
 \end{slide}
