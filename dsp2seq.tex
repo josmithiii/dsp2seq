@@ -40,6 +40,8 @@
   \theEvent
 }
 
+\newcommand{\onevec}{\underline{1}}
+
 \begin{document}
 
 \maketitle
@@ -84,7 +86,7 @@
 \textbf{Idea: Let's Make an Associative Memory!}
 \begin{itemize}
 \mpitem $x(n)$ can be a \emph{long vector} $\xv(n)\in\RN$ representing \emph{anything we want} --- any ``label''
-\mpitem Set $\geev = \underline{1}$ and $\peev = \underline{1}$ to make $\yv(n)$ a \emph{sum of all input vectors} (``integrator'')
+\mpitem Set $\geev = \onevec$ and $\peev = \onevec$ to make $\yv(n)$ a \emph{sum of all input vectors} (``integrator'')
 \mpitem Choose the dimension $N$ so large that \emph{vectors in the sum are mostly orthogonal}
 \mpitem Retrieve similar vectors using a \emph{matched inner product} $\wv^T\xv > b$,\\
         for some suitable threshold $b$ (Hey! That's a simulated neuron! (``Perceptron''))
@@ -688,6 +690,49 @@ model-space regions, etc.
 %% \myFigureToWidth{Architectures}{\twidth}{}
 %% \vspace{-4em}
 %% \end{wideslidewhite}
+
+\begin{slide}[\slideopts,toc={Unified State Space}]{State Space Unification of Transformers and GRNNs}
+\vspace{-1em}
+% State Transition Matrices
+\begin{equation*}
+\begin{array}{cc}
+\underbrace{
+\mathbf{A_T} = \ev^{j\Delta_n} \begin{pmatrix}
+0 & 0 & \cdots & 0 & 0 \\
+\onevec & 0 & \cdots & 0 & 0 \\
+0 & \onevec & \cdots & 0 & 0 \\
+\vdots & \vdots & \ddots & \vdots & \vdots \\
+0 & 0 & \cdots & \onevec & 0
+\end{pmatrix}
+}_{\mbox{Transformer}}
+&\quad
+\underbrace{
+\mathbf{A_M} = \av_n \ev^{j\Delta_n} \begin{pmatrix}
+\onevec & 0 & \cdots & 0 \\
+0 & \onevec & \cdots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & \onevec
+\end{pmatrix}
+}_{\mbox{Mamba-2 style RNN + [W]RoPE}}
+\end{array}
+\end{equation*}
+\[
+\mathbf{A_{TM}} = \ev^{j\Delta_n} \begin{pmatrix}
+0 & 0 & \cdots & 0 & 0 & 0 & \cdots & 0 \\
+\onevec & 0 & \cdots & 0 & 0 & 0 & \cdots & 0 \\
+0 & \onevec & \cdots & 0 & 0 & 0 & \cdots & 0 \\
+\vdots & \vdots & \ddots & \vdots & \vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & \onevec & 0 & 0 & \cdots & 0 \\
+% & & & & & \av_n \onevec & 0 & \cdots & 0 \\
+0 & 0 & \cdots & 0 & \onevec & \av_n & \cdots & 0 \\
+\vdots & \vdots & \ddots & \vdots & \vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & 0 & 0 & 0 & \cdots & \av_n
+\end{pmatrix}
+\quad
+\mathbf{B_{TM}} = \begin{pmatrix} \beev_n \\ 0 \\ 0 \\ \vdots \\ 0 \end{pmatrix}
+\]
+
+\end{slide}
 
 \begin{slide}[\slideopts,toc={Plan}]{Reasonable Next Steps}
   \vspace{-1em}
