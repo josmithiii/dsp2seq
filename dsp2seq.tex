@@ -746,19 +746,19 @@ model-space regions, etc.
     \begin{itemize}
       \mpitem Vocabulary embeddings trained to the unit hypersphere (\eg, \tx{word2sphere})
       \mpitem Memory \emph{duration} and \emph{reset} functions separately trained and implemented
-      \mpitem Initial \emph{biases} at $\zv$ versus $2/N$ etc.
+      \mpitem Initial \emph{biases} at $\zv$ versus $1/N$ or larger
       \mpitem Do \emph{power normalization} in place of \tx{RMSNorm} where possible (efficiency)
+      \mpitem Try \emph{power normalized attention} in place of $1/\sqrt{d_h}$ and \tx{Softmax} (efficiency)
       \mpitem Adapt \emph{model dimension} to \emph{layer width} at each level (efficiency)
       \mpitem Warped Rotational Positional Encoding (WRoPE)
       \mpitem Translational Positional Encoding (TraPE) in its own head (no \tx{RMSNorm})
       \mpitem Explore other ``Control Heads'' that flow along purely for ``conditioning'' like TraPE
     \end{itemize}
-    \mpitem Publish on Arxiv and GitHub, advertise on ``AI social media'' and blog
     \mpitem Progress to date:
     \begin{itemize}
       \mpitem New synthetic benchmarks analogous to ``needle in a haystack''
       \mpitem Adapted Andrej Karpathy's \tx{makemore} code, adding Mamba and new benchmarks
-      \mpitem Four papers started
+      \mpitem Four papers started, aiming for Arxiv, GitHub, ``AI social media,'' blog
     \end{itemize}
     \mpitem Feel free to take over any of these! (and LMK so I can do something else)
   \end{itemize}
