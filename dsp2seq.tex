@@ -26,8 +26,8 @@
 % Uses package etoolbox for \newtoggle et al:
 \usepackage{etoolbox} % for \newtoggle et al
 \newtoggle{local}
-%\toggletrue{local}
-\togglefalse{local}
+\toggletrue{local}
+%\togglefalse{local}
 \input localremote.tex
 
 \date{\theDate}
@@ -692,6 +692,7 @@ model-space regions, etc.
 %% \end{wideslidewhite}
 
 \begin{slide}[\slideopts,toc={Unified State Space}]{State Space Unification of Transformers and GRNNs}
+% MambaFormer is taken, so maybe TransMamba?
 \vspace{-1em}
 % State Transition Matrices
 \begin{equation*}
@@ -724,20 +725,24 @@ model-space regions, etc.
 \vdots & \vdots & \ddots & \vdots & \vdots & \vdots & \ddots & \vdots \\
 0 & 0 & \cdots & \onevec & 0 & 0 & \cdots & 0 \\
 % & & & & & \av_n \onevec & 0 & \cdots & 0 \\
-0 & 0 & \cdots & 0 & \onevec & \av_n & \cdots & 0 \\
+0 & 0 & \cdots & 0 & \bv_{1}(n) & \av_n & \cdots & 0 \\
 \vdots & \vdots & \ddots & \vdots & \vdots & \vdots & \ddots & \vdots \\
-0 & 0 & \cdots & 0 & \onevec & 0 & \cdots & \av_n
+0 & 0 & \cdots & 0 & \bv_{N_M}(n) & 0 & \cdots & \av_n
 \end{pmatrix}
 \quad
-\mathbf{B_{TM}} = \begin{pmatrix} \beev_n \\ 0 \\ 0 \\ \vdots \\ 0 \end{pmatrix}
+\mathbf{B_{TM}} = \begin{pmatrix} \beev_1(n) \\ 0 \\ 0 \\ \vdots \\ 0 \end{pmatrix}
 \]
 
 \end{slide}
 
-\begin{slide}[\slideopts,toc={Plan}]{Reasonable Next Steps}
+\begin{slide}[\slideopts,toc={TransMamba}]{Transformer followed by GRNN with 2x State Expansion}
+\myFigureToWidth{transmamba}{\twidth}{TransMamba}
+\end{slide}
+
+\begin{slide}[\slideopts,toc={Plan}]{Next Steps}
   \vspace{-1em}
   \begin{itemize}
-    \mpitem Try to improve \textbf{Mamba}[-2] on small synthetic datasets testing \emph{memory}
+    \mpitem Try to improve [Trans]\textbf{Mamba}[-2] on small synthetic datasets testing \emph{memory}
     \begin{itemize}
       \mpitem Vocabulary embeddings trained to the unit hypersphere (\eg, \tx{word2sphere})
       \mpitem Memory \emph{duration} and \emph{reset} functions separately trained and implemented
@@ -755,7 +760,7 @@ model-space regions, etc.
       \mpitem Adapted Andrej Karpathy's \tx{makemore} code, adding Mamba and new benchmarks
       \mpitem Four papers started
     \end{itemize}
-    \mpitem Feel free to take on any of these so I don't have to! (And LMK, please)
+    \mpitem Feel free to take over any of these! (and LMK so I can do something else)
   \end{itemize}
 \end{slide}
 
