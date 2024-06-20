@@ -18,3 +18,10 @@ keyeps eps/$(KEY).eps: key/$(KEY).key Makefile
 clean::
 	-/bin/rm -f $(NAME).l2h
 	-/bin/rm -f $(NAME).ps
+
+# ho means "HTML open" already:
+remote rem handout hout: $(NAME).pdf
+	/bin/cp -p $(NAME).pdf $(NAME)-ho.pdf
+
+local presentation pres: $(NAME).pdf
+	/bin/cp -p $(NAME).pdf $(NAME)-presentation.pdf

@@ -26,8 +26,8 @@
 % Uses package etoolbox for \newtoggle et al:
 \usepackage{etoolbox} % for \newtoggle et al
 \newtoggle{local}
-\toggletrue{local}
-%\togglefalse{local}
+%\toggletrue{local}
+\togglefalse{local}
 \input localremote.tex
 
 \date{\theDate}
@@ -508,8 +508,8 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
 
 \emph{Separately learnable FIR coefficient matrices} $\dv_k[\xv(n)], \cv_j[\xv(n-j),k]$, depending on
   \begin{enumerate}
-    \mpitem input \emph{position} $j$ in the input sequence (``context buffer'' or ``expanded state'' + [W]RoPE),
-    \mpitem input \emph{vector} $\xv(n-j)$,\; $j=0,1,2,\dots,M$,
+    \mpitem input \emph{position} $j$ in the input sequence (``context buffer'' or ``expanded state'' + [W]RoPE)
+    \mpitem input \emph{vector} $\xv(n-j)$,\; $j=0,1,2,\dots,M$
     \mpitem \emph{output-position} $k$ being computed,\; $k=0,1,2,\dots,M$ ($M+1$ outputs)
   \end{enumerate}
 
@@ -735,7 +735,7 @@ model-space regions, etc.
 
 \end{slide}
 
-\begin{slide}[\slideopts,toc={TransMamba}]{Transformer followed by GRNN with 2x State Expansion}
+\begin{slide}[\slideopts,toc={TransMamba}]{Transformer followed by GRNN with 2x State Expansion (like Mamba)}
 \myFigureToWidth{transmamba}{\twidth}{TransMamba}
 \end{slide}
 
