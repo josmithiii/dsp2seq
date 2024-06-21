@@ -390,7 +390,7 @@ Output gating allows network to be ``bypassed'' when not helpful.
 \begin{slide}[\slideopts,toc={Perceptrons}]{Detecting Multiple Vectors in Parallel}
 \maybepause
 \vspace{1em}
-\textbf{Idea:} Detect multiple memory vectors in parallel using an array of \emph{``Perceptrons''}
+\textbf{Idea:} Detect multiple memory vectors in \emph{parallel} using an array of \emph{``Perceptrons''}
 %\emph{``Multi-Layer Perceptron'' (MLP)}
 \begin{itemize}
   \mpitem Each Perceptron detects one or more memory vectors similar to its weight vectors
@@ -506,7 +506,7 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
 
 \vspace{-1em}
 
-\emph{Separately learnable FIR coefficient matrices} $\dv_k[\xv(n)], \cv_j[\xv(n-j),k]$, depending on
+\emph{Separately learnable FIR coefficient matrices} $\dv_k[\xv(n)], \cv_j[\xv(n-j),k]$, depending on:
   \begin{enumerate}
     \mpitem input \emph{position} $j$ in the input sequence (``context buffer'' or ``expanded state'' + [W]RoPE)
     \mpitem input \emph{vector} $\xv(n-j)$,\; $j=0,1,2,\dots,M$
@@ -614,7 +614,7 @@ $\Rightarrow$ relevance of input $j$ to output $k$ in attention-head $l$ becomes
 \cv_{kj}\xv_j = (Q_k^T \xv_j)\xv_j \;\longrightarrow\; \cv_{lkj}\xv_{lj} = \left[Q_{lk}^T(\xv_k) K_{lj}(\xv_{j})\right]V_{lj}(\xv_j)
 \]
 where $Q_{lk}$ (``query''), $K_{lj}$ (``key''), and $V_{lj}$
-(``value'') vectors are learned down-projections of the input $\xv_j$
+(``value'') vectors are learned \emph{down-projections} of the input $\xv_j$
 for each attention-head $l$ and for all sequence indices $j$ and $k$
 in the context buffer (``Transformer'')
 
