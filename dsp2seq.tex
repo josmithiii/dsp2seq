@@ -454,7 +454,13 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
   \Delta_n = \funcalign{\frac{\pi n}{L}}{n=0,1,2,\ldots,L-1}{%
     \pi + \frac{\pi n}{n+1}}{n=L,L+1,L+2,\ldots}
   \]
-  where $L$ is now the \emph{typical} sequence length (giving it more ``space'' in recall)
+  where $L$ is now the \emph{typical} sequence length (giving it more
+  ``space'' in recall)
+%
+  \mpitem As vectors recede into the past, dot-products among them
+  \emph{increase} due to the compressive time warping. To compensate
+  for this, a forgetting factor can be used, \ie, $\hv_a(n) = \rho_n
+  e^{j\Delta_n}\hv(n)$ for some choice of $\rho_n$.
 \end{itemize}
 \end{slide}
 
