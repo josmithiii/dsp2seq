@@ -464,6 +464,23 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
 \end{itemize}
 \end{slide}
 
+\begin{slide}[\slideopts,toc={Compressed Time}]{Compressed Time Retrieval}
+
+\begin{itemize}
+  \mpitem Recall that a vector $\wv$ is detected in the vector memory $\hv$ by the inner product $\wv^T\xv
+  exceeding some detection threshold $b$, \ie $\wv^T\xv > b$
+  \mpitem The threshold $b$ can be lowered to capture a wider range of similar vectors
+  \mpitem The captured vectors lie in a cone at angle $\theta$ centered on the vector $\wv$,
+  and $\cos(\theta)=b$
+  \mpitem In WRoPE, the angular rotation decreases as $1/t$ or the like
+  \mpitem ...
+\end{itemize}
+
+This causes inner products to increase as vectors get squeezed together.
+
+
+\end{slide}
+
 \begin{slide}[\slideopts,toc={Reservations}]{Reserving Angular Dimensions}
 
   \vspace{-1em}
