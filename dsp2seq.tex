@@ -456,7 +456,25 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
   \]
   where $L$ is now the \emph{typical} sequence length (giving it more
   ``space'' in recall)
-%
+\end{itemize}
+\end{slide}
+
+\begin{slide}[\slideopts,toc={}]{Searching a Time Range}
+
+\vspace{-1em}
+
+\begin{itemize}
+  \mpitem Reserving complex angle for positional encoding $Leftrightarrow$ \emph{real} vocabulary
+          embedding vectors
+  \mpitem Downstream weights and biases must be \emph{complex}
+  \mpitem Complex angle discarded by absolute value when no longer needed
+  \mpitem Query vector for a vocabulary vector (``token'') $\wv$ between $n_1$ to $n_2$ is
+   \[
+   \qv = \sum_{n=n_1}^{n_2}e^{jn \Delta}\wv
+   = \wv \frac{e^{j(n_2+1)\Delta} - e^{jn_1\Delta}}{e^{j\Delta}-1}
+   ...
+   \]
+
   \mpitem As vectors recede into the past, dot-products among them
   \emph{increase} due to the compressive time warping. To compensate
   for this, a forgetting factor can be used, \ie, $\hv_a(n) = \rho_n
@@ -475,7 +493,7 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
 %    \mpitem \emph{Augment the space with new angular dimensions:}
 %    \begin{enumerate}
       \mpitem RoPE: Effectively reserves \emph{complex angle:} $\hv_a(n) = e^{j\Delta}\hv(n)$\\
-      		    (data size doubled: $\xv \to (\xv,\zv)$)
+	(data size doubled: $\xv \to (\xv,\zv)$) --- the zero imaginary part reserves complex angle for [W]RoPE
       \mpitem Use \emph{quaternions} for two more angles $\Rightarrow$ data size quadrupled: $\xv \to (\xv,\zv,\zv,\zv)$\\
       % https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
       $\hv_a(n) = \qb\hv(n)$, where, from \htmladdnormallink{Wikipedia}{https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation}:\\
