@@ -464,29 +464,31 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
 \vspace{-1em}
 
 \begin{itemize}
-  \mpitem Reserving complex angle for positional encoding $Leftrightarrow$ \emph{real} vocabulary
+  \mpitem Reserving complex angle for positional encoding $\Leftrightarrow$ \emph{real} vocabulary
           embedding vectors
   \mpitem Downstream weights and biases must be \emph{complex}
   \mpitem Complex angle discarded by absolute value when no longer needed
-  \mpitem Query vector for a vocabulary vector (``token'') $\wv$ between $n_1$ to $n_2$ is
+  \mpitem Exact orthogonality is obtained for each of the $L$ RoPE time-steps when there is 
+  no amplitude decay as in normal RNNs, \ie, $e^{jn\Delta}\xv(n)\perp e^{jm\Delta}\xv(n) \forall n\ne m$
+  \mpitem Query vector for a vocabulary vector (``token'') $\wv$ any time between $n_1$ to $n_2$ is
    \[
-   \qv = \sum_{n=n_1}^{n_2}e^{jn \Delta}\wv
-   = \wv \frac{e^{j(n_2+1)\Delta} - e^{jn_1\Delta}}{e^{j\Delta}-1}
-   ...
+   \qv \eqsp \sum_{n=n_1}^{n_2}e^{jn \Delta}\wv
+   \eqsp \wv \frac{e^{j(n_2+1)\Delta} - e^{jn_1\Delta}}{e^{j\Delta}-1}
+   \eqsp \wv\, e^{j\theta_{12}}\frac{\sin\left(\frac{n_2-n_1+1}{2}\Delta\right)}{\sin(\Delta/2)}
    \]
-
-  \mpitem As vectors recede into the past, dot-products among them
-  \emph{increase} due to the compressive time warping. To compensate
-  for this, a forgetting factor can be used, \ie, $\hv_a(n) = \rho_n
-  e^{j\Delta_n}\hv(n)$ for some choice of $\rho_n$.
+  \mpitem As vectors recede into the past, the \emph{width} of such a
+  query vector \emph{shrinks}, causing dot-products among vectors in the group to
+  \emph{increase} % due to the compressive time warping
+  \mpitem To compensate, a forgetting factor can be used, \ie, $\hv_a(n) = \rho_n
+  e^{j\Delta_n}\hv(n)$ for some $\rho_n$
 \end{itemize}
 \end{slide}
 
 \begin{slide}[\slideopts,toc={Compressed Time}]{Compressed Time Retrieval}
 
 \begin{itemize}
-  \mpitem Recall that a vector $\wv$ is detected in the vector memory $\hv$ by the inner product $\wv^T\xv
-  exceeding some detection threshold $b$, \ie $\wv^T\xv > b$
+  \mpitem Recall that a vector $\wv$ is detected in the vector memory $\hv$ by the inner product $\wv^T\xv$
+  exceeding some detection threshold $b$, \ie, $\wv^T\xv > b$
   \mpitem The threshold $b$ can be lowered to capture a wider range of similar vectors
   \mpitem The captured vectors lie in a cone at angle $\theta$ centered on the vector $\wv$,
   and $\cos(\theta)=b$
