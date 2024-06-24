@@ -15,6 +15,10 @@ keyeps eps/$(KEY).eps: key/$(KEY).key Makefile
 	-echo 'OR:'
 	pdf2ps key/$(KEY).pdf > eps/$(KEY).eps
 
+WEBP = cartoon-mamba-t
+webpeps eps/$(WEBP).eps: webp/$(WEBP).webp Makefile
+	magick webp/$(WEBP).webp eps/$(WEBP).eps
+
 clean::
 	-/bin/rm -f $(NAME).l2h
 	-/bin/rm -f $(NAME).ps
