@@ -160,7 +160,7 @@ since $E[a_i b_j]=0$ for $i \ne j$, $E[a_i^2] = E[b_i]^2 = 1/N$, and $\ab$ and $
 \maybepause
 \textbf{Suggestions:}
 \begin{itemize}
-\mpitem \emph{Initialize biases larger than $1/N$}
+\mpitem \emph{Initialize biases larger than $1/N$} or close to that
 \mpitem \emph{Divide the sum of $M$ vectors by $\sqrt{M}$:}
 \begin{itemize}
   \item ``power normalization''
@@ -170,6 +170,7 @@ since $E[a_i b_j]=0$ for $i \ne j$, $E[a_i^2] = E[b_i]^2 = 1/N$, and $\ab$ and $
 \end{itemize}
 \mpitem Apply \tx{RMSNorm} when \emph{training} the initial \emph{vocabulary embedding} (``\tx{word2sphere}'')
 \mpitem Set the \emph{model dimension} just sufficient for the \emph{layer width} at each level
+\mpitem Caveat: We are only considering \emph{one mechanism} here --- \emph{others are definitely going on}
 \end{itemize}
 % Note to self: embeddings have semantic proximity while feature maps may not
 
@@ -269,7 +270,7 @@ since $E[a_i b_j]=0$ for $i \ne j$, $E[a_i^2] = E[b_i]^2 = 1/N$, and $\ab$ and $
 \vspace{-1em}
 \myFigureToWidth{integrator}{0.6\twidth}{}
 \vspace{-1em}
-\myFigureToWidth{ginaSphere1}{0.5\twidth}{}
+\myFigureToWidth{ginaSphere1}{0.5\twidth}{MidJourney}
 %\myTwoFiguresToWidth{integrator}{ginaSphere1}{0.5\twidth}{Vector summer}{MidJourney depiction for $N=3$}{}
 \end{slide}
 
@@ -469,18 +470,19 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
   \mpitem Downstream weights and biases must be \emph{complex}
   \mpitem Complex angle discarded by absolute value when no longer needed
   \mpitem Exact orthogonality is obtained for each of the $L$ RoPE time-steps when there is 
-  no amplitude decay as in normal RNNs, \ie, $e^{jn\Delta}\xv(n)\perp e^{jm\Delta}\xv(n) \forall n\ne m$
-  \mpitem Query vector for a vocabulary vector (``token'') $\wv$ any time between $n_1$ to $n_2$ is
+  no amplitude decay as in normal RNNs, \ie, $e^{jn\Delta}\xv(n)\perp e^{jm\Delta}\xv(n)\, \forall n\ne m$
+  \mpitem RoPE query vector for a vocabulary vector (``token'') $\wv$ any time between $n_1$ to $n_2$ is
    \[
    \qv \eqsp \sum_{n=n_1}^{n_2}e^{jn \Delta}\wv
    \eqsp \wv \frac{e^{j(n_2+1)\Delta} - e^{jn_1\Delta}}{e^{j\Delta}-1}
    \eqsp \wv\, e^{j\theta_{12}}\frac{\sin\left(\frac{n_2-n_1+1}{2}\Delta\right)}{\sin(\Delta/2)}
    \]
-  \mpitem As vectors recede into the past, the \emph{width} of such a
-  query vector \emph{shrinks}, causing dot-products among vectors in the group to
-  \emph{increase} % due to the compressive time warping
+  \mpitem In WRoPE, as vectors recede into the past, the \emph{angular width} of such a
+  query vector \emph{shrinks} due to time-warping, causing dot-products among vectors in the group to
+  \emph{increase}, making them look closer together in time
   \mpitem To compensate, a forgetting factor can be used, \ie, $\hv_a(n) = \rho_n
   e^{j\Delta_n}\hv(n)$ for some $\rho_n$
+  % \mpitem [Exact calculation of $\rho_n$ for $\Delta_n = \Delta_0/(1+n)$]
 \end{itemize}
 \end{slide}
 
@@ -492,11 +494,11 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
   \mpitem The threshold $b$ can be lowered to capture a wider range of similar vectors
   \mpitem The captured vectors lie in a cone at angle $\theta$ centered on the vector $\wv$,
   and $\cos(\theta)=b$
-  \mpitem In WRoPE, the angular rotation decreases as $1/t$ or the like
+  \mpitem In WRoPE, the angular rotation decreases as $1/n$ or the like
   \mpitem ...
 \end{itemize}
 
-This causes inner products to increase as vectors get squeezed together.
+This causes inner products to increase as vectors get squeezed together along the complex-angle arc.
 
 
 \end{slide}
@@ -512,16 +514,20 @@ This causes inner products to increase as vectors get squeezed together.
 %    \mpitem \emph{Augment the space with new angular dimensions:}
 %    \begin{enumerate}
       \mpitem RoPE: Effectively reserves \emph{complex angle:} $\hv_a(n) = e^{j\Delta}\hv(n)$\\
-	(data size doubled: $\xv \to (\xv,\zv)$) --- the zero imaginary part reserves complex angle for [W]RoPE
-      \mpitem Use \emph{quaternions} for two more angles $\Rightarrow$ data size quadrupled: $\xv \to (\xv,\zv,\zv,\zv)$\\
-      % https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
-      $\hv_a(n) = \qb\hv(n)$, where, from \htmladdnormallink{Wikipedia}{https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation}:\\
-      $
-      % \displaystyle
-      \qb = e^{{\frac {\Delta}{2}}{(\av_x\ib +\av_y\jb +\av_z\kb )}}
-      = \cos {\frac {\Delta }{2}}+(\av_x\ib +\av_y\jb + \av_z\kb )\sin {\frac {\Delta }{2}}
-      = \cos {\frac {\Delta }{2}}+\av\sin {\frac {\Delta }{2}}
-      $
+      (data size doubled: $\xv \to (\xv,\zv)$)
+      \mpitem A zero imaginary part in the vocabulary embedding reserves complex angle % for [W]RoPE
+      \mpitem \emph{Quaternions} give two more angles
+      		$\Leftrightarrow$ embedding size quadrupled: $\xv \to (\xv,\zv,\zv,\zv)$\\
+      \begin{itemize}
+        \mpitem $\hv_a(n) = \qb\,\hv(n)$, where, from
+        \htmladdnormallink{Wikipedia}{https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation}:\\
+        $
+        % \displaystyle
+        \qb = e^{{\frac {\Delta}{2}}{(\av_x\ib +\av_y\jb +\av_z\kb )}}
+        = \cos {\frac {\Delta }{2}}+(\av_x\ib +\av_y\jb + \av_z\kb )\sin {\frac {\Delta }{2}}
+        = \cos {\frac {\Delta }{2}}+\av\sin {\frac {\Delta }{2}}
+        $
+      \end{itemize}
       \mpitem See the Cayley-Dickson Construction for $2^k-1$ angles, $k=1,2,3,\ldots$
       \mpitem Trivial in \emph{polar coordinates} (``write-protect'' reserved dimensions during gradient step),\\
       but then back-propagation must be rewritten for polar coordinates
@@ -779,7 +785,10 @@ model-space regions, etc.
 \end{slide}
 
 \begin{slide}[\slideopts,toc={TransMamba}]{Transformer followed by GRNN with 2x State Expansion (like Mamba)}
+\vspace{-1.6em}
 \myFigureToWidth{transmamba}{\twidth}{TransMamba}
+\vspace{-2em}
+\myFigureToWidth{cartoon-mamba-t}{0.8in}{}
 \end{slide}
 
 \begin{slide}[\slideopts,toc={Plan}]{Next Steps}
