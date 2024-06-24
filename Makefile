@@ -1,6 +1,6 @@
 # See also /k/l/stdpreshdr.tex
 NAME = dsp2seq
-OTHER_DEPENDS = localremote.tex courses-overview.tex fig/*.fig eps/*.eps ../latex/*.tex ../inputs/*.sty
+OTHER_DEPENDS = abstract.tex localremote.tex courses-overview.tex fig/*.fig eps/*.eps ../latex/*.tex ../inputs/*.sty
 #OTHER_GOODIES = 
 OTHER_PRODUCTS = $(NAME)_2up.pdf earth1.ps
 OTHER_CLEANS = $(NAME).bm $(NAME).vrb $(NAME).aux $(NAME).toc $(NAME).idx $(NAME).ilg $(NAME).ind $(NAME).bbl .LATEX-*-TIMESTAMP .BIBTEX-TIMESTAMP $(NAME).nav $(NAME).snm $(NAME).eps

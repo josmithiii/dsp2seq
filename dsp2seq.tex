@@ -46,6 +46,8 @@
 
 \maketitle
 
+\input abstract.tex
+
 \section[\sectopts]{Background}
 
 \begin{slide}[\slideopts,toc={Path to CCRMA}]{My Path to
@@ -70,8 +72,6 @@
 
 %\end{document}
 %\endinput
-
-%\input abstract.tex
 
 \section[\sectopts,toc={Basic Idea}]{Music 320 Project Idea}
 
@@ -477,12 +477,7 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
    \eqsp \wv \frac{e^{j(n_2+1)\Delta} - e^{jn_1\Delta}}{e^{j\Delta}-1}
    \eqsp \wv\, e^{j\theta_{12}}\frac{\sin\left(\frac{n_2-n_1+1}{2}\Delta\right)}{\sin(\Delta/2)}
    \]
-  \mpitem In WRoPE, as vectors recede into the past, the \emph{angular width} of such a
-  query vector \emph{shrinks} due to time-warping, causing dot-products among vectors in the group to
-  \emph{increase}, making them look closer together in time
-  \mpitem To compensate, a forgetting factor can be used, \ie, $\hv_a(n) = \rho_n
-  e^{j\Delta_n}\hv(n)$ for some $\rho_n$
-  % \mpitem [Exact calculation of $\rho_n$ for $\Delta_n = \Delta_0/(1+n)$]
+   \vspace{-1em}
 \end{itemize}
 \end{slide}
 
@@ -499,7 +494,6 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
 \end{itemize}
 
 This causes inner products to increase as vectors get squeezed together along the complex-angle arc.
-
 
 \end{slide}
 
@@ -788,6 +782,7 @@ model-space regions, etc.
 \vspace{-1.6em}
 \myFigureToWidth{transmamba}{\twidth}{TransMamba}
 \vspace{-2em}
+\maybepause
 \myFigureToWidth{cartoon-mamba-t}{0.8in}{}
 \end{slide}
 
