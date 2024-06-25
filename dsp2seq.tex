@@ -121,6 +121,31 @@
 
 \end{slide}
 
+\begin{slide}[\slideopts,toc={}]{Decaying Vector Retrieval by Inner Product}
+
+  RNNs typically have a \emph{forgetting factor} $p<1$.
+
+  Given the sum of vectors
+  \[
+  \yv(n) = \sum_{m=0}^n p^{n-m}\xv(m)
+  \]
+  and a ``query vector'' $\wv = \xv(k)$,\\
+  \maybepause
+  the inner product now gives
+  \[
+  \wv^T\yv(n) \eqsp \sum_{m=0}^n \wv^Tp^{n-m}\xv(m) \;\approx\; p^{n-k}\xv^T(k)\,\xv(k) \eqsp p^{n-k} \;>\; b
+  \]
+  where $b$ is the \emph{detection threshold} for $\xv(k)$, independent of $k$ given $\|\xv(k)\|=1$
+
+  \begin{itemize}
+  \mpitem \emph{Cannot retrieve} when $p^{n-k} < b$, setting an upper limit on $n$
+  \mpitem $p < b^{1/n}$ and $n < \log(b)/\log(p)$
+  \mpitem Lowering $b$ extends the memory range, but allows more false detections due to ``noise''
+  \mpitem ``Noise'' here is ``other random vectors in the sum''
+  \end{itemize}
+
+\end{slide}
+
 %---------------------------------------------------------------------------------------------------
 
 \begin{slide}[\slideopts,toc={Orthogonality}]{Orthogonality in High Dimensions}
@@ -195,6 +220,26 @@ assuming $\wv\perp\yv$ and $\|\wv\|=\|\xv_m\|=1$ for all $m$. Thus,
 %  \mpitem Later it will similarly be the importance of \emph{selective attention}
   \mpitem If $L$ vectors are in the sum, our Perceptron ``bias'' (detection threshold) must be higher than $L/N$
 \end{itemize}
+\end{slide}
+
+\begin{slide}[\slideopts,toc={}]{Orthogonality of Exponentially Decaying Random Sums}
+\vspace{-1em}
+RNNs typically have a \emph{forgetting factor} $p<1$, in which case we have,\\
+defining $\mu=n-m$ and $\lambda=n-l$:
+\beas
+E\left[\left(\wv^T\yv_n\right)^2\right]
+&=& E\left[\left(\sum_{m=0}^n \wv^T\nu^m\xv_m\right)^2\right]
+\eqsp \sum_{l=0}^n\sum_{m=0}^n E \left[ \wv^T\lambda^l\xv_l\nu^m\xv_m^T\wv \right]\\[5pt]
+&=& \sum_{m=0}^n \nu^{2m} E \left[ \wv^T\xv_m\xv_m^T\wv \right]
+\eqsp \sum_{m=0}^n \nu^{2m} E\left[\left(\wv^T\xv_m\right)^2\right]\\[5pt]
+&=& \zbox{\frac{1}{N} \frac{1-\nu^{2(n+1)}}{1-\nu^2}}
+\;\to\; \frac{1}{N} \frac{1}{1-\nu^2}\quad\mbox{(as $n\to\infty$)}
+\eeas
+\begin{itemize}
+  \mpitem For $1/(1-\nu^2) < N$, keep $\nu < \sqrt{(N-1)/N}$
+  \mpitem For $1/(1-\nu^2) < N/2$, keep $\nu < \sqrt{(N-2)/N}$
+\end{itemize}
+and so on.  \emph{This gives us one way to calculate a maximum feedback coefficient in RNNs}
 \end{slide}
 
 \begin{slide}[\slideopts,toc={Model Dimension}]{Model Dimension vs.~Model \& Vocab Size
