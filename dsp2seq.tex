@@ -228,16 +228,16 @@ RNNs typically have a \emph{forgetting factor} $p<1$, in which case we have,\\
 defining $\mu=n-m$ and $\lambda=n-l$:
 \beas
 E\left[\left(\wv^T\yv_n\right)^2\right]
-&=& E\left[\left(\sum_{m=0}^n \wv^T\nu^m\xv_m\right)^2\right]
-\eqsp \sum_{l=0}^n\sum_{m=0}^n E \left[ \wv^T\lambda^l\xv_l\nu^m\xv_m^T\wv \right]\\[5pt]
-&=& \sum_{m=0}^n \nu^{2m} E \left[ \wv^T\xv_m\xv_m^T\wv \right]
-\eqsp \sum_{m=0}^n \nu^{2m} E\left[\left(\wv^T\xv_m\right)^2\right]\\[5pt]
-&=& \zbox{\frac{1}{N} \frac{1-\nu^{2(n+1)}}{1-\nu^2}}
-\;\to\; \frac{1}{N} \frac{1}{1-\nu^2}\quad\mbox{(as $n\to\infty$)}
+&=& E\left[\left(\sum_{m=0}^n \wv^Tp^m\xv_m\right)^2\right]
+\eqsp \sum_{l=0}^n\sum_{m=0}^n E \left[ \wv^T\lambda^l\xv_lp^m\xv_m^T\wv \right]\\[5pt]
+&=& \sum_{m=0}^n p^{2m} E \left[ \wv^T\xv_m\xv_m^T\wv \right]
+\eqsp \sum_{m=0}^n p^{2m} E\left[\left(\wv^T\xv_m\right)^2\right]\\[5pt]
+&=& \zbox{\frac{1}{N} \frac{1-p^{2(n+1)}}{1-p^2}}
+\;\to\; \frac{1}{N} \frac{1}{1-p^2}\quad\mbox{(as $n\to\infty$)}
 \eeas
 \begin{itemize}
-  \mpitem For $1/(1-\nu^2) < N$, keep $\nu < \sqrt{(N-1)/N}$
-  \mpitem For $1/(1-\nu^2) < N/2$, keep $\nu < \sqrt{(N-2)/N}$
+  \mpitem For $1/(1-p^2) < N$, keep $p < \sqrt{(N-1)/N}$
+  \mpitem For $1/(1-p^2) < N/2$, keep $p < \sqrt{(N-2)/N}$
 \end{itemize}
 and so on.  \emph{This gives us one way to calculate a maximum feedback coefficient in RNNs}
 \end{slide}
