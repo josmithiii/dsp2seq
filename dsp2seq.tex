@@ -176,6 +176,27 @@ since $E[a_i b_j]=0$ for $i \ne j$, $E[a_i^2] = E[b_i]^2 = 1/N$, and $\ab$ and $
 
 \end{slide}
 
+\begin{slide}[\slideopts,toc={}]{Orthogonality of Random Sums}
+\vspace{-1em}
+Similarly,
+\beas
+E\left[\left(\wv^T\yv_n\right)^2\right]
+&=& E\left[\left(\sum_{m=0}^n \wv^T\xv_m\right)^2\right]
+\eqsp \sum_{l=0}^n\sum_{m=0}^n E \left[ \wv^T\xv_l\xv_m^T\wv \right]\\[5pt]
+&=& \sum_{m=0}^n E \left[ \wv^T\xv_m\xv_m^T\wv \right]
+\eqsp \sum_{m=0}^n E\left[\left(\wv^T\xv_m\right)^2\right]
+\eqsp \zbox{\frac{n}{N}}
+\eeas
+assuming $\wv\perp\yv$ and $\|\wv\|=\|\xv_m\|=1$ for all $m$. Thus,
+\emph{retrieval becomes unreliable when the number of summed vectors $n$ reaches the model dimension $N$.}
+\begin{itemize}
+  \mpitem $N$ is of course the number of exactly orthogonal vectors possible in $N$ dimensions
+%  \mpitem We the importance of input and feedback \emph{gating}
+%  \mpitem Later it will similarly be the importance of \emph{selective attention}
+  \mpitem If $L$ vectors are in the sum, our Perceptron ``bias'' (detection threshold) must be higher than $L/N$
+\end{itemize}
+\end{slide}
+
 \begin{slide}[\slideopts,toc={Model Dimension}]{Model Dimension vs.~Model \& Vocab Size
 (\htmladdnormallink{ChatGPT-4o}{https://chatgpt.com/share/76499bbc-95f7-48bf-8646-19786c1961f4}, not checked)}
 
@@ -365,7 +386,7 @@ Output gating allows network to be ``bypassed'' when not helpful.
 
 \emph{``Structured State-Space Models''} (SSM) look like this (\eg, Mamba)
 \begin{itemize}
-  \mpitem Increased storage capacity
+  \mpitem Increased storage capacity (more vectors can be summed and later retrieved)
   \mpitem Feedback matrix $\Amtx$ typically \emph{diagonal} since 2022 (see ``S4D'')\\
   	  \maybepause $\Rightarrow$ Parallel bank of vector one-poles (\emph{``linearly'' gated, state-expanded RNNs})
   \mpitem In Mamba-2, $\Amtx = p\,\Imtx$, \ie, \emph{shared memory duration} across expanded state
@@ -783,7 +804,7 @@ model-space regions, etc.
 \myFigureToWidth{transmamba}{\twidth}{TransMamba}
 \vspace{-2em}
 \maybepause
-\myFigureToWidth{cartoon-mamba-t}{0.8in}{}
+\myFigureToWidth{cartoon-mamba-t}{0.9in}{}
 \end{slide}
 
 \begin{slide}[\slideopts,toc={Plan}]{Next Steps}
@@ -793,7 +814,7 @@ model-space regions, etc.
     \begin{itemize}
       \mpitem Vocabulary embeddings trained to the unit hypersphere (\eg, \tx{word2sphere})
       \mpitem Memory \emph{duration} and \emph{reset} functions separately trained and implemented
-      \mpitem Initial \emph{biases} at $\zv$ versus $1/N$ or larger
+      \mpitem Initial \emph{biases} at $\zv$ versus $L/N$ etc.
       \mpitem Do \emph{power normalization} in place of \tx{RMSNorm} where possible (efficiency)
       \mpitem Try \emph{power normalized attention} in place of $1/\sqrt{d_h}$ and \tx{Softmax} (efficiency)
       \mpitem Adapt \emph{model dimension} to \emph{layer width} at each level (efficiency)
