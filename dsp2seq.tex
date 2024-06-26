@@ -26,8 +26,8 @@
 % Uses package etoolbox for \newtoggle et al:
 \usepackage{etoolbox} % for \newtoggle et al
 \newtoggle{local}
-%\toggletrue{local}
-\togglefalse{local}
+\toggletrue{local}
+%\togglefalse{local}
 \input localremote.tex
 
 \date{\theDate}
@@ -135,13 +135,13 @@
   \[
   \wv^T\yv(n) \eqsp \sum_{m=0}^n \wv^Tp^{n-m}\xv(m) \;\approx\; p^{n-k}\xv^T(k)\,\xv(k) \eqsp p^{n-k} \;>\; b
   \]
-  where $b$ is the \emph{detection threshold} for $\xv(k)$, independent of $k$ given $\|\xv(k)\|=1$
+  where $b$ is the detection threshold for $\xv(k)$, independent of $k$ since $\|\xv(k)\|=1$
 
   \begin{itemize}
   \mpitem \emph{Cannot retrieve} when $p^{n-k} < b$, setting an upper limit on $n$
-  \mpitem $p < b^{1/n}$ and $n < \log(b)/\log(p)$
-  \mpitem Lowering $b$ extends the memory range, but allows more false detections due to ``noise''
-  \mpitem ``Noise'' here is ``other random vectors in the sum''
+  \mpitem We need $p > b^{1/n}$ or $n_{\mbox{max}} \le \log(b)/\log(p)$
+  \mpitem Lowering $b$ extends the memory range, but admits more false detections due to ``interference''
+  \mpitem ``Interference'' here means ``other vectors in the sum''
   \end{itemize}
 
 \end{slide}
@@ -151,21 +151,24 @@
 \begin{slide}[\slideopts,toc={Orthogonality}]{Orthogonality in High Dimensions}
 \vspace{-1em}
 % \input orthogonality.tex
-Let $\ab\in\reals^N$ and $\bb\in\reals^N$ be two normally random, real, unit-norm vectors in $N$ dimensions.
-$\|\ab\|=\|\bb\|=1$.
+Let $\ab\in\reals^N$ and $\bb\in\reals^N$ be two normally random, real, unit-norm vectors in $N$ dimensions,
+with $\|\ab\|=\|\bb\|=1$
 
-The dot-product of
+\maybepause
+The dot-product (inner product) of
 $\ab^T=[a_1,a_2,\ldots,a_N]$ and
 $\bb^T=[b_1,b_2,\ldots,b_N]$ is defined as
 \[
 \ab \cdot \bb = \ab^T\bb = \sum_{i=1}^{N} a_i b_i.
 \]
 
+\maybepause
 The squared dot product is
 \[
 (\ab \cdot \bb)^2 = \left(\sum_{i=1}^{N} a_i b_i\right)^2 = \sum_{i=1}^{N} \sum_{j=1}^{N} a_i a_j b_i b_j.
 \]
 
+\maybepause
 Expected value (average):
 \[
 E\left[(\ab \cdot \bb)^2\right]
@@ -185,7 +188,7 @@ since $E[a_i b_j]=0$ for $i \ne j$, $E[a_i^2] = E[b_i]^2 = 1/N$, and $\ab$ and $
 \maybepause
 \textbf{Suggestions:}
 \begin{itemize}
-\mpitem \emph{Initialize biases larger than $1/N$} or close to that
+\mpitem \emph{Initialize biases (detection thresholds) larger than $1/N$}
 \mpitem \emph{Divide the sum of $M$ vectors by $\sqrt{M}$:}
 \begin{itemize}
   \item ``power normalization''
@@ -212,13 +215,16 @@ E\left[\left(\wv^T\yv_n\right)^2\right]
 \eqsp \sum_{m=0}^n E\left[\left(\wv^T\xv_m\right)^2\right]
 \eqsp \zbox{\frac{n}{N}}
 \eeas
-assuming $\wv\perp\yv$ and $\|\wv\|=\|\xv_m\|=1$ for all $m$. Thus,
-\emph{retrieval becomes unreliable when the number of summed vectors $n$ reaches the model dimension $N$.}
+assuming $\wv\notin\yv$ and $\|\wv\|=\|\xv_m\|=1$ for all $m$. Thus,
+\emph{retrieval becomes unreliable when the number of summed vectors $n$ nears the model dimension $N$.}
 \begin{itemize}
   \mpitem $N$ is of course the number of exactly orthogonal vectors possible in $N$ dimensions
 %  \mpitem We the importance of input and feedback \emph{gating}
 %  \mpitem Later it will similarly be the importance of \emph{selective attention}
-  \mpitem If $L$ vectors are in the sum, our Perceptron ``bias'' (detection threshold) must be higher than $L/N$
+  \mpitem If $L$ vectors are in the sum, our Perceptron ``bias'' (detection threshold)
+  should be higher than $L/N$ when there are $L$ vectors in the memory
+  \mpitem \textbf{Suggestion:} \emph{Keep the number of active vectors
+  in the memory well below the model dimension $N$}
 \end{itemize}
 \end{slide}
 
@@ -239,7 +245,7 @@ E\left[\left(\wv^T\yv_n\right)^2\right]
   \mpitem For $1/(1-p^2) < N$, keep $p < \sqrt{(N-1)/N}$
   \mpitem For $1/(1-p^2) < N/2$, keep $p < \sqrt{(N-2)/N}$
 \end{itemize}
-and so on.  \emph{This gives us one way to calculate a maximum feedback coefficient in RNNs}
+and so on.  \emph{This gives us one way to calculate a maximum feedback coefficient $p$ in RNNs}
 \end{slide}
 
 \begin{slide}[\slideopts,toc={Model Dimension}]{Model Dimension vs.~Model \& Vocab Size
@@ -256,62 +262,62 @@ and so on.  \emph{This gives us one way to calculate a maximum feedback coeffici
 \begin{itemize}
     \item \textbf{Original Transformer}
     \begin{itemize}
-      \item $d = 512$ ($65$ M)
+      \item $N = 512$ (Model Size $65$ M)
     \end{itemize}
 
     \item \textbf{BERT}
     \begin{itemize}
-        \item $d = 768$ ($110$ M, $30$ K)
-        \item $d = 1024$ ($340$ M, $30$ K)
+        \item $N = 768$ ($110$ M, $30$ K)
+        \item $N = 1024$ ($340$ M, $30$ K)
     \end{itemize}
 
     \item \textbf{GPT-2}
     \begin{itemize}
-        \item $d = 768$ ($124$ M, $50$ K)
-        \item $d = 1024$ ($345$ M, $50$ K)
-        \item $d = 1280$ ($774$ M, $50$ K)
-        \item $d = 1600$ ($1.5$ B, $50$ K)
+        \item $N = 768$ ($124$ M, $50$ K)
+        \item $N = 1024$ ($345$ M, $50$ K)
+        \item $N = 1280$ ($774$ M, $50$ K)
+        \item $N = 1600$ ($1.5$ B, $50$ K)
     \end{itemize}
 
     \item \textbf{GPT-3}
     \begin{itemize}
-        \item $d = 2048$ ($2.7$ B, $50$ K)
-        \item $d = 4096$ ($6.7$ B, $50$ K)
-        \item $d = 6144$ ($13$ B, $50$ K)
-        \item $d = 12288$ ($175$ B, $50$ K)
+        \item $N = 2048$ ($2.7$ B, $50$ K)
+        \item $N = 4096$ ($6.7$ B, $50$ K)
+        \item $N = 6144$ ($13$ B, $50$ K)
+        \item $N = 12288$ ($175$ B, $50$ K)
     \end{itemize}
 
     \item \textbf{T5}
     \begin{itemize}
-        \item $d = 512$ ($60$ M, $32$ K)
-        \item $d = 768$ ($220$ M, $32$ K)
-        \item $d = 1024$ ($770$ M, $32$ K)
-        \item $d = 1024$ ($3$ B, $32$ K)
-        \item $d = 1024$ ($11$ B, $32$ K)
+        \item $N = 512$ ($60$ M, $32$ K)
+        \item $N = 768$ ($220$ M, $32$ K)
+        \item $N = 1024$ ($770$ M, $32$ K)
+        \item $N = 1024$ ($3$ B, $32$ K)
+        \item $N = 1024$ ($11$ B, $32$ K)
     \end{itemize}
 
     %% \item \textbf{RoBERTa}
     %% \begin{itemize}
-    %%     \item $d = 768$ ($125$ M, $50$ K)
-    %%     \item $d = 1024$ ($355$ M, $50$ K)
+    %%     \item $N = 768$ ($125$ M, $50$ K)
+    %%     \item $N = 1024$ ($355$ M, $50$ K)
     %% \end{itemize}
 
     \item \textbf{ALBERT}
     \begin{itemize}
-        \item $d = 768$ ($12$ M, $30$ K)
-        \item $d = 1024$ ($18$ M, $30$ K)
-        \item $d = 2048$ ($60$ M, $30$ K)
-        \item $d = 4096$ ($235$ M, $30$ K)
+        \item $N = 768$ ($12$ M, $30$ K)
+        \item $N = 1024$ ($18$ M, $30$ K)
+        \item $N = 2048$ ($60$ M, $30$ K)
+        \item $N = 4096$ ($235$ M, $30$ K)
     \end{itemize}
 
     \item \textbf{DistilBERT}
     \begin{itemize}
-        \item $d = 768$ ($66$ M, $30$ K)
+        \item $N = 768$ ($66$ M, $30$ K)
     \end{itemize}
 
     \item \textbf{Megatron-Turing NLG}
     \begin{itemize}
-        \item $d = 20480$ ($530$ B, $50$ K)
+        \item $N = 20480$ ($530$ B, $50$ K)
     \end{itemize}
 
 \end{itemize}
@@ -801,7 +807,6 @@ model-space regions, etc.
 %% \end{wideslidewhite}
 
 \begin{slide}[\slideopts,toc={Unified State Space}]{State Space Unification of Transformers and GRNNs}
-% MambaFormer is taken, so maybe TransMamba?
 \vspace{-1em}
 % State Transition Matrices
 \begin{equation*}
@@ -846,10 +851,12 @@ model-space regions, etc.
 
 \begin{slide}[\slideopts,toc={TransMamba}]{Transformer followed by GRNN with 2x State Expansion (like Mamba)}
 \vspace{-1.6em}
-\myFigureToWidth{transmamba}{\twidth}{TransMamba}
+\myFigureToWidth{transmamba}{\twidth}{TransMamba} % MambaFormer is taken
 \vspace{-2em}
 \maybepause
-\myFigureToWidth{cartoon-mamba-t}{0.9in}{}
+\myFigureToWidth{cartoon-mamba-t}{0.9in}{} % And now we don't want MambaFormer after all - this is great!
+% Prompt 1: "Friendly cartoon Mamba snake" (cute but boring)
+% Prompt 2: "Make it trans" (over the top better!)
 \end{slide}
 
 \begin{slide}[\slideopts,toc={Plan}]{Next Steps}
