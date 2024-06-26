@@ -733,6 +733,8 @@ where $Q_{lk}$ (``query''), $K_{lj}$ (``key''), and $V_{lj}$
 for each attention-head $l$ and for all sequence indices $j$ and $k$
 in the context buffer (``Transformer'')
 
+%%   \mpitem Filter coefficients computed from input as before, but smaller
+
 %% \[
 %% $(Q_k^T K_j)V_j$,
 %% \]
@@ -744,6 +746,54 @@ Other useful generalizations can be imagined for these learned (Q,K,V)
 vectors, such as grouping grammatical functions, creating new
 model-space regions, etc.
 
+\end{slide}
+
+\begin{slide}[\slideopts,toc={Language}]{How Many Vectors in a Sum are Needed for Language?}
+
+\maybepause
+\vspace{-1em}
+
+It is well known that \emph{phone numbers} were limited to \emph{7
+digits} due to \emph{short-term memory limits} in typical
+humans. \maybepause Can \emph{language} be parsed using 7 vectors
+or less at each level?
+
+\maybepause
+
+\textbf{Layers:}
+\vspace{-1em}
+\begin{multicols}{2}
+\begin{enumerate}
+ \mpitem Base vocabulary = characters\\
+  (26 for English)
+  \mpitem Syllable in 7 chars or less\\
+  (44 syllables in English;\\
+   107 in Int'l Phonetic Alphabet)
+  \mpitem Word in 7 syllables or less
+  \mpitem Noun + 6 or less modifying adjectives 
+  \mpitem Verb + up to 6 adverbs
+  \mpitem Noun phrase
+  \columnbreak
+  \mpitem Direct or indirect object
+  \mpitem Prepositional phrase
+  \mpitem Subject verb [indirect object] object
+  \mpitem Sentence
+  \mpitem Paragraph
+  \mpitem Section
+  \mpitem Chapter
+  \mpitem Book
+ \mpitem Subject Area % $\ldots$
+%  \mpitem $\ldots$
+\end{enumerate}
+\end{multicols}
+\maybepause
+\vspace{-1em}
+Different cortical areas (6 layers each) needed for all these levels.\\
+\maybepause
+\textbf{Complex examples:}
+{\tiny
+\url{https://www.quora.com/In-regards-to-diagramming-sentences-which-one-is-the-most-difficult-youve-ever-come-across}
+}
 \end{slide}
 
 % Relatively weak/obvious points:
@@ -769,23 +819,6 @@ model-space regions, etc.
 %%   during training might help.  Then perhaps there is no need for RMSNorm at the output after summing the skip
 %%   connection.
 %% \end{itemize}
-%% \end{slide}
-
-%% \begin{slide}[\slideopts,toc={Multiple Heads}]{MultiHead Attention}
-
-%% \vspace{-1em}
-
-%% \textbf{Idea:} To enable several independent meaning possibilities, \emph{partition the space}
-
-%% %\myFigureToWidth{one-pole-rnn-seq}{0.6\twidth}{} % {Sequence Modeling with Gated RNNs}
-%% %\vspace{-4em}
-
-%% \begin{itemize}
-%%   \mpitem Each \emph{head} can form an independent sequence model
-%%   \mpitem Filter coefficients computed from input as before, but smaller
-%%   \mpitem Part of the \emph{Transformer} for sequence modeling (attention layer)
-%% \end{itemize}
-
 %% \end{slide}
 
 %% \begin{slide}[\slideopts,toc={Other Features}]{Other ``Obvious'' Features}
