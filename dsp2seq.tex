@@ -140,8 +140,8 @@
   \begin{itemize}
   \mpitem \emph{Cannot retrieve} when $p^{n-k} < b$, setting an upper limit on $n$
   \mpitem We need $p > b^{1/n}$ or $n_{\mbox{max}} \le \log(b)/\log(p)$
-  \mpitem Lowering $b$ extends the memory range, but admits more false detections due to ``interference''
-  \mpitem ``Interference'' here means ``other vectors in the sum''
+  \mpitem Lower $b$ $\Rightarrow$ more memory, but also more false detections from ``interference''\\
+	  (``other vectors in the sum'')
   \end{itemize}
 
 \end{slide}
@@ -221,8 +221,8 @@ assuming $\wv\notin\yv$ and $\|\wv\|=\|\xv_m\|=1$ for all $m$. Thus,
   \mpitem $N$ is of course the number of exactly orthogonal vectors possible in $N$ dimensions
 %  \mpitem We the importance of input and feedback \emph{gating}
 %  \mpitem Later it will similarly be the importance of \emph{selective attention}
-  \mpitem If $L$ vectors are in the sum, our Perceptron ``bias'' (detection threshold)
-  should be higher than $L/N$ when there are $L$ vectors in the memory
+  \mpitem If $L$ vectors are typically in the sum, our Perceptron ``bias'' (detection threshold)
+  should be higher than $L/N$
   \mpitem \textbf{Suggestion:} \emph{Keep the number of active vectors
   in the memory well below the model dimension $N$}
 \end{itemize}
