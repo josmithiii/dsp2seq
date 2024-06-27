@@ -26,8 +26,8 @@
 % Uses package etoolbox for \newtoggle et al:
 \usepackage{etoolbox} % for \newtoggle et al
 \newtoggle{local}
-\toggletrue{local}
-%\togglefalse{local}
+%\toggletrue{local}
+\togglefalse{local}
 \input localremote.tex
 
 \date{\theDate}
@@ -274,6 +274,9 @@ Different cortical areas (6 layers each) needed for this many levels.\\
 {\tiny
 \url{https://www.quora.com/In-regards-to-diagramming-sentences-which-one-is-the-most-difficult-youve-ever-come-across}
 }
+% Jamba block (3/24) goes 4 Mamba layers : Attention : three more Mambas (alternately MoE types)
+% Zamba block (5/24) is 6 Mamba + Skip : Shared Attention : MLP
+% Samba block (6/24) is Mamba : MLP : SlidingWindowAttention : MLP
 \end{slide}
 
 \begin{slide}[\slideopts,toc={}]{Orthogonality of Exponentially Decaying Random Sums}
@@ -892,6 +895,15 @@ model-space regions, etc.
 % Prompt 2: "Make it trans" (over the top better!)
 \end{slide}
 
+\begin{slide}[\slideopts,toc={MambaX}]{From Direct Form I to Direct Form II}
+\vspace{-1.6em}
+\textbf{Idea: Mamba for Short-Term Memory, Transformer for (Finite) Long-Term Memory}
+\myFigureToWidth{mambax}{\twidth}{MambaX}
+\vspace{-2em}
+%\maybepause
+%\myFigureToWidth{cartoon-mambax}{0.9in}{}
+\end{slide}
+
 \begin{slide}[\slideopts,toc={Plan}]{Next Steps}
   \vspace{-1em}
   \begin{itemize}
@@ -947,6 +959,11 @@ model-space regions, etc.
 \begin{slidewhite}[\slideopts,toc={RWKV+}]{RWKV, Eagle, Finch}
 \vspace{-6em}
 \myFigureRotateToWidth{Architectures5}{-90}{\twidth}{}
+\end{slidewhite}
+
+\begin{slidewhite}[\slideopts,toc={Hybrid}]{Jamba, Zamba, \& Samba Hybrid Architectures (Mamba then Attention)}
+\vspace{-6em}
+\myFigureRotateToWidth{JambaZambaSamba}{-90}{\twidth}{}
 \end{slidewhite}
 
 %\begin{slidewhite}[\slideopts,toc={}]{Architectures 6}
