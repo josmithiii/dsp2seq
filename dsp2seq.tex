@@ -198,7 +198,7 @@ since $E[a_i b_j]=0$ for $i \ne j$, $E[a_i^2] = E[b_i]^2 = 1/N$, and $\ab$ and $
 \end{itemize}
 \mpitem Apply \tx{RMSNorm} when \emph{training} the initial \emph{vocabulary embedding} (``\tx{word2sphere}'')
 \mpitem Set the \emph{model dimension} just sufficient for the \emph{layer width} at each level
-\mpitem Caveat: We are only considering \emph{one mechanism} here --- \emph{others are definitely going on}
+\mpitem \textbf{Caveat:} We are only considering \emph{one mechanism} here --- \emph{others are definitely going on}
 \end{itemize}
 % Note to self: embeddings have semantic proximity while feature maps may not
 
@@ -226,6 +226,54 @@ assuming $\wv\notin\yv$ and $\|\wv\|=\|\xv_m\|=1$ for all $m$. Thus,
   \mpitem \textbf{Suggestion:} \emph{Keep the number of active vectors
   in the memory well below the model dimension $N$}
 \end{itemize}
+\end{slide}
+
+\begin{slide}[\slideopts,toc={Language}]{How Many Vectors in a Sum are Needed for Language?}
+
+\maybepause
+\vspace{-1em}
+
+It is well known that \emph{phone numbers} were limited to \emph{7
+digits} due to our \emph{limited short-term memory} for \emph{unrelated}
+objects. \maybepause Can \emph{language} be parsed using 7 vectors or
+less at each level? [Original Transformer paper had 8 attention heads and 6 layers (like neocortex)]
+
+\maybepause
+
+\textbf{Layers (\eg):}
+\vspace{-1em}
+\begin{multicols}{2}
+\begin{enumerate}
+ \mpitem Base vocabulary = characters\\
+  (26 for English)
+  \mpitem Syllable in 7 chars or less\\
+  (44 syllables in English;\\
+   107 in Int'l Phonetic Alphabet)
+  \mpitem Word in 7 syllables or less
+  \mpitem Noun + 6 or less modifying adjectives
+  \mpitem Verb + up to 6 adverbs
+  \mpitem Noun phrase
+  \columnbreak
+  \mpitem Direct or indirect object
+  \mpitem Prepositional phrase
+  \mpitem Subject verb [indirect object] object
+  \mpitem Sentence
+  \mpitem Paragraph
+  \mpitem Section
+  \mpitem Chapter
+  \mpitem Book
+ \mpitem Subject Area % $\ldots$
+%  \mpitem $\ldots$
+\end{enumerate}
+\end{multicols}
+\maybepause
+\vspace{-1em}
+Different cortical areas (6 layers each) needed for this many levels.\\
+\maybepause
+\textbf{Complex examples:}
+{\tiny
+\url{https://www.quora.com/In-regards-to-diagramming-sentences-which-one-is-the-most-difficult-youve-ever-come-across}
+}
 \end{slide}
 
 \begin{slide}[\slideopts,toc={}]{Orthogonality of Exponentially Decaying Random Sums}
@@ -541,7 +589,7 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
           embedding vectors
   \mpitem Downstream weights and biases must be \emph{complex}
   \mpitem Complex angle discarded by absolute value when no longer needed
-  \mpitem Exact orthogonality is obtained for each of the $L$ RoPE time-steps when there is 
+  \mpitem Exact orthogonality is obtained for each of the $L$ RoPE time-steps when there is
   no amplitude decay as in normal RNNs, \ie, $e^{jn\Delta}\xv(n)\perp e^{jm\Delta}\xv(n)\, \forall n\ne m$
   \mpitem RoPE query vector for a vocabulary vector (``token'') $\wv$ any time between $n_1$ to $n_2$ is
    \[
@@ -746,55 +794,6 @@ Other useful generalizations can be imagined for these learned (Q,K,V)
 vectors, such as grouping grammatical functions, creating new
 model-space regions, etc.
 
-\end{slide}
-
-% Move this to before multi-head attention as a motivation for it?
-\begin{slide}[\slideopts,toc={Language}]{How Many Vectors in a Sum are Needed for Language?}
-
-\maybepause
-\vspace{-1em}
-
-It is well known that \emph{phone numbers} were limited to \emph{7
-digits} due to our \emph{limited short-term memory} for \emph{unrelated}
-objects. \maybepause Can \emph{language} be parsed using 7 vectors or
-less at each level? [Original Transformer paper had 8 attention heads and 6 layers]
-
-\maybepause
-
-\textbf{Layers:}
-\vspace{-1em}
-\begin{multicols}{2}
-\begin{enumerate}
- \mpitem Base vocabulary = characters\\
-  (26 for English)
-  \mpitem Syllable in 7 chars or less\\
-  (44 syllables in English;\\
-   107 in Int'l Phonetic Alphabet)
-  \mpitem Word in 7 syllables or less
-  \mpitem Noun + 6 or less modifying adjectives 
-  \mpitem Verb + up to 6 adverbs
-  \mpitem Noun phrase
-  \columnbreak
-  \mpitem Direct or indirect object
-  \mpitem Prepositional phrase
-  \mpitem Subject verb [indirect object] object
-  \mpitem Sentence
-  \mpitem Paragraph
-  \mpitem Section
-  \mpitem Chapter
-  \mpitem Book
- \mpitem Subject Area % $\ldots$
-%  \mpitem $\ldots$
-\end{enumerate}
-\end{multicols}
-\maybepause
-\vspace{-1em}
-Different cortical areas (6 layers each) needed for all these levels.\\
-\maybepause
-\textbf{Complex examples:}
-{\tiny
-\url{https://www.quora.com/In-regards-to-diagramming-sentences-which-one-is-the-most-difficult-youve-ever-come-across}
-}
 \end{slide}
 
 % Relatively weak/obvious points:
