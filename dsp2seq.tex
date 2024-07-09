@@ -920,6 +920,18 @@ model-space regions, etc.
     \mpitem Indefinitely many fading-memory cells
     \end{itemize}
   \end{multicols}
+  In \htmladdnormallink{``On the Power of Convolution Augmented
+    Transformer'' (CAT)}{https://arxiv.org/pdf/2407.05591}, they found that\\
+  ``the locality of the convolution synergizes with the global view of
+  the attention''.
+  \BIT
+  \mpitem Convolution can ``summarize'' the context window as\\
+  ``salient summary tokens'' for attention
+  \mpitem Summary $(Q, K, V)$ matrices computed as $(X\ast F_i)W_i$, for $i=q,k,v$,\\
+  where $X$ is the input, $F_i$ is a learned filter, and $W_i$ is a learned projection
+  \EIT
+  % They do not cite Infini-Attention
+  % Code will be at https://github.com/umich-sota/CAT
 \end{slide}
 
 \begin{slide}[\slideopts,toc={Plan}]{Next Steps}
