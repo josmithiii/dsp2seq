@@ -279,6 +279,32 @@ Different cortical areas (6 layers each) needed for this many levels.\\
 % Samba block (6/24) is Mamba : MLP : SlidingWindowAttention : MLP
 \end{slide}
 
+\begin{slide}[\slideopts,toc={}]{Pictorial Examples}
+\BIT
+\mpitem 6 dot-patterns on a die
+\mpitem \htmladdnormallink{7 LED segments for numbers}{https://www.opledtw.com/wp-content/uploads/2021/11/7segment_display_arabic_numeral_7段顯示器數字顯示.png}
+\mpitem 4 or fewer strokes to draw a letter
+%\mpitem 10 digits driven by number of fingers
+\EIT
+
+\emph{Hierarchy} used to keep the number of components per concept \emph{small}
+
+\vspace{1em}
+
+\textbf{Suggestions:}
+\BIT
+\mpitem \emph{Ready signal} when symbol is recognized (whole letter, word, phrase, etc.)
+\mpitem \emph{Reset memory} after symbol recognition
+\mpitem Memory can be \emph{small!}
+\EIT
+
+Maybe these signals are happening in the layers already?
+
+% 26 letter characters in the alphabet, but a lot of time is spent learning them, and in ~7 groups:
+%  ABCD, EFG, HIJK, LMNOP, QRST, UV, WX&Y&Z
+% Chinese characters?  https://www.ames.cam.ac.uk/files/introduction_to_chinese_characters.pdf
+\end{slide}
+
 \begin{slide}[\slideopts,toc={}]{Orthogonality of Exponentially Decaying Random Sums}
 \vspace{-1em}
 RNNs typically have a \emph{forgetting factor} $p<1$, in which case we have,\\
