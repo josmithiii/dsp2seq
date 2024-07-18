@@ -26,8 +26,8 @@
 % Uses package etoolbox for \newtoggle et al:
 \usepackage{etoolbox} % for \newtoggle et al
 \newtoggle{local}
-%\toggletrue{local}
-\togglefalse{local}
+\toggletrue{local}
+%\togglefalse{local}
 \input localremote.tex
 
 \date{\theDate}
@@ -73,14 +73,14 @@
 %\end{document}
 %\endinput
 
-\section[\sectopts,toc={Basic Idea}]{Music 320 Project Idea}
+\section[\sectopts,toc={Basic Idea}]{Music 320 (Signal Processing) Project Idea}
 
 \begin{slide}[\slideopts,toc={One Pole Filter}]{Assignment: Do Something Cool with a \emph{One-Pole Recursive Digital Filter}}
-\vspace{-1em}
+\vspace{-2em}
 \myFigureToWidth{one-pole-jos}{0.5\twidth}{
   One Pole at $z = p$\\[5pt]
-    $y(n) = g\, x(n) + p\, y(n-1)$, $n=0,1,2,\ldots$\\[5pt]
-    $H(z) = \frac{\displaystyle Y(z)}{\displaystyle X(z)} = \frac{\displaystyle  g}{\displaystyle 1 - p\,\zi}$}
+    $y(n) = g\, x(n) + p\, y(n-1)$, $n=0,1,2,\ldots$\quad[difference equation]\\[5pt]
+    $H(z) = \frac{\displaystyle Y(z)}{\displaystyle X(z)} = \frac{\displaystyle  g}{\displaystyle 1 - p\,\zi}$\quad[transfer function]}
 \maybepause
 \vspace{-1em}
 \textbf{Idea: Let's Make an Associative Memory!}
@@ -88,6 +88,7 @@
 \mpitem $x(n)$ can be a \emph{long vector} $\xv(n)\in\RN$ representing \emph{anything we want} --- any ``label''
 \mpitem Set $\geev = \onevec$ and $\peev = \onevec$ to make $\yv(n)$ a \emph{sum of all input vectors} (``integrator'')
 \mpitem Choose the dimension $N$ so large that \emph{vectors in the sum are mostly orthogonal}
+\mpitem Let $\xv(n)$ be \textbf{embedded vectors} (\eg, \tx{word2vec}) so that \emph{closeness = similarity}
 \mpitem Retrieve similar vectors using a \emph{matched inner product} $\wv^T\xv > b$,\\
         for some suitable threshold $b$ (Hey! That's a simulated neuron! (``Perceptron''))
 \end{itemize}
@@ -113,7 +114,7 @@
   \mpitem Retrieval threshold $b(k)$ depends on $\|\xv(k)\|^2$\\
   $\Rightarrow$ \textbf{suggestion:} \emph{reserve the radial dimension for similarity scoring}
 
-  \mpitem \Ie, \emph{only populate the \textbf{hypersphere}} in $\RN$: $\norm{\xv(k)} = 1, \, \forall k$
+  \mpitem \Ie, \emph{only populate the \textbf{hypersphere}} in $\RN$: $\norm{\xv(k)}^2 = 1 \mbox{ (or $N$)}, \, \forall k$
 
   \mpitem We just invented \textbf{\texttt{RMSNorm}}, used extensively in neural networks (not \texttt{LayerNorm})
 
@@ -135,7 +136,7 @@
   \[
   \wv^T\yv(n) \eqsp \sum_{m=0}^n \wv^Tp^{n-m}\xv(m) \;\approx\; p^{n-k}\xv^T(k)\,\xv(k) \eqsp p^{n-k} \;>\; b
   \]
-  where $b$ is the detection threshold for $\xv(k)$, independent of $k$ since $\|\xv(k)\|=1$
+  where $b$ is the detection threshold for $\xv(k)$, independent of $k$ if $\|\xv(k)\|=1$
 
   \begin{itemize}
   \mpitem \emph{Cannot retrieve} when $p^{n-k} < b$, setting an upper limit on $n$
@@ -207,6 +208,7 @@ since $E[a_i b_j]=0$ for $i \ne j$, $E[a_i^2] = E[b_i]^2 = 1/N$, and $\ab$ and $
 \begin{slide}[\slideopts,toc={}]{Orthogonality of Random Sums}
 \vspace{-1em}
 Similarly,
+\vspace{-1em}
 \beas
 E\left[\left(\wv^T\yv_n\right)^2\right]
 &=& E\left[\left(\sum_{m=0}^n \wv^T\xv_m\right)^2\right]
@@ -223,12 +225,14 @@ assuming $\wv\notin\yv$ and $\|\wv\|=\|\xv_m\|=1$ for all $m$. Thus,
 %  \mpitem Later it will similarly be the importance of \emph{selective attention}
   \mpitem If $L$ vectors are typically in the sum, our Perceptron ``bias'' (detection threshold)
   should be higher than $L/N$
-  \mpitem \textbf{Suggestion:} \emph{Keep the number of active vectors
-  in the memory well below the model dimension $N$}
+  \mpitem \textbf{Suggestion:} \emph{Keep the number of active vectors in memory well below $N$}
+  \mpitem \textbf{Consider:} Devise vocabulary grids on which all subset sums are \emph{unique}\\
+  (Pairs well with 1-bit weights)
+  % Can replace inner-product with direct lookup
 \end{itemize}
 \end{slide}
 
-\begin{slide}[\slideopts,toc={Language}]{How Many Vectors in a Sum are Needed for Language?}
+\begin{slide}[\slideopts,toc={Language}]{How Many Summed Vectors Needed for Language Parsing? (BERT style)}
 
 \maybepause
 \vspace{-1em}
@@ -256,13 +260,13 @@ less at each level? [Original Transformer paper had 8 attention heads and 6 laye
   \columnbreak
   \mpitem Direct or indirect object
   \mpitem Prepositional phrase
-  \mpitem Subject verb [indirect object] object
+  \mpitem Subject, verb, [indirect object], object
   \mpitem Sentence
   \mpitem Paragraph
   \mpitem Section
   \mpitem Chapter
   \mpitem Book
- \mpitem Subject Area % $\ldots$
+ \mpitem Subject Area Hierarchy $\ldots$
 %  \mpitem $\ldots$
 \end{enumerate}
 \end{multicols}
@@ -270,7 +274,7 @@ less at each level? [Original Transformer paper had 8 attention heads and 6 laye
 \vspace{-1em}
 Different cortical areas (6 layers each) needed for this many levels.\\
 \maybepause
-\textbf{Complex examples:}
+\textbf{Complex Sentence Diagram Examples:}
 {\tiny
 \url{https://www.quora.com/In-regards-to-diagramming-sentences-which-one-is-the-most-difficult-youve-ever-come-across}
 }
@@ -280,23 +284,25 @@ Different cortical areas (6 layers each) needed for this many levels.\\
 \end{slide}
 
 \begin{slide}[\slideopts,toc={}]{Pictorial Examples}
-\BIT
+\begin{itemize}
 \mpitem 6 dot-patterns on a die
 \mpitem \htmladdnormallink{7 LED segments for numbers}{https://www.opledtw.com/wp-content/uploads/2021/11/7segment_display_arabic_numeral_7段顯示器數字顯示.png}
 \mpitem 4 or fewer strokes to draw a letter
 %\mpitem 10 digits driven by number of fingers
-\EIT
+\end{itemize}
 
+\maybepause
 \emph{Hierarchy} used to keep the number of components per concept \emph{small}
 
 \vspace{1em}
 
+\maybepause
 \textbf{Suggestions:}
-\BIT
+\begin{itemize}
 \mpitem \emph{Ready signal} when symbol is recognized (whole letter, word, phrase, etc.)
 \mpitem \emph{Reset memory} after symbol recognition
 \mpitem Memory can be \emph{small!}
-\EIT
+\end{itemize}
 
 Maybe these signals are happening in the layers already?
 
@@ -950,12 +956,12 @@ model-space regions, etc.
     Transformer'' (CAT)}{https://arxiv.org/pdf/2407.05591}, they found that\\
   ``the locality of the convolution synergizes with the global view of
   the attention''.
-  \BIT
+  \begin{itemize}
   \mpitem Convolution can ``summarize'' the context window as\\
   ``salient summary tokens'' for attention
   \mpitem Summary $(Q, K, V)$ matrices computed as $(X\ast F_i)W_i$, for $i=q,k,v$,\\
   where $X$ is the input, $F_i$ is a learned filter, and $W_i$ is a learned projection
-  \EIT
+  \end{itemize}
   % They do not cite Infini-Attention
   % Code will be at https://github.com/umich-sota/CAT
 \end{slide}
