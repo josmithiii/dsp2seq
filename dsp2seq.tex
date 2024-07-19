@@ -226,9 +226,9 @@ assuming $\wv\notin\yv$ and $\|\wv\|=\|\xv_m\|=1$ for all $m$. Thus,
   \mpitem If $L$ vectors are typically in the sum, our Perceptron ``bias'' (detection threshold)
   should be higher than $L/N$
   \mpitem \textbf{Suggestion:} \emph{Keep the number of active vectors in memory well below $N$}
-  \mpitem \textbf{Consider:} Devise vocabulary grids on which all subset sums are \emph{unique}\\
-  (Pairs well with 1-bit weights)
-  % Can replace inner-product with direct lookup
+% Move this to attention section:  \mpitem \textbf{Consider:} Devise vocabulary grids on which all subset sums are \emph{unique}\\
+% (Pairs well with 1-bit weights)
+% Can replace inner-product with direct lookup
 \end{itemize}
 \end{slide}
 
@@ -695,7 +695,7 @@ This causes inner products to increase as vectors get squeezed together along th
 
 \vspace{-1em}
 
-\textbf{Idea:} Also use \emph{FIR Filtering} (SSM State Expansion Factor $N\ge M$, $\Amtx$ subdiagonal):
+\textbf{Idea:} Also use \emph{FIR Filtering} (SSM State Expansion Factor $K\ge M$, $\Amtx$ subdiagonal):
 
 %\myFigureToWidth{one-pole-rnn-seq}{0.6\twidth}{} % {Sequence Modeling with Gated RNNs}
 %\vspace{-4em}
@@ -947,23 +947,25 @@ model-space regions, etc.
     \mpitem Fuzzy, fading, long-term memory
     \mpitem Like Infini-Attention
       \columnbreak
-    \mpitem Short/Long-term memory in either
-    \mpitem Small set of exact memory cells
-    \mpitem Indefinitely many fading-memory cells
+    \mpitem Fading short-term memory
+    \mpitem Limited long-term memory
+    \mpitem Also like the brain
     \end{itemize}
   \end{multicols}
-  In \htmladdnormallink{``On the Power of Convolution Augmented
-    Transformer'' (CAT)}{https://arxiv.org/pdf/2407.05591}, they found that\\
-  ``the locality of the convolution synergizes with the global view of
-  the attention''.
-  \begin{itemize}
-  \mpitem Convolution can ``summarize'' the context window as\\
-  ``salient summary tokens'' for attention
-  \mpitem Summary $(Q, K, V)$ matrices computed as $(X\ast F_i)W_i$, for $i=q,k,v$,\\
-  where $X$ is the input, $F_i$ is a learned filter, and $W_i$ is a learned projection
-  \end{itemize}
-  % They do not cite Infini-Attention
-  % Code will be at https://github.com/umich-sota/CAT
+  Maybe use both?
+  %% Hold off on this discussion for now:
+  %% In \htmladdnormallink{``On the Power of Convolution Augmented
+  %%   Transformer'' (CAT)}{https://arxiv.org/pdf/2407.05591}, they found that\\
+  %% ``the locality of the convolution synergizes with the global view of
+  %% the attention''.
+  %% \begin{itemize}
+  %% \mpitem Convolution can ``summarize'' the context window as\\
+  %% ``salient summary tokens'' for attention
+  %% \mpitem Summary $(Q, K, V)$ matrices computed as $(X\ast F_i)W_i$, for $i=q,k,v$,\\
+  %% where $X$ is the input, $F_i$ is a learned filter, and $W_i$ is a learned projection
+  %% \end{itemize}
+  %% % They do not cite Infini-Attention
+  %% % Code will be at https://github.com/umich-sota/CAT
 \end{slide}
 
 \begin{slide}[\slideopts,toc={Plan}]{Next Steps}
