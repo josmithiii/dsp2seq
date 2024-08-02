@@ -600,7 +600,7 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
   \hv_a(n) = e^{j\Delta}\hv(n), \quad \mbox{with}\; \Delta = \frac{2\pi}{L}
   \]
   when our maximum sequence length (before reset) is $L$
-  \mpitem \textbf{Idea:} ``Warped RoPE'' (WRoPE) for \emph{arbitrarily long sequences}:
+  \mpitem \textbf{Idea:} ``Warped RoPE'' (WRoPE) for \emph{arbitrarily long sequences} (processed in reverse):
   \[
   \Delta_n = \frac{2\pi n}{n+L}, \quad n=0,1,2,\ldots
   \]
@@ -615,6 +615,25 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
   ``space'' in recall)
 \end{itemize}
 \end{slide}
+
+\begin{slide}[\slideopts]{WRoPE Memory}
+%  \vspace{-1em}
+  \begin{itemize}
+    \mpitem WRoPE sequences are naturally reversed because we can only change all stored angles by the same delta:
+    \[
+    \hv_a(n) = e^{j\Delta_n}\hv(n), \quad n=0,1,2,\dots
+    \]
+    \mpitem This makes inference non-autoregressive (more expensive)
+    \mpitem One improvement is to \emph{store} past hidden states so that positional encodings can be updated arbitrarily when accessed:
+    \[
+    \hv_a(n,m) = e^{j\Delta_{n-m}}\hv(m), \quad m=n-L,\dots,n-1,n
+    \]
+    ($m$th hidden state vector needed for inference at time $n$)
+    \mpitem This is the same amount of storage needed for the Truncated Infinite Impulse Response (TIIR) technique
+    (which provides a recursively computed sliding-window of memory).
+  \end{itemize}
+\end{slide}
+
 
 \begin{slide}[\slideopts,toc={}]{Searching a Time Range}
 
