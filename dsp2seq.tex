@@ -630,7 +630,9 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
     \]
     ($m$th hidden state vector needed for inference at time $n$)
     \mpitem This is the same amount of storage needed for the Truncated Infinite Impulse Response (TIIR) technique
-    (which provides a recursively computed sliding-window of memory).
+    which provides a recursively computed sliding-window of memory
+    \mpitem In the TIIR case (fixed length $L$), might as well use normal RoPE
+    \mpitem WRoPE maybe competitive for encoding ``journalistic style'' into a vector
   \end{itemize}
 \end{slide}
 
