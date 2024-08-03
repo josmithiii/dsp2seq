@@ -45,36 +45,20 @@
 
 \begin{document}
 
-%\end{document}
+\begin{slide}[\slideopts,toc={TIIR Sliding Window}]{TIIR Sliding-Window RNN Memory}
+\myFigureToWidth{tiir-rnn}{\twidth}{}
+\end{slide}
+
+\end{document}
+\endinput
 
 \maketitle
 
 \input abstract.tex
 
-\section[\sectopts]{Background}
+%\input jos-overview.tex
 
-\begin{slide}[\slideopts,toc={Path to CCRMA}]{My Path to
-    \htmladdnormallink{\textbf{CCRMA}}{http://ccrma.stanford.edu/}
-    (Center for Computer Research in Music and Acoustics)
-}
-
-\centerline{Musician : Math : Physics : EE : Control : DSP : System ID : SAIL/CCRMA}
-\vspace{1em}
-
-\myTwoFiguresToBoxes{Julius}{jtm45_new2}{0.4\twidth}{0.6\textheight}{Some Gig}{Tube Amp}{}
-%\myTwoFiguresToBoxes{Bittersweet2}{jtm45_new2}{0.4\twidth}{0.6\textheight}{Some Gig}{Tube Amp}{}
-%\myTwoFiguresToBoxes{Julius}{Bittersweet2}{0.4\twidth}{0.6\textheight}{High School Band}{Tube Amp}{}
-%\myTwoFiguresToBoxes{Julius}{moogschemsmall}{0.4\twidth}{0.6\textheight}{Some Gig}{Moog VCF Ladder}{}
-%\myTwoFiguresToWidth{Julius}{wdelt}{0.4\twidth}{}{}{}
-%\myTwoFiguresToWidth{Julius}{conicalcap2}{0.5\twidth}{Tesseract Gig}{Cone Proof}{}
-%\myFigureRotateToWidth{Julius}{-90}{0.9\twidth}{}
-%\centerline{JOS in situ}
-\end{slide}
-
-\input courses-overview.tex
-
-%\end{document}
-%\endinput
+%\input courses-overview.tex
 
 \section[\sectopts,toc={Basic Idea}]{Music 320 (Signal Processing) Project Idea}
 
@@ -660,6 +644,10 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
   \end{itemize}
 \end{slide}
 
+\begin{slide}[\slideopts,toc={TIIR Sliding Window}]{TIIR Sliding-Window RNN Memory}
+\myFigureToWidth{tiir-rnn}{\twidth}{}
+\end{slide}
+
 \begin{slide}[\slideopts,toc={TIIR Resets}]{Ping-Ponging Periodically Resetting RNNs (Classic TIIR Trick)}
 \myFigureToWidth{tiir1}{\twidth}{}
 \end{slide}
@@ -971,9 +959,10 @@ model-space regions, etc.
 \myFigureToWidth{transmamba}{\twidth}{TransMamba} % MambaFormer is taken
 \vspace{-2em}
 \maybepause
+% Prompt 1: "Friendly cartoon Mamba snake" (cute but boring):
+% => \myFigureToWidth{cartoon-mamba}{0.9in}{} % And now we don't want MambaFormer after all - this is great!
+% Prompt 2: "Make it trans" (over the top better!):=>
 \myFigureToWidth{cartoon-mamba-t}{0.9in}{} % And now we don't want MambaFormer after all - this is great!
-% Prompt 1: "Friendly cartoon Mamba snake" (cute but boring)
-% Prompt 2: "Make it trans" (over the top better!)
 \end{slide}
 
 %% % Not finished:
