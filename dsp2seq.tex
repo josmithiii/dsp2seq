@@ -5,7 +5,8 @@
 %\newcommand{\theTitle}{Sequence Models from a Signal Processing Perspective}
 \newcommand{\theEvent}{\htmladdnormallink{West Coast Machine Learning}{https://www.youtube.com/channel/UCuoNQWLuEYwjP7mI23sZ3WQ}}
 %\newcommand{\theDate}{June 20, 2024}
-\newcommand{\theDate}{July 18, 2024}
+%\newcommand{\theDate}{July 18, 2024}
+\newcommand{\theDate}{August 8, 2024}
 
 %% \newcommand{\theTitle}{Inventing Modern Sequence Models as a Music 320 Project}
 %% \newcommand{\theSubTitle}{Samples become Meaning Vectors}
@@ -56,7 +57,8 @@
 
 %\input courses-overview.tex
 
-\section[\sectopts,toc={Basic Idea}]{Music 320 (Signal Processing) Project Idea}
+%\section[\sectopts,toc={Basic Idea}]{Music 320 (Signal Processing) Project Idea}
+\section[\sectopts,toc={Basic Idea}]{Signal-Processing Class-Project Idea}
 
 \begin{slide}[\slideopts,toc={One Pole Filter}]{Assignment: Do Something Cool with a \emph{One-Pole Recursive Digital Filter}}
 \vspace{-2em}
@@ -481,7 +483,8 @@ Output gating allows network to be ``bypassed'' when not helpful.
 \begin{itemize}
 \mpitem \textbf{``Obvious'' Suggestion:} The bypass path should be scaled for \emph{power normalization}\\
 \mpitem \textbf{Better yet:} Don't scale the bypass and use \tx{RMSNorm} at the input of the next layer\\
-(prevents a ``bad layer'' from isolating deeper layers from the input with garbage)
+(prevents a ``bad layer'' from isolating deeper layers from the input with garbage,\\
+and equalizes gradient backpropagation to all layers)
 \end{itemize}
 
 \end{slide}
@@ -632,7 +635,7 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
     \mpitem Hidden state update becomes
     \vspace{-1em}
     \begin{align*}
-    \hv(n+1) &= \hv(n) + \Bmtx_n\xv(n) - \dhv(n-L)\\
+    \hv(n+1) &= \hv(n) + \dhv_n\\
              &= \hv(n) + \Bmtx_n\xv(n) - \Bmtx_{n-L}\, \xv(n-L)
     \end{align*}
     \vspace{-1em}
@@ -645,6 +648,10 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
 \end{slide}
 
 \begin{slide}[\slideopts,toc={TIIR Resets}]{Ping-Ponging Periodically Resetting RNNs (Classic TIIR Trick)}
+  \vspace{-1em}
+  Needed when there is a \emph{forgetting factor} $p$ in the hidden-state feedback:
+  \vspace{-2em}
+\maybepause
 \myFigureToWidth{tiir1}{\twidth}{}
 \end{slide}
 
