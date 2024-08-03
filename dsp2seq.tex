@@ -45,6 +45,8 @@
 
 \begin{document}
 
+%\end{document}
+
 \maketitle
 
 \input abstract.tex
@@ -636,6 +638,31 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
   \end{itemize}
 \end{slide}
 
+
+\begin{slide}[\slideopts,toc={TIIR RNNs}]{Truncated Infinite Impulse Response (TIIR) RNNs}
+  A \emph{sliding rectangular window} can be obtained as an integrator minus a \emph{delayed} integrator:
+  \[
+  [1,1,\ldots, 1] \quad\longleftrightarrow\quad \sum_{n=0}^{N-1} z^{-n} \eqsp \frac{1-z^{-N}}{1-z^{-1}} \eqsp \zbox{\frac{1}{1-\zi} - z^{-N}\frac{1}{1-\zi}}
+  \]
+  \begin{itemize}
+    \mpitem Thus, two identical RNNs can be \emph{differenced} to provide a non-fading,\\
+            linearly RoPEd memory of any length $L$
+            \mpitem A \emph{real} memory of length $L$ is needed for the \emph{hidden state update:}\\
+            $\dhv(n) = \hv(n+1)-\hv(n) = \Bmtx_n\xv(n)$
+    \mpitem Hidden state update becomes
+    \vspace{-1em}
+    \begin{align*}
+    \hv(n+1) &= \hv(n) + \Bmtx_n\xv(n) - \dhv(n-L)\\
+             &= \hv(n) + \Bmtx_n\xv(n) - \Bmtx_{n-L}\, \xv(n-L)
+    \end{align*}
+    \vspace{-1em}
+    \mpitem \textbf{Problem:} Accumulating floating-point round-off error (variance increases linearly)
+  \end{itemize}
+\end{slide}
+
+\begin{slide}[\slideopts,toc={TIIR Resets}]{Ping-Ponging Periodically Resetting RNNs (Classic TIIR Trick)}
+\myFigureToWidth{tiir1}{\twidth}{}
+\end{slide}
 
 \begin{slide}[\slideopts,toc={}]{Searching a Time Range}
 
