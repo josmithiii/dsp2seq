@@ -622,7 +622,7 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
 \end{slide}
 
 
-\begin{slide}[\slideopts,toc={TIIR RNNs}]{Truncated Infinite Impulse Response (TIIR) RNNs}
+\begin{slide}[\slideopts,toc={TIIR RNNs}]{Truncated Infinite Impulse Response (TIIR) RNNs (TRNN)}
   A \emph{sliding rectangular window} can be obtained as an integrator minus a \emph{delayed} integrator:
   \[
   [1,1,\ldots, 1] \quad\longleftrightarrow\quad \sum_{n=0}^{N-1} z^{-n} \eqsp \frac{1-z^{-N}}{1-z^{-1}} \eqsp \zbox{\frac{1}{1-\zi} - z^{-N}\frac{1}{1-\zi}}
@@ -639,17 +639,17 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
              &= \hv(n) + \Bmtx_n\xv(n) - \Bmtx_{n-L}\, \xv(n-L)
     \end{align*}
     \vspace{-1em}
-    \mpitem \textbf{Problem:} Accumulating floating-point round-off error (variance increases linearly)
+    % No problem in full-precision fixed-point: \mpitem \textbf{Problem:} Accumulating floating-point round-off error (variance increases linearly)
   \end{itemize}
 \end{slide}
 
-\begin{slide}[\slideopts,toc={TIIR Sliding Window}]{TIIR RNN with Sliding-Window Memory and Linear RoPE}
+\begin{slide}[\slideopts,toc={TIIR Sliding Window}]{TRNN with Sliding-Window Memory and Linear RoPE}
 \myFigureToWidth{tiir-rnn}{0.8\twidth}{}
 \end{slide}
 
 \begin{slide}[\slideopts,toc={TIIR Resets}]{Ping-Ponging Periodically Resetting RNNs (Classic TIIR Trick)}
   \vspace{-1em}
-  Needed when there is a \emph{forgetting factor} $p$ in the hidden-state feedback:
+  Needed when there is a \emph{forgetting factor} $p$ in the hidden-state feedback (any source of roundoff error):
   \vspace{-2em}
 \maybepause
 \myFigureToWidth{tiir1}{\twidth}{}
@@ -1021,7 +1021,7 @@ model-space regions, etc.
       \mpitem Do \emph{power normalization} in place of \tx{RMSNorm} where possible (efficiency)
       \mpitem Try \emph{power normalized attention} in place of $1/\sqrt{d_h}$ and \tx{Softmax} (efficiency)
       \mpitem Adapt \emph{model dimension} to \emph{layer width} at each level (efficiency)
-      \mpitem Truncated Infinite Impulse Response (TIIR) sliding-window memory + linear RoPE
+      \mpitem Truncated Recurrent Neural Network (TRNN) sliding-window memory + linear RoPE
       \mpitem Translational Positional Encoding (TraPE) in its own head (no \tx{RMSNorm})
       \mpitem Explore other ``Control Heads'' that flow along purely for ``conditioning'' like TraPE
     \end{itemize}
