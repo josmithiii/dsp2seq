@@ -1,7 +1,8 @@
 %&latex
 % Created from /l/mt/JOSOverview.tex
 
-\newcommand{\theTitle}{Inventing Sequence Models as Vectorized Signal Processors}
+\newcommand{\theTitle}{Signal Processing Formulations of Sequence Models}
+%\newcommand{\theTitle}{Inventing Sequence Models as Vectorized Signal Processors}
 %\newcommand{\theTitle}{Sequence Models from a Signal Processing Perspective}
 \newcommand{\theEvent}{\htmladdnormallink{West Coast Machine Learning}{https://www.youtube.com/channel/UCuoNQWLuEYwjP7mI23sZ3WQ}}
 %\newcommand{\theDate}{June 20, 2024}
@@ -53,14 +54,32 @@
 
 \input abstract.tex
 
+\begin{slide}[\slideopts]{Intended Audience}
+
+Previous versions of this talk were aimed at
+\begin{enumerate}
+\mpitem CCRMA students after one introductory signal-processing course
+\mpitem West Coast Machine Learning meetup group: mostly in machine learning
+\end{enumerate}
+\maybepause
+This version is aimed at
+\begin{enumerate}
+  \mpitem[3.] Signal-processing students and professionals,\\
+              assumed to know more DSP than machine learning
+\end{enumerate}
+
+\end{slide}
+
 %\input jos-overview.tex
 
 %\input courses-overview.tex
 
+\section[\sectopts,toc={Approach}]{Signal-Processing Ingredients}
+%\section[\sectopts,toc={Basic Idea}]{Signal-Processing Class-Project Idea}
 %\section[\sectopts,toc={Basic Idea}]{Music 320 (Signal Processing) Project Idea}
-\section[\sectopts,toc={Basic Idea}]{Signal-Processing Class-Project Idea}
 
-\begin{slide}[\slideopts,toc={One Pole Filter}]{Assignment: Do Something Cool with a \emph{One-Pole Recursive Digital Filter}}
+\begin{slide}[\slideopts,toc={One Pole Filter}]{Consider the \emph{One-Pole Recursive Digital Filter}}
+%\begin{slide}[\slideopts,toc={One Pole Filter}]{Assignment: Do Something Cool with a \emph{One-Pole Recursive Digital Filter}}
 \vspace{-2em}
 \myFigureToWidth{one-pole-jos}{0.5\twidth}{
   One Pole at $z = p$\\[5pt]
@@ -68,14 +87,15 @@
     $H(z) = \frac{\displaystyle Y(z)}{\displaystyle X(z)} = \frac{\displaystyle  g}{\displaystyle 1 - p\,\zi}$\quad[transfer function]}
 \maybepause
 \vspace{-1em}
-\textbf{Idea: Let's Make an Associative Memory!}
+\textbf{One Unit Delay (for Vectors) can be an Associative Memory:}
+%\textbf{Idea: Let's Make an Associative Memory!}
 \begin{itemize}
-\mpitem $x(n)$ can be a \emph{long vector} $\xv(n)\in\RN$ representing \emph{anything we want} --- any ``label''
+\mpitem Let $x(n)$ be a \emph{long vector} $\xv(n)\in\RN$ representing any ``label''
 \mpitem Set $\geev = \onevec$ and $\peev = \onevec$ to make $\yv(n)$ a \emph{sum of all input vectors} (``integrator'')
 \mpitem Choose the dimension $N$ so large that \emph{vectors in the sum are mostly orthogonal}
 \mpitem Let $\xv(n)$ be \textbf{embedded vectors} (\eg, \tx{word2vec}) so that \emph{closeness = similarity}
 \mpitem Retrieve similar vectors using a \emph{matched inner product} $\wv^T\xv > b$,\\
-        for some suitable threshold $b$ (Hey! That's a simulated neuron! (``Perceptron''))
+        for some suitable threshold $b$ (That's a simulated neuron! (``Perceptron''))
 \end{itemize}
 \end{slide}
 
