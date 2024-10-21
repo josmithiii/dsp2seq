@@ -556,6 +556,11 @@ and equalizes gradient backpropagation to all layers)
 %% Vinod Nair, Geoffrey E. Hinton, "Rectified Linear Units Improve Restricted Boltzmann Machines" 2010.
     \eeas
     % output instead $s_l \cdot \yv_l$ (ReLU)
+    \mpitem The activation $\xv\cdot\sigma(\xv)$ is called the \href{https://pytorch.org/docs/stable/generated/torch.nn.SiLU.html}{\emph{Sigmoid Linear Unit} (SiLU)} or \textit{Swish}} activation
+      % \mpitem Add GLU?:
+      % https://arxiv.org/abs/2002.05202
+      % https://paperswithcode.com/method/glu
+      % https://medium.com/deeplearningmadeeasy/glu-gated-linear-unit-21e71cd52081
     \mpitem Such MLPs are trainable by \emph{gradient descent} [1967, 1980s] % Shun'ichi Amari - Wikipedia: https://en.wikipedia.org/wiki/Multilayer_perceptron
     \mpitem By the \emph{Universal Approximation Theorem} [1989], \emph{one hidden layer} is enough to approximate
     any continuous input-output map (\href{http://neuralnetworksanddeeplearning.com/chap4.html}{easy} for two hidden layers)
