@@ -1,0 +1,118 @@
+\begin{slide}[\slideopts,toc={WRoPE}]{RoPE and WRoPE}
+
+\vspace{-1em}
+
+\begin{itemize}
+\item Rotational Positional Encoding (RoPE) owns \emph{one arc direction} along the hypersphere % to \emph{positional encoding}
+  \mpitem We can thus rotate our vector memory $\hv(n)$ by $\Delta$ radians each time step to ``age'' it:
+  \[
+  \hv_a(n) = e^{j\Delta}\hv(n), \quad \mbox{with}\; \Delta = \frac{2\pi}{L}
+  \]
+  when our maximum sequence length (before reset) is $L$
+  \mpitem \textbf{Idea:} ``Warped RoPE'' (WRoPE) for \emph{arbitrarily long sequences} (processed in reverse):
+  \[
+  \Delta_n = \frac{2\pi n}{n+L}, \quad n=0,1,2,\ldots
+  \]
+  \maybepause
+  (inspired by the \emph{bilinear transform} used in digital filter design)
+  \mpitem A \emph{blend} of \emph{uniform} and \emph{warped} rotations can be used:
+  \[
+  \Delta_n = \funcalign{\frac{\pi n}{L}}{n=0,1,2,\ldots,L-1}{%
+    \pi + \frac{\pi n}{n+1}}{n=L,L+1,L+2,\ldots}
+  \]
+  where $L$ is now the \emph{typical} sequence length (giving it more
+  ``space'' in recall)
+\end{itemize}
+\end{slide}
+
+\begin{slide}[\slideopts]{WRoPE Memory}
+%  \vspace{-1em}
+  \begin{itemize}
+    \mpitem WRoPE sequences are naturally reversed because we can only change all stored angles by the same delta:
+    \[
+    \hv_a(n) = e^{j\Delta_n}\hv(n), \quad n=0,1,2,\dots
+    \]
+    \mpitem This makes inference non-autoregressive (more expensive)
+    \mpitem One improvement is to \emph{store} past hidden states so that positional encodings can be updated arbitrarily when accessed:
+    \[
+    \hv_a(n,m) = e^{j\Delta_{n-m}}\hv(m), \quad m=n-L,\dots,n-1,n
+    \]
+    ($m$th hidden state vector needed for inference at time $n$)
+    \mpitem This is the same amount of storage needed for the Truncated Infinite Impulse Response (TIIR) technique
+    which provides a recursively computed sliding-window of memory
+    \mpitem In the TIIR case (fixed length $L$), might as well use normal RoPE
+    \mpitem WRoPE maybe competitive for encoding ``journalistic style'' into a vector
+  \end{itemize}
+\end{slide}
+
+%% NOT FINISHED:
+
+\begin{slide}[\slideopts,toc={}]{Searching a Time Range}
+\vspace{-1em}
+\begin{itemize}
+  \mpitem Reserving complex angle for positional encoding $\Leftrightarrow$ \emph{real} vocabulary
+          embedding vectors
+  \mpitem Downstream weights and biases must be \emph{complex}
+  \mpitem Complex angle discarded by absolute value when no longer needed
+  \mpitem Exact orthogonality is obtained for each of the $L$ RoPE time-steps when there is
+  no amplitude decay as in normal RNNs, \ie, $e^{jn\Delta}\xv(n)\perp e^{jm\Delta}\xv(n)\, \forall n\ne m$
+  \mpitem RoPE query vector for a vocabulary vector (``token'') $\wv$ any time between $n_1$ to $n_2$ is
+   \[
+   \qv \eqsp \sum_{n=n_1}^{n_2}e^{jn \Delta}\wv
+   \eqsp \wv \frac{e^{j(n_2+1)\Delta} - e^{jn_1\Delta}}{e^{j\Delta}-1}
+   \eqsp \wv\, e^{j\theta_{12}}\frac{\sin\left(\frac{n_2-n_1+1}{2}\Delta\right)}{\sin(\Delta/2)}
+   \]
+   \vspace{-1em}
+\end{itemize}
+\end{slide}
+
+\begin{slide}[\slideopts,toc={Compressed Time}]{Compressed Time Retrieval}
+\begin{itemize}
+  \mpitem Recall that a vector $\wv$ is detected in the vector memory $\hv$ by the inner product $\wv^T\xv$
+  exceeding some detection threshold $b$, \ie, $\wv^T\xv > b$
+  \mpitem The threshold $b$ can be lowered to capture a wider range of similar vectors
+  \mpitem The captured vectors lie in a cone at angle $\theta$ centered on the vector $\wv$,
+  and $\cos(\theta)=b$
+  \mpitem In WRoPE, the angular rotation decreases as $1/n$ or the like
+  \mpitem ...
+\end{itemize}
+This causes inner products to increase as vectors get squeezed together along the complex-angle arc.
+\end{slide}
+
+\begin{slide}[\slideopts,toc={Reservations}]{Reserving Angular Dimensions}
+
+  \vspace{-1em}
+
+  Reserving the radial dimension looks easy (\eg, \tx{RMSNorm} every $k$ gradient-descent steps)\\
+  How to reserve an \emph{arc dimension} for [W]RoPE and perhaps other purposes?
+
+  \begin{itemize}
+%    \mpitem \emph{Augment the space with new angular dimensions:}
+%    \begin{enumerate}
+      \mpitem RoPE: Effectively reserves \emph{complex angle:} $\hv_a(n) = e^{j\Delta}\hv(n)$\\
+      (data size doubled: $\xv \to (\xv,\zv)$)
+      \mpitem A zero imaginary part in the vocabulary embedding reserves complex angle % for [W]RoPE
+      \mpitem \emph{Quaternions} give two more angles
+      		$\Leftrightarrow$ embedding size quadrupled: $\xv \to (\xv,\zv,\zv,\zv)$\\
+      \begin{itemize}
+        \mpitem $\hv_a(n) = \qb\,\hv(n)$, where, from
+        \htmladdnormallink{Wikipedia}{https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation}:\\
+        $
+        % \displaystyle
+        \qb = e^{{\frac {\Delta}{2}}{(\av_x\ib +\av_y\jb +\av_z\kb )}}
+        = \cos {\frac {\Delta }{2}}+(\av_x\ib +\av_y\jb + \av_z\kb )\sin {\frac {\Delta }{2}}
+        = \cos {\frac {\Delta }{2}}+\av\sin {\frac {\Delta }{2}}
+        $
+      \end{itemize}
+      \mpitem See the Cayley-Dickson Construction for $2^k-1$ angles, $k=1,2,3,\ldots$
+      \mpitem Trivial in \emph{polar coordinates} (``write-protect'' reserved dimensions during gradient step),\\
+      but then back-propagation must be rewritten for polar coordinates
+      % \\ Replace weight matrices $\Wmtx$ with \emph{rotation matrices?}
+      \mpitem Find a suitable method of \emph{constrained gradient descent}
+      \mpitem Train (or calculate) a \emph{pointwise MLP} that ``de-rotates'' $\xv+\mu\gradv$ given also $\xv$
+      \mpitem Use \emph{reserved translational dimension(s)} instead (``TraPE'') (omitted from \tx{RMSNorm})
+      % Illustrate "meta" reserved translation dimension: \myFigureToWidth{threeGinaSpheres}{0.5\twidth}{}
+  \end{itemize}
+
+\end{slide}
+

@@ -33,8 +33,8 @@
 % Uses package etoolbox for \newtoggle et al:
 \usepackage{etoolbox} % for \newtoggle et al
 \newtoggle{local}
-%\toggletrue{local}
-\togglefalse{local}
+\toggletrue{local}
+%\togglefalse{local}
 \input localremote.tex
 
 \date{\theDate}
@@ -80,16 +80,15 @@
     $H(z) = \frac{\displaystyle Y(z)}{\displaystyle X(z)} = \frac{\displaystyle  g}{\displaystyle 1 - p\,\zi}$\quad[transfer function]}
 \maybepause
 \vspace{-1em}
-\textbf{Vectorize it!}
-\textbf{One Unit Delay (for Vectors) can be an Associative Memory:}
+\textbf{A Unit Delay (for Vectors) can be an Associative Memory:}
 %\textbf{Idea: Let's Make an Associative Memory!}
 \begin{itemize}
-\mpitem Let $x(n)$ be a \emph{long vector} $\xv(n)\in\RN$ representing any ``label''
+\mpitem Generalize $x(n)$ to a \emph{long vector} $\xv(n)\in\RN$ representing any ``label''
 \mpitem Set $\geev = \onevec$ and $\peev = \onevec$ to make $\yv(n)$ a \emph{sum of all input vectors} (``integrator'')
 \mpitem Choose the dimension $N$ so large that \emph{vectors in the sum are mostly orthogonal}
-\mpitem Let $\xv(n)$ be \textbf{embedded vectors} (\eg, \tx{word2vec}) so that \emph{closeness = similarity}
+\mpitem Let $\xv(n)$ be \textbf{embedding vectors} (\eg, \tx{word2vec}) so that \emph{closeness = similarity}
 \mpitem Retrieve similar vectors using a \emph{matched inner product} $\wv^T\xv > b$,\\
-        for some suitable threshold $b$ (Hey!  A simulated neuron! (``Perceptron'' [1957]))
+        for some suitable threshold $b$ (Hey!  That's a simulated neuron! (``Perceptron'' [1957]))
 \end{itemize}
 \end{slide}
 
@@ -105,7 +104,7 @@
   \[
   \wv^T\yv(n) \eqsp \sum_{m=0}^n \wv^T\xv(m) \;\approx\; \xv^T(k)\,\xv(k) \eqsp \|\xv(k)\|^2 \;>\; b(k)
   \]
-  where $b(k)$ is the \emph{detection threshold} for $\xv(k)$
+  or ``found'' if $\wv^T\yv(n) - b(k) > 0$, where $b(k)$ is the \emph{detection threshold} for $\xv(k)$
 
   \begin{itemize}
   \mpitem This works because the spatial dimension is so large that $\xv^T(j)\,\xv(k)\approx \epsilon$ for $j\ne k$
@@ -401,22 +400,33 @@ and so on.  \emph{This gives us one way to calculate a maximum feedback coeffici
 
 \end{slide}
 
-\begin{slide}[\slideopts,toc={Channel Mixing}]{Input Gating with ``Component Mixing''}
+\begin{slide}[\slideopts,toc={Channel Mixing}]{Input Gating with Projection}
 \textbf{Idea:} Learn a \emph{full matrix} for the input to provide \emph{arbitrary projection} as well as \emph{gating}
 \myFigureToWidth{one-pole-rnn-mixing}{0.4\twidth}{Vector Memory with Learned Input Projection and Gating}
+The added \emph{linear transformation} can 
+\begin{itemize}
+\mpitem further optimize the \emph{input embedding} for the current \emph{task} and \emph{training data},
+\mpitem change the spatial layout to make room for things like temporal encoding,
+\mpitem up-project to a higher internal model dimension (``state expansion'' discussed later).
+\end{itemize}
+In \emph{state-space models} such as S4 and H3,
+\begin{itemize}
+\mpitem full \emph{feedback matrices} $\Pmtx(\xv_n)$ were investigated, but
+\mpitem diagonal $\peev(\xv_n)$ were found to be sufficient (even a constant diagonal in Mamba-2).
+\end{itemize}
 \end{slide}
 
 \begin{slide}[\slideopts,toc={MLP Layer}]{MLP Information Extraction}
 %\vspace{-1em}
-  Hook up an MLP to extract information from the vector memory:
+Let's hook up an MLP to detect vectors in our vector memory and assign meaning:
 %\vspace{-1em}
 \myFigureToWidth{one-pole-rnn-mlp}{0.8\twidth}{Gated Recurrent Unit into an MLP}
 %\vspace{-1em}
 \maybepause
 \begin{itemize}
 \mpitem Hidden layer(s) can have any dimension
-\mpitem Final linear layer typically projects back to the model dimension
-\mpitem Skip connection normally provided, bypassing the ``residual stream''
+\mpitem Final linear layer $\Wmtx_2$ typically projects back to the model dimension
+% Not introduced yet, or in figure: \mpitem Skip connection normally provided, bypassing the ``residual stream''
 \end{itemize}
 \end{slide}
 
@@ -507,7 +517,7 @@ and equalizes gradient backpropagation to all layers)
 
 \begin{slide}[\slideopts,toc={MLP}]{MultiLayer Perceptrons (MLP)}
 
-  \textbf{Idea:} The outputs from a Perceptron Array can be further processed by \emph{another Perceptron Array}
+  \textbf{Idea:} Process Perceptron-Array outputs using \emph{another Perceptron Array}
   \begin{itemize}
     \mpitem MultiLayer Perceptron (MLP) = multiple layers of Perceptron arrays [1960s]
     \mpitem Can now detect ``patterns of patterns of patterns . . .''
@@ -537,10 +547,11 @@ and equalizes gradient backpropagation to all layers)
 \textbf{Idea:} \emph{Soften} the Rectified Linear Unit (ReLU) to facilitate gradient descent
 \begin{itemize}
   \mpitem The small smooth ``well'' of a SwiGLU [2020], replacing the corner, biases ``undecided'' gradients near the corner
-  \mpitem Piecewise-linear polytopes in the model dimension become smoother (good for audio effects)
-\mpitem \textbf{Idea:} (Backpropagation---1980s?): To facilitate
-\emph{learning} $\wv_i$ via gradient descent, replace ``$>$'' by
-something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
+  \mpitem Piecewise-linear polytopes in the model dimension become smoother\\
+  (good for audio effects)
+  \mpitem \textbf{Idea:} (Backpropagation --- 1980s):\\
+  To facilitate \emph{learning} $\wv_i$ via gradient descent, replace ``$>$'' by
+  something \emph{smooth}, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
 \end{itemize}
 \end{slide}
 
@@ -562,53 +573,7 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
   \end{itemize}
 \end{slide}
 
-\begin{slide}[\slideopts,toc={WRoPE}]{RoPE and WRoPE}
-
-\vspace{-1em}
-
-\begin{itemize}
-\item Rotational Positional Encoding (RoPE) owns \emph{one arc direction} along the hypersphere % to \emph{positional encoding}
-  \mpitem We can thus rotate our vector memory $\hv(n)$ by $\Delta$ radians each time step to ``age'' it:
-  \[
-  \hv_a(n) = e^{j\Delta}\hv(n), \quad \mbox{with}\; \Delta = \frac{2\pi}{L}
-  \]
-  when our maximum sequence length (before reset) is $L$
-  \mpitem \textbf{Idea:} ``Warped RoPE'' (WRoPE) for \emph{arbitrarily long sequences} (processed in reverse):
-  \[
-  \Delta_n = \frac{2\pi n}{n+L}, \quad n=0,1,2,\ldots
-  \]
-  \maybepause
-  (inspired by the \emph{bilinear transform} used in digital filter design)
-  \mpitem A \emph{blend} of \emph{uniform} and \emph{warped} rotations can be used:
-  \[
-  \Delta_n = \funcalign{\frac{\pi n}{L}}{n=0,1,2,\ldots,L-1}{%
-    \pi + \frac{\pi n}{n+1}}{n=L,L+1,L+2,\ldots}
-  \]
-  where $L$ is now the \emph{typical} sequence length (giving it more
-  ``space'' in recall)
-\end{itemize}
-\end{slide}
-
-\begin{slide}[\slideopts]{WRoPE Memory}
-%  \vspace{-1em}
-  \begin{itemize}
-    \mpitem WRoPE sequences are naturally reversed because we can only change all stored angles by the same delta:
-    \[
-    \hv_a(n) = e^{j\Delta_n}\hv(n), \quad n=0,1,2,\dots
-    \]
-    \mpitem This makes inference non-autoregressive (more expensive)
-    \mpitem One improvement is to \emph{store} past hidden states so that positional encodings can be updated arbitrarily when accessed:
-    \[
-    \hv_a(n,m) = e^{j\Delta_{n-m}}\hv(m), \quad m=n-L,\dots,n-1,n
-    \]
-    ($m$th hidden state vector needed for inference at time $n$)
-    \mpitem This is the same amount of storage needed for the Truncated Infinite Impulse Response (TIIR) technique
-    which provides a recursively computed sliding-window of memory
-    \mpitem In the TIIR case (fixed length $L$), might as well use normal RoPE
-    \mpitem WRoPE maybe competitive for encoding ``journalistic style'' into a vector
-  \end{itemize}
-\end{slide}
-
+%\input wrope.tex
 
 \begin{slide}[\slideopts,toc={TIIR RNNs}]{Truncated Infinite Impulse Response (TIIR) RNNs (TRNN)}
   A \emph{sliding rectangular window} can be obtained as an integrator minus a \emph{delayed} integrator:
@@ -641,80 +606,6 @@ something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
   \vspace{-2em}
 \maybepause
 \myFigureToWidth{tiir1}{\twidth}{}
-\end{slide}
-
-\begin{slide}[\slideopts,toc={}]{Searching a Time Range}
-
-\vspace{-1em}
-
-\begin{itemize}
-  \mpitem Reserving complex angle for positional encoding $\Leftrightarrow$ \emph{real} vocabulary
-          embedding vectors
-  \mpitem Downstream weights and biases must be \emph{complex}
-  \mpitem Complex angle discarded by absolute value when no longer needed
-  \mpitem Exact orthogonality is obtained for each of the $L$ RoPE time-steps when there is
-  no amplitude decay as in normal RNNs, \ie, $e^{jn\Delta}\xv(n)\perp e^{jm\Delta}\xv(n)\, \forall n\ne m$
-  \mpitem RoPE query vector for a vocabulary vector (``token'') $\wv$ any time between $n_1$ to $n_2$ is
-   \[
-   \qv \eqsp \sum_{n=n_1}^{n_2}e^{jn \Delta}\wv
-   \eqsp \wv \frac{e^{j(n_2+1)\Delta} - e^{jn_1\Delta}}{e^{j\Delta}-1}
-   \eqsp \wv\, e^{j\theta_{12}}\frac{\sin\left(\frac{n_2-n_1+1}{2}\Delta\right)}{\sin(\Delta/2)}
-   \]
-   \vspace{-1em}
-\end{itemize}
-\end{slide}
-
-\begin{slide}[\slideopts,toc={Compressed Time}]{Compressed Time Retrieval}
-
-\begin{itemize}
-  \mpitem Recall that a vector $\wv$ is detected in the vector memory $\hv$ by the inner product $\wv^T\xv$
-  exceeding some detection threshold $b$, \ie, $\wv^T\xv > b$
-  \mpitem The threshold $b$ can be lowered to capture a wider range of similar vectors
-  \mpitem The captured vectors lie in a cone at angle $\theta$ centered on the vector $\wv$,
-  and $\cos(\theta)=b$
-  \mpitem In WRoPE, the angular rotation decreases as $1/n$ or the like
-  \mpitem ...
-\end{itemize}
-
-This causes inner products to increase as vectors get squeezed together along the complex-angle arc.
-
-\end{slide}
-
-\begin{slide}[\slideopts,toc={Reservations}]{Reserving Angular Dimensions}
-
-  \vspace{-1em}
-
-  Reserving the radial dimension looks easy (\eg, \tx{RMSNorm} every $k$ gradient-descent steps)\\
-  How to reserve an \emph{arc dimension} for [W]RoPE and perhaps other purposes?
-
-  \begin{itemize}
-%    \mpitem \emph{Augment the space with new angular dimensions:}
-%    \begin{enumerate}
-      \mpitem RoPE: Effectively reserves \emph{complex angle:} $\hv_a(n) = e^{j\Delta}\hv(n)$\\
-      (data size doubled: $\xv \to (\xv,\zv)$)
-      \mpitem A zero imaginary part in the vocabulary embedding reserves complex angle % for [W]RoPE
-      \mpitem \emph{Quaternions} give two more angles
-      		$\Leftrightarrow$ embedding size quadrupled: $\xv \to (\xv,\zv,\zv,\zv)$\\
-      \begin{itemize}
-        \mpitem $\hv_a(n) = \qb\,\hv(n)$, where, from
-        \htmladdnormallink{Wikipedia}{https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation}:\\
-        $
-        % \displaystyle
-        \qb = e^{{\frac {\Delta}{2}}{(\av_x\ib +\av_y\jb +\av_z\kb )}}
-        = \cos {\frac {\Delta }{2}}+(\av_x\ib +\av_y\jb + \av_z\kb )\sin {\frac {\Delta }{2}}
-        = \cos {\frac {\Delta }{2}}+\av\sin {\frac {\Delta }{2}}
-        $
-      \end{itemize}
-      \mpitem See the Cayley-Dickson Construction for $2^k-1$ angles, $k=1,2,3,\ldots$
-      \mpitem Trivial in \emph{polar coordinates} (``write-protect'' reserved dimensions during gradient step),\\
-      but then back-propagation must be rewritten for polar coordinates
-      % \\ Replace weight matrices $\Wmtx$ with \emph{rotation matrices?}
-      \mpitem Find a suitable method of \emph{constrained gradient descent}
-      \mpitem Train (or calculate) a \emph{pointwise MLP} that ``de-rotates'' $\xv+\mu\gradv$ given also $\xv$
-      \mpitem Use \emph{reserved translational dimension(s)} instead (``TraPE'') (omitted from \tx{RMSNorm})
-      % Illustrate "meta" reserved translation dimension: \myFigureToWidth{threeGinaSpheres}{0.5\twidth}{}
-  \end{itemize}
-
 \end{slide}
 
 \section[\sectopts,toc={Attention}]{Attention}
@@ -998,30 +889,31 @@ model-space regions, etc.
   %% % Code will be at https://github.com/umich-sota/CAT
 \end{slide}
 
-\begin{slide}[\slideopts,toc={Plan}]{Next Steps}
-  \vspace{-1em}
-  \begin{itemize}
-    \mpitem Try to improve [Trans]\textbf{Mamba}[-2] on small synthetic datasets testing \emph{memory}
-    \begin{itemize}
-      \mpitem Vocabulary embeddings trained to the unit hypersphere (\eg, \tx{word2sphere})
-      \mpitem Memory \emph{duration} and \emph{reset} functions separately trained and implemented
-      \mpitem Initial \emph{biases} at $\zv$ versus $L/N$ etc.
-      \mpitem Do \emph{power normalization} in place of \tx{RMSNorm} where possible (efficiency)
-      \mpitem Try \emph{power normalized attention} in place of $1/\sqrt{d_h}$ and \tx{Softmax} (efficiency)
-      \mpitem Adapt \emph{model dimension} to \emph{layer width} at each level (efficiency)
-      \mpitem Truncated Recurrent Neural Network (TRNN) sliding-window memory + linear RoPE
-      \mpitem Translational Positional Encoding (TraPE) in its own head (no \tx{RMSNorm})
-      \mpitem Explore other ``Control Heads'' that flow along purely for ``conditioning'' like TraPE
-    \end{itemize}
-    \mpitem Progress to date:
-    \begin{itemize}
-      \mpitem New synthetic benchmarks analogous to ``needle in a haystack''
-      \mpitem Adapted Andrej Karpathy's \tx{makemore} code, adding Mamba and new benchmarks
-      \mpitem Four papers started, aiming for Arxiv, GitHub, ``AI social media,'' blog
-    \end{itemize}
-    \mpitem Feel free to take over any of these! (and LMK so I can do something else)
-  \end{itemize}
-\end{slide}
+%% No time to update these right now:
+%% \begin{slide}[\slideopts,toc={Plan}]{Possible Next Steps}
+%%   \vspace{-1em}
+%%   \begin{itemize}
+%%     \mpitem Try to improve [Trans]\textbf{Mamba}[-2] on small synthetic datasets testing \emph{memory}
+%%     \begin{itemize}
+%%       \mpitem Vocabulary embeddings trained to the unit hypersphere (\eg, \tx{word2sphere})
+%%       \mpitem Memory \emph{duration} and \emph{reset} functions separately trained and implemented
+%%       \mpitem Initial \emph{biases} at $\zv$ versus $L/N$ etc.
+%%       \mpitem Do \emph{power normalization} in place of \tx{RMSNorm} where possible (efficiency)
+%%       \mpitem Try \emph{power normalized attention} in place of $1/\sqrt{d_h}$ and \tx{Softmax} (efficiency)
+%%       \mpitem Adapt \emph{model dimension} to \emph{layer width} at each level (efficiency)
+%%       \mpitem Truncated Recurrent Neural Network (TRNN) sliding-window memory + linear RoPE
+%%       \mpitem Translational Positional Encoding (TraPE) in its own head (no \tx{RMSNorm})
+%%       \mpitem Explore other ``Control Heads'' that flow along purely for ``conditioning'' like TraPE
+%%     \end{itemize}
+%%     \mpitem Progress to date:
+%%     \begin{itemize}
+%%       \mpitem New synthetic benchmarks analogous to ``needle in a haystack''
+%%       \mpitem Adapted Andrej Karpathy's \tx{makemore} code, adding Mamba and new benchmarks
+%%       \mpitem Four papers started, aiming for Arxiv, GitHub, ``AI social media,'' blog
+%%     \end{itemize}
+%%     \mpitem Feel free to take over any of these! (and LMK so I can do something else)
+%%   \end{itemize}
+%% \end{slide}
 
 \begin{slide}[\slideopts,toc={Hypersphere}]{Thanks for your Attention!}
 \vspace{-1em}
