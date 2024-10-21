@@ -4,7 +4,7 @@
 \newcommand{\theTitle}{Signal Processing Formulations of Sequence Models}
 %\newcommand{\theTitle}{Inventing Sequence Models as Vectorized Signal Processors}
 %\newcommand{\theTitle}{Sequence Models from a Signal Processing Perspective}
-\newcommand{\theEvent}{\htmladdnormallink{DSP Online Conference}{https://dsponlineconference.com}}
+\newcommand{\theEvent}{\htmladdnormallink{DSP Online Conference}{https://www.dsponlineconference.com}}
 %\newcommand{\theEvent}{\htmladdnormallink{West Coast Machine Learning}{https://www.youtube.com/channel/UCuoNQWLuEYwjP7mI23sZ3WQ}}
 %\newcommand{\theDate}{June 20, 2024}
 %\newcommand{\theDate}{July 18, 2024}
@@ -44,7 +44,8 @@
 %  CCRMA Open House\\
 %  Classroom (Knoll 217)\\
 %  Stanford University \\[10pt]
-  \theEvent
+  \theEvent\\
+  \htmladdnormallink{\texttt{www.dsponlineconference.com}}{https://www.dsponlineconference.com}
 }
 
 \newcommand{\onevec}{\underline{1}}
@@ -66,6 +67,27 @@
 %\input jos-overview.tex
 
 %\input courses-overview.tex
+
+\begin{slide}[\slideopts,toc={Deep Learning}]{Example Deep Neural Network for F0 Estimation}
+  \vspace{-1.5em}
+  \centerline{Verma and Schafer, Interspeech 2016}
+% \twocolumn{
+  \vspace{-2em}
+  \myFigureRotateToWidth{VermaSchafer1}{-90}{\twidth}{}
+  \vspace{-4em}
+  \myFigureRotateToWidth{VermaSchafer2}{-90}{\twidth}{}
+%  }{
+  \vspace{-2em}
+  \begin{itemize}
+    \mpitem ``Audio filter bank'' \emph{learned} in the first layer for the F0-estimation task
+    \mpitem Filter bands more dense in the F0 range
+    \mpitem Suggests: Replace first layer with a \emph{pre-structured
+            auditory filter bank} having a \emph{differentiable and convex} parameterization,
+            for \emph{data} and \emph{task adaptation} (see \href{https://github.com/google-research/leaf-audio}{LEAF})
+            %\mpitem See, \eg, \href{https://github.com/google-research/leaf-audio}{LEAF: a LEarnable Audio Frontend}
+  \end{itemize}
+% }
+\end{slide}
 
 %\section[\sectopts,toc={Approach}]{Signal-Processing Ingredients}
 %\section[\sectopts,toc={Basic Idea}]{Signal-Processing Class-Project Idea}
