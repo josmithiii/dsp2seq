@@ -56,10 +56,28 @@
 
 \input abstract.tex
 
+\begin{slide}[\slideopts]{Intended Audience}
+
+Previous versions of this talk were aimed at
+\begin{enumerate}
+\mpitem CCRMA students after one introductory signal-processing course
+\mpitem West Coast Machine Learning meetup group: mostly in machine learning
+\end{enumerate}
+\maybepause
+This version is aimed at
+\begin{enumerate}
+  \mpitem[3.] Signal-processing students and professionals,\\
+              assumed to know more DSP than machine learning
+\end{enumerate}
+
+\end{slide}
+
 %\input jos-overview.tex
 
 %\input courses-overview.tex
 
+\section[\sectopts,toc={Approach}]{Signal-Processing Ingredients}
+%\section[\sectopts,toc={Basic Idea}]{Signal-Processing Class-Project Idea}
 %\section[\sectopts,toc={Basic Idea}]{Music 320 (Signal Processing) Project Idea}
 \section[\sectopts,toc={Basic Idea}]{Motivating Problem: Associative Memory}
 
@@ -72,8 +90,10 @@
 \maybepause
 \vspace{-1em}
 \textbf{Vectorize it!}
+\textbf{One Unit Delay (for Vectors) can be an Associative Memory:}
+%\textbf{Idea: Let's Make an Associative Memory!}
 \begin{itemize}
-\mpitem $x(n)$ can be a \emph{long vector} $\xv(n)\in\RN$ representing \emph{anything we want} --- any ``label''
+\mpitem Let $x(n)$ be a \emph{long vector} $\xv(n)\in\RN$ representing any ``label''
 \mpitem Set $\geev = \onevec$ and $\peev = \onevec$ to make $\yv(n)$ a \emph{sum of all input vectors} (``integrator'')
 \mpitem Choose the dimension $N$ so large that \emph{vectors in the sum are mostly orthogonal}
 \mpitem Let $\xv(n)$ be \textbf{embedded vectors} (\eg, \tx{word2vec}) so that \emph{closeness = similarity}
@@ -508,9 +528,9 @@ and equalizes gradient backpropagation to all layers)
 \begin{itemize}
   \mpitem The small smooth ``well'' of a SwiGLU [2020], replacing the corner, biases ``undecided'' gradients near the corner
   \mpitem Piecewise-linear polytopes in the model dimension become smoother (good for audio effects)
-  \mpitem \textbf{Idea:} (Backpropagation---1980s?): To facilitate
-  \emph{learning} $\wv_i$ via gradient descent, replace ``$>$'' by
-  something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
+\mpitem \textbf{Idea:} (Backpropagation---1980s?): To facilitate
+\emph{learning} $\wv_i$ via gradient descent, replace ``$>$'' by
+something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
 \end{itemize}
 \end{slide}
 
