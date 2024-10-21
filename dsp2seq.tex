@@ -1,12 +1,15 @@
 %&latex
 % Created from /l/mt/JOSOverview.tex
 
-\newcommand{\theTitle}{Inventing Sequence Models as Vectorized Signal Processors}
+\newcommand{\theTitle}{Signal Processing Formulations of Sequence Models}
+%\newcommand{\theTitle}{Inventing Sequence Models as Vectorized Signal Processors}
 %\newcommand{\theTitle}{Sequence Models from a Signal Processing Perspective}
-\newcommand{\theEvent}{\htmladdnormallink{West Coast Machine Learning}{https://www.youtube.com/channel/UCuoNQWLuEYwjP7mI23sZ3WQ}}
+\newcommand{\theEvent}{\htmladdnormallink{DSP Online Conference}{https://dsponlineconference.com}}
+%\newcommand{\theEvent}{\htmladdnormallink{West Coast Machine Learning}{https://www.youtube.com/channel/UCuoNQWLuEYwjP7mI23sZ3WQ}}
 %\newcommand{\theDate}{June 20, 2024}
 %\newcommand{\theDate}{July 18, 2024}
-\newcommand{\theDate}{August 8, 2024}
+%\newcommand{\theDate}{August 8, 2024}
+\newcommand{\theDate}{October 29-31, 2024}
 
 %% \newcommand{\theTitle}{Inventing Modern Sequence Models as a Music 320 Project}
 %% \newcommand{\theSubTitle}{Samples become Meaning Vectors}
@@ -58,9 +61,9 @@
 %\input courses-overview.tex
 
 %\section[\sectopts,toc={Basic Idea}]{Music 320 (Signal Processing) Project Idea}
-\section[\sectopts,toc={Basic Idea}]{Signal-Processing Class-Project Idea}
+\section[\sectopts,toc={Basic Idea}]{Motivating Problem: Associative Memory}
 
-\begin{slide}[\slideopts,toc={One Pole Filter}]{Assignment: Do Something Cool with a \emph{One-Pole Recursive Digital Filter}}
+\begin{slide}[\slideopts,toc={One Pole Filter}]{Challenge Problem: Can we make an \emph{Associative Memory} out of a \emph{Vectorized One-Pole Filter}}
 \vspace{-2em}
 \myFigureToWidth{one-pole-jos}{0.5\twidth}{
   One Pole at $z = p$\\[5pt]
@@ -68,14 +71,14 @@
     $H(z) = \frac{\displaystyle Y(z)}{\displaystyle X(z)} = \frac{\displaystyle  g}{\displaystyle 1 - p\,\zi}$\quad[transfer function]}
 \maybepause
 \vspace{-1em}
-\textbf{Idea: Let's Make an Associative Memory!}
+\textbf{Vectorize it!}
 \begin{itemize}
 \mpitem $x(n)$ can be a \emph{long vector} $\xv(n)\in\RN$ representing \emph{anything we want} --- any ``label''
 \mpitem Set $\geev = \onevec$ and $\peev = \onevec$ to make $\yv(n)$ a \emph{sum of all input vectors} (``integrator'')
 \mpitem Choose the dimension $N$ so large that \emph{vectors in the sum are mostly orthogonal}
 \mpitem Let $\xv(n)$ be \textbf{embedded vectors} (\eg, \tx{word2vec}) so that \emph{closeness = similarity}
 \mpitem Retrieve similar vectors using a \emph{matched inner product} $\wv^T\xv > b$,\\
-        for some suitable threshold $b$ (Hey! That's a simulated neuron! (``Perceptron''))
+        for some suitable threshold $b$ (Hey!  A simulated neuron! (``Perceptron'' [1957]))
 \end{itemize}
 \end{slide}
 
@@ -172,19 +175,21 @@ E\left[(\ab \cdot \bb)^2\right] = \zbox{\frac{1}{N}}
 \]
 since $E[a_i b_j]=0$ for $i \ne j$, $E[a_i^2] = E[b_i]^2 = 1/N$, and $\ab$ and $\bb$ are independent.\\
 \maybepause
-\textbf{Suggestions:}
+\textbf{Suggestions for Training:}
 \begin{itemize}
-\mpitem \emph{Initialize biases (detection thresholds) larger than $1/N$}
+\mpitem \emph{Initialize biases (detection thresholds) near $1/N$}
 \mpitem \emph{Divide the sum of $M$ vectors by $\sqrt{M}$:}
 \begin{itemize}
   \item ``power normalization''
   \mpitem ``\tx{RMSNorm}-preserving''
-  \mpitem Done in \htmladdnormallink{Hawk \& Griffin}{https://arxiv.org/abs/2402.19427}, \eg
+  % \mpitem Often seen in machine learning
+  % \mpitem Done in \htmladdnormallink{Hawk \& Griffin}{https://arxiv.org/abs/2402.19427}, \eg
   \mpitem ``Keep vector sums near the unit sphere''
 \end{itemize}
 \mpitem Apply \tx{RMSNorm} when \emph{training} the initial \emph{vocabulary embedding} (``\tx{word2sphere}'')
 \mpitem Set the \emph{model dimension} just sufficient for the \emph{layer width} at each level
-\mpitem \textbf{Caveat:} We are only considering \emph{one mechanism} here --- \emph{others are definitely going on}
+\mpitem \textbf{Caveat:} We are only considering associative recall as \emph{one mechanism} here.\\
+          \emph{Other mechanisms are definitely learned}, such as ``attention sinks'' and ``induction heads'', \ldots)
 \end{itemize}
 % Note to self: embeddings have semantic proximity while feature maps may not
 
@@ -316,91 +321,7 @@ E\left[\left(\wv^T\yv_n\right)^2\right]
 and so on.  \emph{This gives us one way to calculate a maximum feedback coefficient $p$ in RNNs}
 \end{slide}
 
-\begin{slide}[\slideopts,toc={Model Dimension}]{Model Dimension vs.~Model \& Vocab Size
-(\htmladdnormallink{ChatGPT-4o}{https://chatgpt.com/share/76499bbc-95f7-48bf-8646-19786c1961f4}, not checked)}
-
-\vspace{-2em}
-
-% \usepackage{multicol}
-% \usepackage{amsmath}
-
 % \input ModelDims.tex
-
-\begin{multicols}{2}
-\begin{itemize}
-    \item \textbf{Original Transformer}
-    \begin{itemize}
-      \item $N = 512$ (Model Size $65$ M)
-    \end{itemize}
-
-    \item \textbf{BERT}
-    \begin{itemize}
-        \item $N = 768$ ($110$ M, $30$ K)
-        \item $N = 1024$ ($340$ M, $30$ K)
-    \end{itemize}
-
-    \item \textbf{GPT-2}
-    \begin{itemize}
-        \item $N = 768$ ($124$ M, $50$ K)
-        \item $N = 1024$ ($345$ M, $50$ K)
-        \item $N = 1280$ ($774$ M, $50$ K)
-        \item $N = 1600$ ($1.5$ B, $50$ K)
-    \end{itemize}
-
-    \item \textbf{GPT-3}
-    \begin{itemize}
-        \item $N = 2048$ ($2.7$ B, $50$ K)
-        \item $N = 4096$ ($6.7$ B, $50$ K)
-        \item $N = 6144$ ($13$ B, $50$ K)
-        \item $N = 12288$ ($175$ B, $50$ K)
-    \end{itemize}
-
-    \item \textbf{T5}
-    \begin{itemize}
-        \item $N = 512$ ($60$ M, $32$ K)
-        \item $N = 768$ ($220$ M, $32$ K)
-        \item $N = 1024$ ($770$ M, $32$ K)
-        \item $N = 1024$ ($3$ B, $32$ K)
-        \item $N = 1024$ ($11$ B, $32$ K)
-    \end{itemize}
-
-    %% \item \textbf{RoBERTa}
-    %% \begin{itemize}
-    %%     \item $N = 768$ ($125$ M, $50$ K)
-    %%     \item $N = 1024$ ($355$ M, $50$ K)
-    %% \end{itemize}
-
-    \item \textbf{ALBERT}
-    \begin{itemize}
-        \item $N = 768$ ($12$ M, $30$ K)
-        \item $N = 1024$ ($18$ M, $30$ K)
-        \item $N = 2048$ ($60$ M, $30$ K)
-        \item $N = 4096$ ($235$ M, $30$ K)
-    \end{itemize}
-
-    \item \textbf{DistilBERT}
-    \begin{itemize}
-        \item $N = 768$ ($66$ M, $30$ K)
-    \end{itemize}
-
-    \item \textbf{Megatron-Turing NLG}
-    \begin{itemize}
-        \item $N = 20480$ ($530$ B, $50$ K)
-    \end{itemize}
-
-\end{itemize}
-\end{multicols}
-
-\end{slide}
-
-\begin{slidewhite}[\slideopts,toc={}]{Log10 Model Dimension versus Log10 Model Size}
-
-\vspace{-2em}
-
-%\myFigureToWidth{Model_Dimension_vs_Log10_Parameters}{\twidth}{}
-\myFigureToWidth{Model_Dimensions_vs_Model_Sizes_Labeled}{\twidth}{}
-
-\end{slidewhite}
 
 %---------------------------------------------------------------------------------------------------
 
@@ -532,7 +453,7 @@ and equalizes gradient backpropagation to all layers)
 \begin{slide}[\slideopts,toc={Perceptrons}]{Detecting Multiple Vectors in Parallel}
 \maybepause
 \vspace{1em}
-\textbf{Idea:} Detect multiple memory vectors in \emph{parallel} using an array of \emph{``Perceptrons''}
+\textbf{Idea:} Detect multiple memory vectors in \emph{parallel} using an \emph{array} of \emph{``Perceptrons''}
 %\emph{``Multi-Layer Perceptron'' (MLP)}
 \begin{itemize}
   \mpitem Each Perceptron detects one or more memory vectors similar to its weight vectors
@@ -548,12 +469,49 @@ and equalizes gradient backpropagation to all layers)
 
 \mpitem The Perceptrons indicate \emph{which weight-vectors $\wv_i$ are present} in the vector memory $\hv$
 
-\mpitem \textbf{Idea:} (Backpropagation---1980s?): To facilitate
-\emph{learning} $\wv_i$ via gradient descent, replace ``$>$'' by
-something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
-
 \end{itemize}
 
+\end{slide}
+
+% ------------------------------------------------------------------------------------------------
+
+\begin{slide}[\slideopts,toc={MLP}]{MultiLayer Perceptrons (MLP)}
+
+  \textbf{Idea:} The outputs from a Perceptron Array can be further processed by \emph{another Perceptron Array}
+  \begin{itemize}
+    \mpitem MultiLayer Perceptron (MLP) = multiple layers of Perceptron arrays [1960s]
+    \mpitem Can now detect ``patterns of patterns of patterns . . .''
+    \mpitem \textbf{Idea:} To avoid reduction to \emph{binary} signals, use the Perceptron as a \emph{gate:}
+    \beas
+    \yv &=& \sum_i\wv_i^T\hv+b_i \quad \mbox{(pre-activation signal)}\\
+    p &=& \sigma(\yv) \quad \mbox{(Perceptron output)}\\
+    \yv_p &=& p \cdot \yv \quad \mbox{(Perceptron-gated pre-activation $\isdef$ \emph{ReLU Activation} [1947,1975,2010])} % Householder, Fukushima, Hinton:
+%% https://stats.stackexchange.com/questions/447674/when-was-the-relu-function-first-used-in-a-neural-network
+%% Jürgen Schmidhuber. "Deep Learning in Neural Networks: An Overview." 2014.
+%% Fukushima, K. (1975). "Cognitron: A self-organizing multilayered neural network." Biological Cybernetics, 20(3-4), 121–136. doi:10.1007/bf00342633
+%% Kunihiko Fukushima. "Neocognitron: A Self-organizing Neural Network Model for a Mechanism of Pattern Recognition Unaffected by Shift in Position." Biological Cybernetics. 1980.
+%% D.E. Rumelhart, G.E. Hinton, and J.L. McClelland. "A General Framework for Parallel Distributed Processing" in Parallel Distributed Computing, Vol 1. 1986.
+%% Vinod Nair, Geoffrey E. Hinton, "Rectified Linear Units Improve Restricted Boltzmann Machines" 2010.
+    \eeas
+    % output instead $s_l \cdot \yv_l$ (ReLU)
+    \mpitem Such MLPs are trainable by \emph{gradient descent} [1967, 1980s] % Shun'ichi Amari - Wikipedia: https://en.wikipedia.org/wiki/Multilayer_perceptron
+    \mpitem By the \emph{Universal Approximation Theorem} [1989], \emph{one hidden layer} is enough to approximate
+    any continuous input-output map (\href{http://neuralnetworksanddeeplearning.com/chap4.html}{easy} for two hidden layers)
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}[\slideopts,toc={Training}]{Training}
+\maybepause
+\vspace{1em}
+\textbf{Idea:} \emph{Soften} the Rectified Linear Unit (ReLU) to facilitate gradient descent
+\begin{itemize}
+  \mpitem The small smooth ``well'' of a SwiGLU [2020], replacing the corner, biases ``undecided'' gradients near the corner
+  \mpitem Piecewise-linear polytopes in the model dimension become smoother (good for audio effects)
+  \mpitem \textbf{Idea:} (Backpropagation---1980s?): To facilitate
+  \emph{learning} $\wv_i$ via gradient descent, replace ``$>$'' by
+  something smoother, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
+\end{itemize}
 \end{slide}
 
 \begin{slide}[\slideopts,toc={Sequences}]{Sequence Modeling}

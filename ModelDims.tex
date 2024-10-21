@@ -1,0 +1,87 @@
+\begin{slide}[\slideopts,toc={Model Dimension}]{Model Dimension vs.~Model \& Vocab Size
+(\htmladdnormallink{ChatGPT-4o}{https://chatgpt.com/share/76499bbc-95f7-48bf-8646-19786c1961f4}, not checked)}
+
+\vspace{-2em}
+
+% \usepackage{multicol}
+% \usepackage{amsmath}
+
+\begin{multicols}{2}
+\begin{itemize}
+    \item \textbf{Original Transformer}
+    \begin{itemize}
+      \item $N = 512$ (Model Size $65$ M)
+    \end{itemize}
+
+    \item \textbf{BERT}
+    \begin{itemize}
+        \item $N = 768$ ($110$ M, $30$ K)
+        \item $N = 1024$ ($340$ M, $30$ K)
+    \end{itemize}
+
+    \item \textbf{GPT-2}
+    \begin{itemize}
+        \item $N = 768$ ($124$ M, $50$ K)
+        \item $N = 1024$ ($345$ M, $50$ K)
+        \item $N = 1280$ ($774$ M, $50$ K)
+        \item $N = 1600$ ($1.5$ B, $50$ K)
+    \end{itemize}
+
+    \item \textbf{GPT-3}
+    \begin{itemize}
+        \item $N = 2048$ ($2.7$ B, $50$ K)
+        \item $N = 4096$ ($6.7$ B, $50$ K)
+        \item $N = 6144$ ($13$ B, $50$ K)
+        \item $N = 12288$ ($175$ B, $50$ K)
+    \end{itemize}
+
+    \item \textbf{T5}
+    \begin{itemize}
+        \item $N = 512$ ($60$ M, $32$ K)
+        \item $N = 768$ ($220$ M, $32$ K)
+        \item $N = 1024$ ($770$ M, $32$ K)
+        \item $N = 1024$ ($3$ B, $32$ K)
+        \item $N = 1024$ ($11$ B, $32$ K)
+    \end{itemize}
+
+    %% \item \textbf{RoBERTa}
+    %% \begin{itemize}
+    %%     \item $N = 768$ ($125$ M, $50$ K)
+    %%     \item $N = 1024$ ($355$ M, $50$ K)
+    %% \end{itemize}
+
+    \item \textbf{ALBERT}
+    \begin{itemize}
+        \item $N = 768$ ($12$ M, $30$ K)
+        \item $N = 1024$ ($18$ M, $30$ K)
+        \item $N = 2048$ ($60$ M, $30$ K)
+        \item $N = 4096$ ($235$ M, $30$ K)
+    \end{itemize}
+
+    \item \textbf{DistilBERT}
+    \begin{itemize}
+        \item $N = 768$ ($66$ M, $30$ K)
+    \end{itemize}
+
+    \item \textbf{Megatron-Turing NLG}
+    \begin{itemize}
+        \item $N = 20480$ ($530$ B, $50$ K)
+    \end{itemize}
+
+\end{itemize}
+\end{multicols}
+
+\end{slide}
+
+%---------------------------------------------------------------------------------------------------
+
+\begin{slidewhite}[\slideopts,toc={}]{Log10 Model Dimension versus Log10 Model Size}
+
+\vspace{-2em}
+
+%\myFigureToWidth{Model_Dimension_vs_Log10_Parameters}{\twidth}{}
+\myFigureToWidth{Model_Dimensions_vs_Model_Sizes_Labeled}{\twidth}{}
+
+\end{slidewhite}
+
+%---------------------------------------------------------------------------------------------------
