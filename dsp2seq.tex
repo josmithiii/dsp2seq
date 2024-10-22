@@ -33,8 +33,8 @@
 % Uses package etoolbox for \newtoggle et al:
 \usepackage{etoolbox} % for \newtoggle et al
 \newtoggle{local}
-\toggletrue{local}
-%\togglefalse{local}
+%\toggletrue{local}
+\togglefalse{local}
 \input localremote.tex
 
 \date{\theDate}
@@ -402,7 +402,7 @@ and so on.  \emph{This gives us one way to calculate a maximum feedback coeffici
 
 \textbf{Suggestions:}
 \begin{itemize}
-\mpitem Use learned, input-based, \emph{activations} for gating (LSTM, GRU, Mamba smoothed input)
+\mpitem Use learned, input-based, \emph{activations} for gating (LSTM, GRU, Mamba)
 \mpitem While activated, \emph{optionally} set \emph{memory duration} via $\peev$ magnitude (SSMs, Mamba)
 \begin{itemize}
   \mpitem \emph{Initialize} $\peev$ for desired initial memory duration (exponential fade time)
@@ -529,7 +529,7 @@ and equalizes gradient backpropagation to all layers)
 
 \vspace{-1em}
 
-\emph{Separately learnable FIR coefficient matrices} $\dv_k[\xv(n)], \cv_j[\xv(n-j),k]$, depending on:
+\emph{Separately learnable FIR coefficient matrices} $\dscalar_k[\xv(n)], \cscalar_j[\xv(n-j),k]$, depending on:
   \begin{enumerate}
     \mpitem input \emph{position} $j$ in the input sequence (``context buffer'' or ``expanded state'' + [W]RoPE)
     \mpitem input \emph{vector} $\xv(n-j)$,\; $j=0,1,2,\dots,M$
@@ -565,25 +565,25 @@ Let $\xv_k$ denote $\xv(n-k)$
 The contribution from input $\xv_j$ to the nonlinear FIR sum for output $\yv_k$ can be calculated as
 \\
 $
-\cv_{kj}\xv_j = \left[\left(\sum_{m\in \Rscr(\xv_k)}\xv_m\right)^T \xv_j\right]\xv_j
+\cscalar_{kj}\xv_j = \left[\left(\sum_{m\in \Rscr(\xv_k)}\xv_m\right)^T \xv_j\right]\xv_j
 $
 \\
 \maybepause
-or more generally $\zbox{\cv_{kj} = Q_k^T \xv_j}$, where
+or more generally $\zbox{\cscalar_{kj} = \qv_k^T \xv_j}$, where
 \\
 %\begin{itemize}
 %  \mpitem
-$Q_k(\xv_k,k)$ is called the \emph{query} vector for position $k$ in the input sequence
-%  \mpitem $K_j[\xv_j,j]$ is called the \emph{key} vector for position $j$ in the input sequence
-%  \mpitem $V_j[\xv_j]$ is called the \emph{value} vector for position $j$ in the input sequence
+$\qv_k$ is called the \emph{query} vector for position $k$ in the output sequence
+%  \mpitem $k_j[\xv_j,j]$ is called the \emph{key} vector for position $j$ in the input sequence
+%  \mpitem $v_j[\xv_j]$ is called the \emph{value} vector for position $j$ in the input sequence
 %\end{itemize}
 
 \vspace{1em}
 
 \maybepause
-The query $Q_k$ can be a sum of \emph{all vectors supported in the attention sum}:\\
-$Q_k = \xv_k + \xv_{m_1} + \cdots + \xv_{m_k}$\\
-$\Rightarrow (Q_k^T \xv_j)\xv_j \approx \xv_j$, if $\xv_j$ is similar to \emph{any vector} in the query sum.
+The query $\qv_k$ can be for example a \emph{sum of vectors allowed in the attention sum}:\\
+$\qv_k = \xv_k + \xv_{m_1} + \cdots + \xv_{m_k}$\\
+$\Rightarrow (\qv_k^T \xv_j)\xv_j \approx \xv_j$, if $\xv_j$ is similar to \emph{any vector} in the query sum.
 
 %We still need a reason to generalize $\xv$ above to a \emph{key} $K(\xv)$ and \emph{value} $V(\xv)$
 
@@ -592,7 +592,7 @@ $\Rightarrow (Q_k^T \xv_j)\xv_j \approx \xv_j$, if $\xv_j$ is similar to \emph{a
 %% \begin{slide}[\slideopts]{Queries, Keys, and Values}
 
 %% \begin{itemize}
-%%   A query $Q_k$ formed as a sum of sought vectors, looks useful, but we can generalize further
+%%   A query $\qv_k$ formed as a sum of sought vectors, looks useful, but we can generalize further
 %%   \mpitem The query for a \emph{noun} can look for \emph{all verbs} and \emph{all adjectives} that could contextualize it
 %%   \mpitem The model space can have different partitions for nouns, verbs, and adjectives
 %%   \mpitem We can learn a projection $K(\xv)$ that projects any $\xv$ to a vector representing ``noun'', ``verb'', or ``adjective,'' etc.
@@ -602,16 +602,16 @@ $\Rightarrow (Q_k^T \xv_j)\xv_j \approx \xv_j$, if $\xv_j$ is similar to \emph{a
 
 %% So now we're up to (Q,K,V) attention:
 %% \[
-%% \cv_{kj}\xv_j = (Q_k^T K_j)V_j
+%% \cscalar_{kj}\xv_j = (\qv_k^T k_j)v_j
 %% \]
 
-%% %Similarly, the key vector $K_j$ can be a sum of \emph{all queries} to which it applies, \eg,\\
-%% %$K_j = \xv_j + \xv_{n_1} + \cdots + \xv_{n_k} \Rightarrow (Q_k^T K_j)\xv_j \approx M\xv_j$, given $M$ similar vectors in both.
+%% %Similarly, the key vector $k_j$ can be a sum of \emph{all queries} to which it applies, \eg,\\
+%% %$k_j = \xv_j + \xv_{n_1} + \cdots + \xv_{n_k} \Rightarrow (\qv_k^T k_j)\xv_j \approx M\xv_j$, given $M$ similar vectors in both.
 
 
 %% %% \textbf{Idea:} For more flexibility in the attention sum (or to learn
 %% %% down-projections in \emph{multi-head} mode), replace $\xv_j$ in the
-%% %% attention sum with a learned \emph{value vector} $V_j[\xv_j]$\\
+%% %% attention sum with a learned \emph{value vector} $v_j[\xv_j]$\\
 
 %% \end{slide}
 
@@ -634,9 +634,9 @@ parallel independent \emph{attention calculations} (``multi-head attention'')
 Now we need \emph{down-projections} of the relevance-calculation components\\
 $\Rightarrow$ relevance of input $j$ to output $k$ in attention-head $l$ becomes proportional to
 \[
-\cv_{kj}\xv_j = (Q_k^T \xv_j)\xv_j \;\longrightarrow\; \cv_{lkj}\xv_{lj} = \left[Q_{lk}^T(\xv_k) K_{lj}(\xv_{j})\right]V_{lj}(\xv_j)
+\cscalar_{kj}\xv_j = (\qv_k^T \xv_j)\xv_j \;\longrightarrow\; \cscalar_{lkj}\xv_{lj} = \left[\qv_{lk}^T(\xv_k) k_{lj}(\xv_{j})\right]v_{lj}(\xv_j)
 \]
-where $Q_{lk}$ (``query''), $K_{lj}$ (``key''), and $V_{lj}$
+where $\qv_{lk}$ (``query''), $k_{lj}$ (``key''), and $v_{lj}$
 (``value'') vectors are learned \emph{down-projections} of the input $\xv_j$
 for each attention-head $l$ and for all sequence indices $j$ and $k$
 in the context buffer (``Transformer'')
@@ -644,9 +644,9 @@ in the context buffer (``Transformer'')
 %%   \mpitem Filter coefficients computed from input as before, but smaller
 
 %% \[
-%% $(Q_k^T K_j)V_j$,
+%% $(\qv_k^T k_j)v j$,
 %% \]
-%% using down-projected queries $Q_k(\xv)$, \emph{keys} $K_j(\xv)$, and \emph{values} $V_j(\xv)$
+%% using down-projected queries $\qv_k(\xv)$, \emph{keys} $k_j(\xv)$, and \emph{values} $V_j(\xv)$
 
 \maybepause
 
@@ -699,58 +699,60 @@ model-space regions, etc.
 %% \vspace{-4em}
 %% \end{wideslidewhite}
 
-\begin{slide}[\slideopts,toc={Unified State Space}]{State Space Unification of Transformers and GRNNs}
-\vspace{-1em}
-% State Transition Matrices
-\begin{equation*}
-\begin{array}{cc}
-\underbrace{
-\mathbf{A_T} = \ev^{j\Delta_n} \begin{pmatrix}
-0 & 0 & \cdots & 0 & 0 \\
-\onevec & 0 & \cdots & 0 & 0 \\
-0 & \onevec & \cdots & 0 & 0 \\
-\vdots & \vdots & \ddots & \vdots & \vdots \\
-0 & 0 & \cdots & \onevec & 0
-\end{pmatrix}
-}_{\mbox{Transformer}}
-&\quad
-\underbrace{
-\mathbf{A_M} = \av_n \ev^{j\Delta_n} \begin{pmatrix}
-\onevec & 0 & \cdots & 0 \\
-0 & \onevec & \cdots & 0 \\
-\vdots & \vdots & \ddots & \vdots \\
-0 & 0 & \cdots & \onevec
-\end{pmatrix}
-}_{\mbox{Mamba-2 style RNN + [W]RoPE}}
-\end{array}
-\end{equation*}
-\[
-\mathbf{A_{TM}} = \ev^{j\Delta_n} \begin{pmatrix}
-0 & 0 & \cdots & 0 & 0 & 0 & \cdots & 0 \\
-\onevec & 0 & \cdots & 0 & 0 & 0 & \cdots & 0 \\
-0 & \onevec & \cdots & 0 & 0 & 0 & \cdots & 0 \\
-\vdots & \vdots & \ddots & \vdots & \vdots & \vdots & \ddots & \vdots \\
-0 & 0 & \cdots & \onevec & 0 & 0 & \cdots & 0 \\
-% & & & & & \av_n \onevec & 0 & \cdots & 0 \\
-0 & 0 & \cdots & 0 & \bv_{1}(n) & \av_n & \cdots & 0 \\
-\vdots & \vdots & \ddots & \vdots & \vdots & \vdots & \ddots & \vdots \\
-0 & 0 & \cdots & 0 & \bv_{N_M}(n) & 0 & \cdots & \av_n
-\end{pmatrix}
-\quad
-\mathbf{B_{TM}} = \begin{pmatrix} \beev_1(n) \\ 0 \\ 0 \\ \vdots \\ 0 \end{pmatrix}
-\]
-
-\end{slide}
+%% Too long to describe, and not as good as a diagram which comes next.
+%% Also, IMPROVE THE NOTATION so that underbar always means an Nx1 column vector and nothing else:
+%% \begin{slide}[\slideopts,toc={Unified State Space}]{State Space Unification of Transformers and GRNNs}
+%% \vspace{-1em}
+%% % State Transition Matrices
+%% \begin{equation*}
+%% \begin{array}{cc}
+%% \underbrace{
+%% \mathbf{A_T} = \ev^{j\Delta_n} \begin{pmatrix}
+%% 0 & 0 & \cdots & 0 & 0 \\
+%% \onevec & 0 & \cdots & 0 & 0 \\
+%% 0 & \onevec & \cdots & 0 & 0 \\
+%% \vdots & \vdots & \ddots & \vdots & \vdots \\
+%% 0 & 0 & \cdots & \onevec & 0
+%% \end{pmatrix}
+%% }_{\mbox{Transformer}}
+%% &\quad
+%% \underbrace{
+%% \mathbf{A_M} = \av_n \ev^{j\Delta_n} \begin{pmatrix}
+%% \onevec & 0 & \cdots & 0 \\
+%% 0 & \onevec & \cdots & 0 \\
+%% \vdots & \vdots & \ddots & \vdots \\
+%% 0 & 0 & \cdots & \onevec
+%% \end{pmatrix}
+%% }_{\mbox{Mamba-2 style RNN + [W]RoPE}}
+%% \end{array}
+%% \end{equation*}
+%% \[
+%% \mathbf{A_{TM}} = \ev^{j\Delta_n} \begin{pmatrix}
+%% 0 & 0 & \cdots & 0 & 0 & 0 & \cdots & 0 \\
+%% \onevec & 0 & \cdots & 0 & 0 & 0 & \cdots & 0 \\
+%% 0 & \onevec & \cdots & 0 & 0 & 0 & \cdots & 0 \\
+%% \vdots & \vdots & \ddots & \vdots & \vdots & \vdots & \ddots & \vdots \\
+%% 0 & 0 & \cdots & \onevec & 0 & 0 & \cdots & 0 \\
+%% % & & & & & \av_n \onevec & 0 & \cdots & 0 \\
+%% 0 & 0 & \cdots & 0 & \bv_{1}(n) & \av_n & \cdots & 0 \\
+%% \vdots & \vdots & \ddots & \vdots & \vdots & \vdots & \ddots & \vdots \\
+%% 0 & 0 & \cdots & 0 & \bv_{N_M}(n) & 0 & \cdots & \av_n
+%% \end{pmatrix}
+%% \quad
+%% \mathbf{B_{TM}} = \begin{pmatrix} \beev_1(n) \\ 0 \\ 0 \\ \vdots \\ 0 \end{pmatrix}
+%% \]
+%% \end{slide}
 
 \begin{slide}[\slideopts,toc={TransMamba}]{Transformer followed by GRNN with 2x State Expansion (like Mamba)}
 \vspace{-1.6em}
-\myFigureToWidth{transmamba}{\twidth}{TransMamba} % MambaFormer is taken
-\vspace{-2em}
-\maybepause
+\myFigureToWidth{transmamba}{\twidth}{}
+%!\myFigureToWidth{transmamba}{\twidth}{TransMamba} % MambaFormer is taken
+%!\vspace{-2em}
+%!\maybepause
 % Prompt 1: "Friendly cartoon Mamba snake" (cute but boring):
 % => \myFigureToWidth{cartoon-mamba}{0.9in}{} % And now we don't want MambaFormer after all - this is great!
 % Prompt 2: "Make it trans" (over the top better!):=>
-\myFigureToWidth{cartoon-mamba-t}{0.9in}{} % And now we don't want MambaFormer after all - this is great!
+%!\myFigureToWidth{cartoon-mamba-t}{0.9in}{} % And now we don't want MambaFormer after all - this is great!
 \end{slide}
 
 %% % Not finished:
@@ -773,13 +775,12 @@ model-space regions, etc.
     \mpitem Fuzzy, fading, long-term memory
     \mpitem Like Infini-Attention
       \columnbreak
-    \mpitem Fading short-term memory
-    \mpitem Limited long-term memory
-    \mpitem Also like the brain
+    \mpitem Both memories see latest input
+    \mpitem IIR part less efficiently used
     \end{itemize}
   \end{multicols}
   \maybepause
-  Maybe use both?
+  Direct Form I looks preferable because it separates short and longer-term memory functions.
   %% Hold off on this discussion for now:
   %% In \htmladdnormallink{``On the Power of Convolution Augmented
   %%   Transformer'' (CAT)}{https://arxiv.org/pdf/2407.05591}, they found that\\
