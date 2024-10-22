@@ -1,0 +1,124 @@
+\section[\sectopts,toc={Processing}]{Memory Access}
+
+\begin{slide}[\slideopts,toc={Perceptrons}]{Detecting Multiple Vectors in Parallel}
+\maybepause
+\vspace{1em}
+\textbf{Idea:} Detect multiple memory vectors in \emph{parallel} using an \emph{array} of \emph{``Perceptrons''}
+%\emph{``Multi-Layer Perceptron'' (MLP)}
+\begin{itemize}
+  \mpitem Each Perceptron detects one or more memory vectors similar to its weight vectors
+  \[
+  y_i(n) = \wv_i^T\hv(n) > b_i
+  \]
+  where $y_i(n)$ denotes the $i$th output at time $n$, i=0,\ldots,M-1,\\
+  and $\hv(n)$ denotes the (``hidden'' [expanded-] state) vector memory
+  \mpitem Note that the $\Cmtx$ matrix can provide these weights:
+  \[
+  \yv(n) = \Cmtx\,\hv(n) > \beev
+  \]
+
+\mpitem The Perceptrons indicate \emph{which weight-vectors $\wv_i$ are present} in the vector memory $\hv$
+
+\end{itemize}
+
+\end{slide}
+
+% ------------------------------------------------------------------------------------------------
+
+\begin{slide}[\slideopts,toc={MLP}]{MultiLayer Perceptrons (MLP)}
+
+  \textbf{Idea:} Process Perceptron-Array outputs using \emph{another Perceptron Array}
+  \begin{itemize}
+    \mpitem MultiLayer Perceptron (MLP) = multiple layers of Perceptron arrays [1960s]
+    \mpitem Can now detect ``patterns of patterns of patterns . . .''
+    \mpitem \textbf{Idea:} To avoid reduction to \emph{binary} signals, use the Perceptron as a \emph{gate:}
+    \beas
+    \yv &=& \sum_i\wv_i^T\hv+b_i \quad \mbox{(pre-activation signal)}\\
+    p &=& \sigma(\yv) \quad \mbox{(Perceptron output)}\\
+    \yv_p &=& p \cdot \yv \quad \mbox{(Perceptron-gated--pre-activation $\isdef$ \emph{ReLU Activation} [1947,1975,2010])} % Householder, Fukushima, Hinton:
+%% https://stats.stackexchange.com/questions/447674/when-was-the-relu-function-first-used-in-a-neural-network
+%% Jürgen Schmidhuber. "Deep Learning in Neural Networks: An Overview." 2014.
+%% Fukushima, K. (1975). "Cognitron: A self-organizing multilayered neural network." Biological Cybernetics, 20(3-4), 121–136. doi:10.1007/bf00342633
+%% Kunihiko Fukushima. "Neocognitron: A Self-organizing Neural Network Model for a Mechanism of Pattern Recognition Unaffected by Shift in Position." Biological Cybernetics. 1980.
+%% D.E. Rumelhart, G.E. Hinton, and J.L. McClelland. "A General Framework for Parallel Distributed Processing" in Parallel Distributed Computing, Vol 1. 1986.
+%% Vinod Nair, Geoffrey E. Hinton, "Rectified Linear Units Improve Restricted Boltzmann Machines" 2010.
+    \eeas
+    % output instead $s_l \cdot \yv_l$ (ReLU)
+    \mpitem The activation $\xv\cdot\sigma(\xv)$ is called the \href{https://pytorch.org/docs/stable/generated/torch.nn.SiLU.html}{\emph{Sigmoid Linear Unit} (SiLU)} or \textit{Swish} activation
+      % \mpitem Add GLU?:
+      % https://arxiv.org/abs/2002.05202
+      % https://paperswithcode.com/method/glu
+      % https://medium.com/deeplearningmadeeasy/glu-gated-linear-unit-21e71cd52081
+    \mpitem Such MLPs are trainable by \emph{gradient descent} [1967, 1980s] % Shun'ichi Amari - Wikipedia: https://en.wikipedia.org/wiki/Multilayer_perceptron
+    \mpitem By the \emph{Universal Approximation Theorem} [1989], \emph{one hidden layer} is enough to approximate
+    any continuous input-output map (\href{http://neuralnetworksanddeeplearning.com/chap4.html}{easy} for two hidden layers)
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}[\slideopts,toc={Training}]{Training}
+\maybepause
+\vspace{1em}
+\textbf{Idea:} \emph{Soften} the Rectified Linear Unit (ReLU) to facilitate gradient descent
+\begin{itemize}
+  \mpitem The small smooth ``well'' of a SwiGLU [2020], replacing the corner, biases ``undecided'' gradients near the corner
+  \mpitem Piecewise-linear polytopes in the model dimension become smoother\\
+  (good for audio effects)
+  \mpitem \textbf{Idea:} (Backpropagation --- 1980s):\\
+  To facilitate \emph{learning} $\wv_i$ via gradient descent, replace ``$>$'' by
+  something \emph{smooth}, such as $1+\tanh[\Cmtx\,\hv(n) - \beev]$
+\end{itemize}
+\end{slide}
+
+\begin{slide}[\slideopts,toc={Sequences}]{Sequence Modeling}
+  \vspace{-1em}
+  \begin{itemize}
+    \mpitem If each vector represents a \emph{word,} a vector sum is simply a \emph{bag of words}
+    \mpitem To model a \emph{sequence} of words, we have various \emph{sequence-position-encoding} options:
+    \begin{enumerate}
+      \mpitem \emph{Amplitude Decay} - Multiply the sum by a \emph{forgetting factor} each sequence step\\
+      (RNNs) - \emph{poor choice} (conflates with angular distance on the hypersphere)
+      \mpitem \emph{Sinusoidal Amplitude Modulation} - Add a sinusoid with \emph{increasing frequency} to each vector summing into the history\\
+      (used in the original Transformer)
+      \mpitem \emph{Phase Shift} - Multiply by the sum by $e^{j\Delta}$ each sample\\
+      (``RoPE'') - \emph{apparently most used today}
+    \end{enumerate}
+    % Toward Xformer: \mpitem Use many vector-sum memories in parallel, positionally encoded (``State Expansion'' in SSMs)
+    % \mpitem Learn position-specific \emph{FIR Coefficients} across a parallel bank of positionally encoded vector-sum memories (``Attention Layer'' in a Transformer)
+  \end{itemize}
+\end{slide}
+
+%\input wrope.tex
+
+\begin{slide}[\slideopts,toc={TIIR RNNs}]{Truncated Infinite Impulse Response (TIIR) RNNs (TRNN)}
+  A \emph{sliding rectangular window} can be obtained as an integrator minus a \emph{delayed} integrator:
+  \[
+  [1,1,\ldots, 1] \quad\longleftrightarrow\quad \sum_{n=0}^{N-1} z^{-n} \eqsp \frac{1-z^{-N}}{1-z^{-1}} \eqsp \zbox{\frac{1}{1-\zi} - z^{-N}\frac{1}{1-\zi}}
+  \]
+  \begin{itemize}
+    \mpitem Thus, two identical RNNs can be \emph{differenced} to provide a non-fading,\\
+            linearly RoPEd memory of any length $L$
+            \mpitem A \emph{real} memory of length $L$ is needed for the \emph{hidden state update:}\\
+            $\dhv(n) = \hv(n+1)-\hv(n) = \Bmtx_n\xv(n)$
+    \mpitem Hidden state update becomes
+    \vspace{-1em}
+    \begin{align*}
+    \hv(n+1) &= \hv(n) + \dhv_n\\
+             &= \hv(n) + \Bmtx_n\xv(n) - \Bmtx_{n-L}\, \xv(n-L)
+    \end{align*}
+    \vspace{-1em}
+    % No problem in full-precision fixed-point: \mpitem \textbf{Problem:} Accumulating floating-point round-off error (variance increases linearly)
+  \end{itemize}
+\end{slide}
+
+\begin{slide}[\slideopts,toc={TIIR Sliding Window}]{TRNN with Sliding-Window Memory and Linear RoPE}
+\myFigureToWidth{tiir-rnn}{0.8\twidth}{}
+\end{slide}
+
+\begin{slide}[\slideopts,toc={TIIR Resets}]{Ping-Ponging Periodically Resetting RNNs (Classic TIIR Trick)}
+  \vspace{-1em}
+  Needed when there is a \emph{forgetting factor} $p$ in the hidden-state feedback (any source of roundoff error):
+  \vspace{-2em}
+\maybepause
+\myFigureToWidth{tiir1}{\twidth}{}
+\end{slide}
